@@ -62,21 +62,21 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-#      - name: Generate deployment package
-#        run: |
-#          mkdir -p deploy
-#          cp -r .ebextensions deploy/.ebextensions
-#          cp docker-compose.yml deploy/docker-compose.yml
-#          cd deploy && zip -r deploy.zip .
-#
-#      - name: Beanstalk Deploy
-#        uses: einaregilsson/beanstalk-deploy@v14
-#        with:
-#          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#          application_name: ${{ env.EB_APP_NAME }}
-#          environment_name: ${{ env.EB_ENV_NAME }}
-#          version_label: ${{ secrets.EB_ENV_NAME }}-${{ steps.current-time.outputs.formattedTime }}
-#          region: ${{ env.AWS_REGION }}
-#          deployment_package: deploy/deploy.zip
-#          wait_for_environment_recovery: 200
+      - name: Generate deployment package
+        run: |
+          mkdir -p deploy
+          cp -r .ebextensions deploy/.ebextensions
+          cp docker-compose.yml deploy/docker-compose.yml
+          cd deploy && zip -r deploy.zip .
+
+      - name: Beanstalk Deploy
+        uses: einaregilsson/beanstalk-deploy@v14
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: ${{ env.EB_APP_NAME }}
+          environment_name: ${{ env.EB_ENV_NAME }}
+          version_label: ${{ secrets.EB_ENV_NAME }}-${{ steps.current-time.outputs.formattedTime }}
+          region: ${{ env.AWS_REGION }}
+          deployment_package: deploy/deploy.zip
+          wait_for_environment_recovery: 200
