@@ -35,7 +35,7 @@ class KakaoAuthHandlerTest {
 
     @Test
     @DisplayName("유효한 인가 코드로 카카오 서버로부터 사용자 이메일을 얻어온다")
-    void getUserEmailSuccessTest() throws Exception {
+    void getUserEmail_success() throws Exception {
         //given
         given(kakaoProperties.getClientId())
                 .willReturn("client id");
@@ -69,7 +69,7 @@ class KakaoAuthHandlerTest {
 
     @Test
     @DisplayName("유효하지 않은 인가 코드로 인증 요청을 하면 예외가 발생한다")
-    void getUserEmailWithInvalidAuthroizationCodeFailureTest() throws Exception {
+    void getUserEmail_withInvalidAuthorizationCode_throwsCustomException() throws Exception {
         //given
         given(kakaoProperties.getClientId())
                 .willReturn("client id");

@@ -35,7 +35,7 @@ public class QuestionEntity extends BaseEntity {
     private String content;
 
     @Enumerated(STRING)
-    @Column(name = "type", nullable = false, columnDefinition = "varchar(20) COMMENT '질문 상태'")
+    @Column(name = "status", nullable = false, columnDefinition = "varchar(20) COMMENT '질문 상태'")
     private QuestionStatus status;
 
     @Enumerated(STRING)

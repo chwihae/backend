@@ -28,7 +28,7 @@ class AuthControllerMockTest {
 
     @Test
     @DisplayName("POST /api/v1/auth/kakao-login - 성공")
-    void kakaoLoginSuccessTest() throws Exception {
+    void kakaoLogin_returnSuccessCode() throws Exception {
         //given
         KakaoLoginRequest request = KakaoLoginRequest.builder()
                 .authorizationCode("authorization code")
@@ -59,7 +59,7 @@ class AuthControllerMockTest {
 
     @Test
     @DisplayName("POST /api/v1/auth/kakao-login - 실패 (유효하지 않은 인가 코드)")
-    void kakaoLoginFailWithInvalidAuthorizationCodeTest() throws Exception {
+    void kakaoLogin_withInvalidAuthorizationCode_returnInvalidKakaoAuthorizationCode() throws Exception {
         //given
         KakaoLoginRequest request = KakaoLoginRequest.builder()
                 .authorizationCode("authorization code")

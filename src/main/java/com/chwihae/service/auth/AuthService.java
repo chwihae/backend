@@ -7,6 +7,7 @@ import com.chwihae.domain.user.UserRepository;
 import com.chwihae.dto.auth.response.LoginResponse;
 import com.chwihae.service.user.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -34,7 +35,15 @@ public class AuthService {
     }
 
     private UserEntity findOrCreateUser(String email) {
-        return userRepository.findByEmail(email).orElseGet(() -> userService.createUser(email));
+        return userRepository.findByEmail(email)
+                .orElseGet(() -> {
+                    try {
+                        return userService.createUser(email);
+                    } catch (DataIntegrityViolationException ex) {
+                        return userRepository.findByEmail(email)
+                                .orElseThrow(() -> new IllegalStateException("Unexpected error while retrieving the user with email: " + email, ex));
+                    }
+                });
     }
 
     private String createToken(Long userId) {

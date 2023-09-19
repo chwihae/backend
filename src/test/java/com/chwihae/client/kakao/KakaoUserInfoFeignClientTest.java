@@ -32,7 +32,7 @@ class KakaoUserInfoFeignClientTest {
 
     @Test
     @DisplayName("유효한 인증 토큰으로 카카오 서버로부터 정상적으로 사용자 이메일을 반환받는다")
-    void requestUserEmailSuccessTest() throws Exception {
+    void requestUserEmail_returnsUserInfo() throws Exception {
         //given
         String userEmail = "test@email.com";
         KakaoUserInfoResponse kakaoUserInfoResponse = KakaoUserInfoResponse.builder()
@@ -56,7 +56,7 @@ class KakaoUserInfoFeignClientTest {
 
     @Test
     @DisplayName("유효하지 않은 인증 토큰으로 요청하면 예외가 발생한다")
-    void requestUserEmailWithInvalidAccessTokenFailureTest() throws Exception {
+    void requestUserEmail_withInvalidAccessToken_throwsCustomException() throws Exception {
         //given
         String userEmail = "test@email.com";
         String responseBody = null;

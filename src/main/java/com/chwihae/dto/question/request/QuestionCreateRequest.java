@@ -34,6 +34,7 @@ public class QuestionCreateRequest {
     @NotNull
     private LocalDateTime closeAt;
 
+    @Size(max = 20)
     @NotEmpty
     private List<OptionCreateRequest> options;
 

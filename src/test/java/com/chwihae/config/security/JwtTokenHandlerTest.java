@@ -6,10 +6,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class JwtTokenHandlerTest {
-    
+
     @Test
     @DisplayName("유효한 토큰에서 userId를 추출한다")
-    void extractUserIdFromValidTokenTest() {
+    void extractUserIdFromToken_returnUserId() {
         //given
         JwtTokenHandler jwtTokenHandler = new JwtTokenHandler();
 
@@ -28,7 +28,7 @@ class JwtTokenHandlerTest {
 
     @Test
     @DisplayName("유효하지 않은 토큰에서 userId를 추출할 때 예외가 발생한다")
-    void extractUserIdFromInvalidTokenTest() {
+    void extractUserIdFromToken_withInvalidToken_returnsJwtException() {
         //given
         JwtTokenHandler jwtTokenHandler = new JwtTokenHandler();
 
@@ -43,8 +43,8 @@ class JwtTokenHandlerTest {
     }
 
     @Test
-    @DisplayName("유효한 토큰을 검증하면 예외가 발생하지 않는다")
-    void validateValidTokenTest() throws Exception {
+    @DisplayName("유효한 토큰을 검증한다")
+    void validateToken() throws Exception {
         //given
         JwtTokenHandler jwtTokenHandler = new JwtTokenHandler();
 
@@ -60,7 +60,7 @@ class JwtTokenHandlerTest {
 
     @Test
     @DisplayName("유효하지 않은 토큰을 검증하면 예외가 발생한다")
-    void validateInvalidTokenTest() throws Exception {
+    void verifyToken_withInvalidToken_returnsJwtException() throws Exception {
         //given
         JwtTokenHandler jwtTokenHandler = new JwtTokenHandler();
 
@@ -74,7 +74,7 @@ class JwtTokenHandlerTest {
 
     @Test
     @DisplayName("null을 검증하면 JwtException 예외가 발생한다")
-    void verifyWithNullTest() throws Exception {
+    void verifyToken_WithNull_returnsJwtException() throws Exception {
         //given
         JwtTokenHandler jwtTokenHandler = new JwtTokenHandler();
 
@@ -88,7 +88,7 @@ class JwtTokenHandlerTest {
 
     @Test
     @DisplayName("만료된 JWT 토큰 검증시 JwtException 예외가 발생한다")
-    void verifyExpiredTokenTest() {
+    void verifyToken_withExpiredToken_returnsJwtException() {
         //given
         JwtTokenHandler jwtTokenHandler = new JwtTokenHandler();
 
@@ -105,7 +105,7 @@ class JwtTokenHandlerTest {
 
     @Test
     @DisplayName("userId로 토큰을 생성한다")
-    void generateTokenTest() {
+    void generateToken_returnsToken() {
         //given
         JwtTokenHandler jwtTokenHandler = new JwtTokenHandler();
 
@@ -130,7 +130,7 @@ class JwtTokenHandlerTest {
 
     @Test
     @DisplayName("유효한 userId로 토큰을 생성하고 그 토큰으로 userId를 정상적으로 추출한다")
-    void generateAndExtractTokenTest() {
+    void generateAndExtractToken_returnsUserId() {
         //given
         JwtTokenHandler jwtTokenHandler = new JwtTokenHandler();
 
@@ -149,7 +149,7 @@ class JwtTokenHandlerTest {
 
     @Test
     @DisplayName("유효하지 않는 토큰으로 userId를 추출하려고 하면 JwtException이 발생한다")
-    void extractUserIdWithInvalidToken() throws Exception {
+    void extractUserId_withInvalidToken_returnsJwtException() throws Exception {
         //given
         JwtTokenHandler jwtTokenHandler = new JwtTokenHandler();
 
@@ -163,7 +163,7 @@ class JwtTokenHandlerTest {
 
     @Test
     @DisplayName("만료된 토큰으로 userId를 추출하려고 하면 JwtException이 발생한다")
-    void extractUserIdWithExpiredToken() throws Exception {
+    void extractUserId_withExpiredToken_returnsJwtException() throws Exception {
         //given
         JwtTokenHandler jwtTokenHandler = new JwtTokenHandler();
 

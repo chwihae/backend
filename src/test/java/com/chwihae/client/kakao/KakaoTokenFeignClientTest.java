@@ -33,7 +33,7 @@ class KakaoTokenFeignClientTest {
 
     @Test
     @DisplayName("올바른 인가 코드로 카카오 토큰 서버로 요청 하면 엑세스 토큰을 정상적으로 반환받는다")
-    void requestTokenSuccessTest() throws Exception {
+    void requestToken_returnsToken() throws Exception {
         //given
         KakaoTokenResponse kakaoTokenResponse = KakaoTokenResponse.builder()
                 .access_token("token")
@@ -69,7 +69,7 @@ class KakaoTokenFeignClientTest {
 
     @Test
     @DisplayName("유효하지 않은 인가 코드로 요청하면 예외가 발생한다")
-    void requestTokenWithInvalidAuthorizationCodeFailureTest() throws Exception {
+    void requestToken_withInvalidAuthorizationCode_throwsCustomException() throws Exception {
         //given
         String responseBody = null;
 
