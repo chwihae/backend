@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class IndexController {
     @GetMapping
-    public ResponseEntity<Void> index() {
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<String> index() {
+        return new ResponseEntity<>("index", HttpStatus.OK);
     }
 }

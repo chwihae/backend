@@ -34,7 +34,7 @@ public class QuestionCreateRequest {
     @NotNull
     private LocalDateTime closeAt;
 
-    @Size(max = 20)
+    @Size(min = 2, max = 10)
     @NotEmpty
     private List<OptionCreateRequest> options;
 
@@ -49,10 +49,11 @@ public class QuestionCreateRequest {
     }
 
     @Builder
-    private QuestionCreateRequest(String title, String content, QuestionType type, LocalDateTime closeAt) {
+    private QuestionCreateRequest(String title, String content, QuestionType type, LocalDateTime closeAt, List<OptionCreateRequest> options) {
         this.title = title;
         this.content = content;
         this.type = type;
         this.closeAt = closeAt;
+        this.options = options;
     }
 }

@@ -1,15 +1,18 @@
 package com.chwihae.controller.question;
 
 import com.chwihae.dto.question.request.QuestionCreateRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.validation.BindException;
+import org.springframework.validation.FieldError;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
+@Slf4j
 class QuestionValidatorTest {
 
     QuestionValidator validator;
@@ -45,7 +48,13 @@ class QuestionValidatorTest {
 
         //when //then
         Assertions.assertThatThrownBy(() -> validator.verify(request))
-                .isInstanceOf(BindException.class);
+                .isInstanceOf(BindException.class)
+                .satisfies(ex -> {
+                    BindException bindException = (BindException) ex;
+                    FieldError fieldError = bindException.getFieldError("closeAt");
+                    Assertions.assertThat(fieldError).isNotNull();
+                    log.info("Error Message : {}", fieldError.getDefaultMessage());
+                });
     }
 
     @Test
@@ -60,6 +69,12 @@ class QuestionValidatorTest {
 
         //when //then
         Assertions.assertThatThrownBy(() -> validator.verify(request))
-                .isInstanceOf(BindException.class);
+                .isInstanceOf(BindException.class)
+                .satisfies(ex -> {
+                    BindException bindException = (BindException) ex;
+                    FieldError fieldError = bindException.getFieldError("closeAt");
+                    Assertions.assertThat(fieldError).isNotNull();
+                    log.info("Error Message : {}", fieldError.getDefaultMessage());
+                });
     }
 }

@@ -25,7 +25,7 @@ class AuthControllerTest extends MockMvcTestSupport {
         //when //then
         mockMvc.perform(post("/api/v1/auth/kakao-login")
                         .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request))
+                        .content(body(request))
                 )
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value(INVALID_ARGUMENT.code()));

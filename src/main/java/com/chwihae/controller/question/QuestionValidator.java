@@ -16,10 +16,12 @@ public class QuestionValidator {
 
     public void verify(QuestionCreateRequest request) throws BindException {
         LocalDateTime now = LocalDateTime.now(KST);
+        LocalDateTime maxTime = now.plusDays(MAX_DAYS_LIMIT);
 
-        if (request.getCloseAt().isAfter(now.plusDays(MAX_DAYS_LIMIT)) || request.getCloseAt().isBefore(now)) {
+        if (request.getCloseAt().isAfter(maxTime) || request.getCloseAt().isBefore(now)) {
+            String errorMessage = String.format("CloseAt time should be after %s and before %s", now, maxTime);
             BindException bindException = new BindException(request, "questionCreateRequest");
-            bindException.addError(new FieldError("questionCreateRequest", "closeAt", "CloseAt time should be after now and before now plus " + (MAX_DAYS_LIMIT - 1) + " days."));
+            bindException.addError(new FieldError("questionCreateRequest", "closeAt", errorMessage));
             throw bindException;
         }
     }
