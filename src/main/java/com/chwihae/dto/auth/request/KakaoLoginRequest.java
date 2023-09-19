@@ -1,4 +1,4 @@
-package com.chwihae.dto.auth;
+package com.chwihae.dto.auth.request;
 
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
@@ -10,6 +10,9 @@ import lombok.Setter;
 @Setter
 public class KakaoLoginRequest {
 
-    @NotEmpty(message = "인가 코드는 필수 값 입니다")
+    @NotEmpty
     private String authorizationCode;
+
+    @NotEmpty
+    private String redirectionUri;
 }

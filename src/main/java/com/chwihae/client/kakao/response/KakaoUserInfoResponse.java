@@ -8,7 +8,6 @@ import lombok.Setter;
 @Setter
 @Getter
 public class KakaoUserInfoResponse {
-
     private Kakao_account kakaoAccount;
 
     @Setter

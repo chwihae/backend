@@ -1,1 +1,2 @@
-
+kakao:
+  client-id: ${kakao.client.id}
