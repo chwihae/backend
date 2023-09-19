@@ -50,7 +50,7 @@ public class KakaoAuthHandler {
     private String requestEmailOrException(String accessToken) {
         return Optional.ofNullable(kakaoUserInfoFeignClient.requestUserEmail(BEARER + accessToken))
                 .filter(Objects::nonNull)
-                .map(KakaoUserInfoResponse::getKakaoAccount)
+                .map(KakaoUserInfoResponse::getKakao_account)
                 .filter(Objects::nonNull)
                 .map(KakaoUserInfoResponse.Kakao_account::getEmail)
                 .filter(Objects::nonNull)
