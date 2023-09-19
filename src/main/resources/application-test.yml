@@ -1,0 +1,3 @@
+kakao:
+  oauth2.endpoint: "http://localhost:8089"
+  userInfo.endpoint: "http://localhost:8089"
