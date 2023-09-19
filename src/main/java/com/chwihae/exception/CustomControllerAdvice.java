@@ -70,16 +70,16 @@ public class CustomControllerAdvice {
         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ApiResponse.of(INVALID_ARGUMENT.code(), INVALID_ARGUMENT.message(), null));
     }
 
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ApiResponse<Void>> handle(RuntimeException ex) {
-        log.error("Error in [{}] Cause: [{}]", ex.getStackTrace()[0], ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.of(INTERNAL_SERVER_ERROR.code(), INTERNAL_SERVER_ERROR.message(), null));
-    }
-
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<ApiResponse<Void>> handle(MissingServletRequestParameterException ex) {
         doLog(ex, "MissingServletRequestParameterException while processing request parameters.");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.of(INVALID_ARGUMENT.code(), INVALID_ARGUMENT.message(), null));
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ApiResponse<Void>> handle(RuntimeException ex) {
+        log.error("Error in [{}] Cause: [{}]", ex.getStackTrace()[0], ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.of(INTERNAL_SERVER_ERROR.code(), INTERNAL_SERVER_ERROR.message(), null));
     }
 
     private void doLog(Exception e, String description) {
