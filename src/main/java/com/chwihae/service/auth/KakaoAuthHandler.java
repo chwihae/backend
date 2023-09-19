@@ -8,10 +8,8 @@ import com.chwihae.client.kakao.response.KakaoUserInfoResponse;
 import com.chwihae.config.properties.KakaoProperties;
 import com.chwihae.exception.CustomException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -36,7 +34,13 @@ public class KakaoAuthHandler {
     private String requestTokenOrException(String authorizationCode, String redirectionUri) {
         KakaoTokenRequest request = buildTokenRequest(authorizationCode, redirectionUri);
 
-        return Optional.ofNullable(kakaoTokenFeignClient.requestToken(request))
+        return Optional.ofNullable(kakaoTokenFeignClient.requestToken(
+                        request.getGrant_type(),
+                        request.getClient_id(),
+                        request.getClient_secret(),
+                        request.getRedirect_uri(),
+                        request.getCode())
+                )
                 .filter(Objects::nonNull)
                 .map(KakaoTokenResponse::getAccessToken)
                 .filter(Objects::nonNull)
@@ -44,9 +48,7 @@ public class KakaoAuthHandler {
     }
 
     private String requestEmailOrException(String accessToken) {
-        MediaType mediaType = new MediaType(MediaType.APPLICATION_FORM_URLENCODED, StandardCharsets.UTF_8);
-
-        return Optional.ofNullable(kakaoUserInfoFeignClient.requestUserEmail(BEARER + accessToken, mediaType.toString()))
+        return Optional.ofNullable(kakaoUserInfoFeignClient.requestUserEmail(BEARER + accessToken))
                 .filter(Objects::nonNull)
                 .map(KakaoUserInfoResponse::getKakaoAccount)
                 .filter(Objects::nonNull)

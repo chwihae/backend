@@ -6,6 +6,8 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 @FeignClient(
         name = "kakao-userinfo-client",
         url = "#{@kakaoUserInfoEndpoint}",
@@ -13,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 )
 public interface KakaoUserInfoFeignClient {
 
-    @GetMapping
-    KakaoUserInfoResponse requestUserEmail(@RequestHeader("Authorization") String accessToken,
-                                           @RequestHeader("Content-type") String contentType);
+    @GetMapping(produces = APPLICATION_JSON_VALUE)
+    KakaoUserInfoResponse requestUserEmail(@RequestHeader("Authorization") String accessToken);
 }
