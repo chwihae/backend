@@ -17,6 +17,7 @@ spring.jpa:
 
 kakao:
   client-id: "this is secret value"
+  client-secret: "this is secret value"
   oauth2.endpoint: "https://kauth.kakao.com/oauth/token"
   userInfo.endpoint: "https://kapi.kakao.com/v2/user/me"
 

@@ -16,7 +16,10 @@ public class KakaoProperties {
 
     @NotBlank(message = "Kakao Client ID must not be blank")
     private String clientId;
-    
+
+    @NotBlank(message = "Kakao Client Secret must not be blank")
+    private String clientSecret;
+
     private final Oauth2 oauth2 = new Oauth2();
     private final UserInfo userInfo = new UserInfo();
 

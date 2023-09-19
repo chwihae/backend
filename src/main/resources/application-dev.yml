@@ -1,2 +1,6 @@
+jwt:
+  secret-key: ${jwt.secret.key}
+
 kakao:
   client-id: ${kakao.client.id}
+  client-secret: ${kakao.client.secret}

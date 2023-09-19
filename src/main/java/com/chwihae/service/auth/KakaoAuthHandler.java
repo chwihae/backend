@@ -58,6 +58,7 @@ public class KakaoAuthHandler {
     private KakaoTokenRequest buildTokenRequest(String authorizationCode, String redirectionUri) {
         return KakaoTokenRequest.builder()
                 .client_id(kakaoProperties.getClientId())
+                .client_secret(kakaoProperties.getClientSecret())
                 .code(authorizationCode)
                 .redirect_uri(redirectionUri)
                 .grant_type(GRANT_TYPE)
