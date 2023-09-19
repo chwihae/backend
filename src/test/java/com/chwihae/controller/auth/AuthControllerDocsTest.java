@@ -1,6 +1,5 @@
-package com.chwihae.docs.auth;
+package com.chwihae.controller.auth;
 
-import com.chwihae.controller.auth.AuthController;
 import com.chwihae.dto.auth.request.KakaoLoginRequest;
 import com.chwihae.dto.auth.response.LoginResponse;
 import com.chwihae.infra.RestDocsSupport;
@@ -20,7 +19,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class AuthControllerDocsTest extends RestDocsSupport {
+class AuthControllerDocsTest extends RestDocsSupport {
 
     private final AuthService authService = Mockito.mock(AuthService.class);
 
@@ -73,7 +72,7 @@ public class AuthControllerDocsTest extends RestDocsSupport {
                                 fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터"),
                                 fieldWithPath("data.userId").type(JsonFieldType.NUMBER).description("사용자 아이디"),
                                 fieldWithPath("data.token").type(JsonFieldType.STRING).description("인증 토큰"),
-                                fieldWithPath("data.refreshToken").type(JsonFieldType.STRING).description("인증 토큰")
+                                fieldWithPath("data.refreshToken").type(JsonFieldType.STRING).description("리프레시 토큰")
                         ))
                 );
     }

@@ -30,3 +30,8 @@ feign:
 jwt:
   secret-key: "adZw12pxc55CmnIKsNP42KIa+M+bTlezcJKs3sW2RctO"
   token-expired-time-ms: 86400000
+
+logging:
+  level:
+    feign: DEBUG
+    com.chwihae.client.kakao: DEBUG
