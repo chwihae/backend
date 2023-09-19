@@ -17,4 +17,3 @@ public interface KakaoTokenFeignClient {
     @PostMapping
     KakaoTokenResponse requestToken(@RequestBody KakaoTokenRequest kakaoTokenRequest);
 }
-x
