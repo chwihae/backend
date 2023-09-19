@@ -10,10 +10,12 @@ import com.chwihae.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 import static com.chwihae.exception.CustomExceptionError.INVALID_KAKAO_AUTHORIZATION_CODE;
+import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
 
 @RequiredArgsConstructor
 @Component
@@ -21,6 +23,8 @@ public class KakaoAuthHandler {
 
     private static final String BEARER = "Bearer ";
     private static final String GRANT_TYPE = "authorization_code";
+    public static final String KAKAO_ACCOUNT_EMAIL = "kakao_account.email";
+    public static final String APPLICATION_FORM_URLENCODED_UTF8_VALUE = APPLICATION_FORM_URLENCODED_VALUE + ";charset=UTF-8";
 
     private final KakaoProperties kakaoProperties;
     private final KakaoTokenFeignClient kakaoTokenFeignClient;
@@ -48,7 +52,12 @@ public class KakaoAuthHandler {
     }
 
     private String requestEmailOrException(String accessToken) {
-        return Optional.ofNullable(kakaoUserInfoFeignClient.requestUserEmail(BEARER + accessToken))
+        return Optional.ofNullable(kakaoUserInfoFeignClient.requestUserEmail(
+                                BEARER + accessToken,
+                                APPLICATION_FORM_URLENCODED_UTF8_VALUE,
+                                List.of(KAKAO_ACCOUNT_EMAIL)
+                        )
+                )
                 .filter(Objects::nonNull)
                 .map(KakaoUserInfoResponse::getKakao_account)
                 .filter(Objects::nonNull)
