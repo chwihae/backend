@@ -1,1 +1,12 @@
+spring.profiles.default: local
 
+kakao:
+  client-id: "this is secret value"
+  oauth2.endpoint: "https://kauth.kakao.com/oauth/token"
+  userInfo.endpoint: "https://kapi.kakao.com/v2/user/me"
+
+feign:
+  client.config.default:
+    connectTimeout: 1000
+    readTimeout: 3000
+    loggerLevel: HEADERS
