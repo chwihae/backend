@@ -2,7 +2,6 @@ package com.chwihae.service.auth;
 
 import com.chwihae.client.kakao.KakaoTokenFeignClient;
 import com.chwihae.client.kakao.KakaoUserInfoFeignClient;
-import com.chwihae.client.kakao.request.KakaoTokenRequest;
 import com.chwihae.client.kakao.response.KakaoTokenResponse;
 import com.chwihae.client.kakao.response.KakaoUserInfoResponse;
 import com.chwihae.config.properties.KakaoProperties;
@@ -10,12 +9,10 @@ import com.chwihae.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 import static com.chwihae.exception.CustomExceptionError.INVALID_KAKAO_AUTHORIZATION_CODE;
-import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
 
 @RequiredArgsConstructor
 @Component
@@ -23,8 +20,6 @@ public class KakaoAuthHandler {
 
     private static final String BEARER = "Bearer ";
     private static final String GRANT_TYPE = "authorization_code";
-    public static final String KAKAO_ACCOUNT_EMAIL = "kakao_account.email";
-    public static final String APPLICATION_FORM_URLENCODED_UTF8_VALUE = APPLICATION_FORM_URLENCODED_VALUE + ";charset=UTF-8";
 
     private final KakaoProperties kakaoProperties;
     private final KakaoTokenFeignClient kakaoTokenFeignClient;
@@ -36,15 +31,12 @@ public class KakaoAuthHandler {
     }
 
     private String requestTokenOrException(String authorizationCode, String redirectionUri) {
-        KakaoTokenRequest request = buildTokenRequest(authorizationCode, redirectionUri);
-
         return Optional.ofNullable(kakaoTokenFeignClient.requestToken(
-                        request.getGrant_type(),
-                        request.getClient_id(),
-                        request.getClient_secret(),
-                        request.getRedirect_uri(),
-                        request.getCode())
-                )
+                        GRANT_TYPE,
+                        kakaoProperties.getClientId(),
+                        kakaoProperties.getClientSecret(),
+                        redirectionUri,
+                        authorizationCode))
                 .filter(Objects::nonNull)
                 .map(KakaoTokenResponse::getAccessToken)
                 .filter(Objects::nonNull)
@@ -52,27 +44,12 @@ public class KakaoAuthHandler {
     }
 
     private String requestEmailOrException(String accessToken) {
-        return Optional.ofNullable(kakaoUserInfoFeignClient.requestUserEmail(
-                                BEARER + accessToken,
-                                APPLICATION_FORM_URLENCODED_UTF8_VALUE,
-                                List.of(KAKAO_ACCOUNT_EMAIL)
-                        )
-                )
+        return Optional.ofNullable(kakaoUserInfoFeignClient.requestUserEmail(BEARER + accessToken))
                 .filter(Objects::nonNull)
-                .map(KakaoUserInfoResponse::getKakao_account)
+                .map(KakaoUserInfoResponse::getKakaoAccount)
                 .filter(Objects::nonNull)
-                .map(KakaoUserInfoResponse.Kakao_account::getEmail)
+                .map(KakaoUserInfoResponse.KakaoAccount::getEmail)
                 .filter(Objects::nonNull)
                 .orElseThrow(() -> new CustomException(INVALID_KAKAO_AUTHORIZATION_CODE));
-    }
-
-    private KakaoTokenRequest buildTokenRequest(String authorizationCode, String redirectionUri) {
-        return KakaoTokenRequest.builder()
-                .client_id(kakaoProperties.getClientId())
-                .client_secret(kakaoProperties.getClientSecret())
-                .code(authorizationCode)
-                .redirect_uri(redirectionUri)
-                .grant_type(GRANT_TYPE)
-                .build();
     }
 }
