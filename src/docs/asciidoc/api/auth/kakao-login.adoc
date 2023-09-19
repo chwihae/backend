@@ -1,0 +1,12 @@
+[[kakao-login]]
+=== 카카오 로그인
+
+==== HTTP Request
+
+include::{snippets}/kakao-login/http-request.adoc[]
+include::{snippets}/kakao-login/request-fields.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/kakao-login/http-response.adoc[]
+include::{snippets}/kakao-login/response-fields.adoc[]
