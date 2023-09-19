@@ -16,8 +16,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 )
 public interface KakaoTokenFeignClient {
 
-    @PostMapping(consumes = APPLICATION_FORM_URLENCODED_VALUE,
-            produces = APPLICATION_JSON_VALUE)
+    @PostMapping(produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_FORM_URLENCODED_VALUE)
     KakaoTokenResponse requestToken(@RequestParam("grant_type") String grantType,
                                     @RequestParam("client_id") String clientId,
                                     @RequestParam("client_secret") String clientSecret,

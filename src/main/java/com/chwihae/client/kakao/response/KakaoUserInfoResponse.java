@@ -8,11 +8,15 @@ import lombok.Setter;
 @Setter
 @Getter
 public class KakaoUserInfoResponse {
-    private Kakao_account kakao_account;
+    private KakaoAccount kakao_account;
 
     @Setter
     @Getter
-    public static class Kakao_account {
+    public static class KakaoAccount {
         private String email;
+    }
+
+    public KakaoAccount getKakaoAccount() {
+        return this.kakao_account;
     }
 }
