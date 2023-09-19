@@ -18,7 +18,6 @@ import java.util.List;
 
 import static com.chwihae.exception.CustomExceptionError.*;
 
-
 @Slf4j
 @RestControllerAdvice
 public class CustomControllerAdvice {

@@ -35,9 +35,10 @@ repositories {
 }
 
 dependencies {
-    //spring web
+    //springboot
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
 
     //spring cloud
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign' // For @FeignClient
@@ -60,6 +61,7 @@ dependencies {
 
     //test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
 
     //rest docs
     asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
