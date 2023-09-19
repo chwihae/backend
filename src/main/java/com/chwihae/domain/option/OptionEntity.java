@@ -23,16 +23,16 @@ public class OptionEntity extends BaseEntity {
     @Column(name = "id_option", nullable = false, updatable = false)
     private Long id;
 
-    @Column(name = "content", nullable = false, columnDefinition = "varchar(100) COMMENT '옵션 내용'")
-    private String content;
+    @Column(name = "name", nullable = false, columnDefinition = "varchar(100) COMMENT '옵션 내용'")
+    private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_question", nullable = false, foreignKey = @ForeignKey(name = "fk_option_question"), columnDefinition = "bigint COMMENT '질문 PK'")
     private QuestionEntity questionEntity;
 
     @Builder
-    private OptionEntity(String content, QuestionEntity questionEntity) {
-        this.content = content;
+    private OptionEntity(QuestionEntity questionEntity, String name) {
+        this.name = name;
         this.questionEntity = questionEntity;
     }
 }

@@ -23,7 +23,7 @@ public class UserEntity extends BaseEntity {
     @Column(name = "id_users", nullable = false, updatable = false)
     private Long id;
 
-    @Column(name = "email", updatable = false, nullable = false, unique = true, columnDefinition = "varchar(50) COMMENT '이메일'")
+    @Column(name = "email", unique = true, nullable = false, updatable = false, columnDefinition = "varchar(50) COMMENT '이메일'")
     private String email;
 
     @Builder
