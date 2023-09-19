@@ -6,8 +6,10 @@ import com.chwihae.domain.user.UserEntity;
 import com.chwihae.domain.user.UserRepository;
 import com.chwihae.dto.auth.response.LoginResponse;
 import com.chwihae.service.user.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+@RequiredArgsConstructor
 @Service
 public class AuthService {
 
@@ -16,21 +18,7 @@ public class AuthService {
     private final KakaoAuthHandler kakaoAuthHandler;
     private final UserService userService;
     private final UserRepository userRepository;
-    private final String secretKey;
-    private final Long tokenExpiredTimeMs;
-
-    public AuthService(JwtTokenHandler jwtTokenHandler,
-                       KakaoAuthHandler kakaoAuthHandler,
-                       UserService userService,
-                       UserRepository userRepository,
-                       JwtTokenProperties jwtTokenProperties) {
-        this.jwtTokenHandler = jwtTokenHandler;
-        this.kakaoAuthHandler = kakaoAuthHandler;
-        this.userService = userService;
-        this.userRepository = userRepository;
-        this.secretKey = jwtTokenProperties.getSecretKey();
-        this.tokenExpiredTimeMs = jwtTokenProperties.getTokenExpiredTimeMs();
-    }
+    private final JwtTokenProperties jwtTokenProperties;
 
     public LoginResponse kakaoLogin(String authorizationCode, String redirectionUri) {
         String userEmail = kakaoAuthHandler.getUserEmail(authorizationCode, redirectionUri);
@@ -50,10 +38,10 @@ public class AuthService {
     }
 
     private String createToken(Long userId) {
-        return jwtTokenHandler.generateToken(userId, secretKey, tokenExpiredTimeMs);
+        return jwtTokenHandler.generateToken(userId, jwtTokenProperties.getSecretKey(), jwtTokenProperties.getTokenExpiredTimeMs());
     }
 
     private String createRefreshToken(Long userId) {
-        return jwtTokenHandler.generateToken(userId, secretKey, tokenExpiredTimeMs * REFRESH_TOKEN_MULTIPLIER);
+        return jwtTokenHandler.generateToken(userId, jwtTokenProperties.getSecretKey(), jwtTokenProperties.getTokenExpiredTimeMs() * REFRESH_TOKEN_MULTIPLIER);
     }
 }

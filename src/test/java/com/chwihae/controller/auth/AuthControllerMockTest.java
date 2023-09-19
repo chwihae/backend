@@ -4,19 +4,20 @@ import com.chwihae.controller.ApiResponse;
 import com.chwihae.dto.auth.request.KakaoLoginRequest;
 import com.chwihae.dto.auth.response.LoginResponse;
 import com.chwihae.exception.CustomException;
-import com.chwihae.infra.MockTestSupport;
 import com.chwihae.service.auth.AuthService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static com.chwihae.exception.CustomExceptionError.INVALID_KAKAO_AUTHORIZATION_CODE;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
-@MockTestSupport
+@ExtendWith(MockitoExtension.class)
 class AuthControllerMockTest {
 
     @InjectMocks
