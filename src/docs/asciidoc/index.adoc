@@ -19,4 +19,5 @@ include::api/outline/outline.adoc[]
 == API
 
 include::api/auth/auth.adoc[]
+include::api/user/user.adoc[]
 include::api/question/question.adoc[]
