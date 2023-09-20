@@ -25,6 +25,7 @@ import java.util.List;
 
 import static com.chwihae.exception.CustomExceptionError.*;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -76,6 +77,7 @@ class QuestionControllerTest extends MockMvcTestSupport {
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(CREATED.value()))
                 .andExpect(jsonPath("$.data.id").isNumber());
 
         Assertions.assertThat(questionRepository.findAll()).hasSize(1);

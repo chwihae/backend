@@ -1,0 +1,7 @@
+[[User]]
+=== 사용자
+
+[[User-statistics]]
+==== 사용자 활동 통계
+
+include::user-statistics.adoc[]

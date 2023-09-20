@@ -1,0 +1,13 @@
+[[kakao-login]]
+===== HTTP Request
+
+include::{snippets}/user-statistics/http-request.adoc[]
+
+===== Request Header
+
+include::{snippets}/user-statistics/request-headers.adoc[]
+
+===== HTTP Response
+
+include::{snippets}/user-statistics/http-response.adoc[]
+include::{snippets}/user-statistics/response-fields.adoc[]
