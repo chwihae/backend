@@ -60,6 +60,7 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok'
 
     //test
+    testImplementation 'org.springframework.cloud:spring-cloud-contract-wiremock' // For @AutoConfigureWireMock
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
 

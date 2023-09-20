@@ -20,6 +20,6 @@ public interface KakaoTokenFeignClient {
     KakaoTokenResponse requestToken(@RequestParam("grant_type") String grantType,
                                     @RequestParam("client_id") String clientId,
                                     @RequestParam("client_secret") String clientSecret,
-                                    @RequestParam("redirect_uri") String redirectUri,
-                                    @RequestParam("code") String code);
+                                    @RequestParam("code") String authorizationCode,
+                                    @RequestParam("redirect_uri") String redirectUri);
 }

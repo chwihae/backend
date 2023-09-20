@@ -30,7 +30,7 @@ class AuthControllerDocsTest extends RestDocsSupport {
 
     @Test
     @DisplayName("카카오 로그인 API")
-    void kakaoLogin() throws Exception {
+    void kakaoLogin_restDocs() throws Exception {
         //given
         Long userId = 1L;
         String token = "token";
@@ -56,7 +56,7 @@ class AuthControllerDocsTest extends RestDocsSupport {
         //when //then
         mockMvc.perform(post("/api/v1/auth/kakao-login")
                         .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                        .content(body(request)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("kakao-login",

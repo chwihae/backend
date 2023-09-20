@@ -17,8 +17,8 @@ class UserRepositoryTest {
     UserRepository userRepository;
 
     @Test
-    @DisplayName("이메일로 사용자를 조회한다")
-    void findByEmailTest() throws Exception {
+    @DisplayName("존재하는 이메일로 사용자 조회 시 사용자를 반환한다")
+    void findByEmail_returnsPresent() throws Exception {
         //given
         String email = "test@email.com";
 
@@ -33,4 +33,33 @@ class UserRepositoryTest {
         Assertions.assertThat(result).isPresent();
     }
 
+    @Test
+    @DisplayName("등록된 이메일로 조회 시 true 반환한다")
+    void existsByEmail_returnsTrue() throws Exception {
+        //given
+        String email = "test@email.com";
+
+        userRepository.save(UserEntity.builder()
+                .email(email)
+                .build());
+
+        //when
+        boolean result = userRepository.existsByEmail(email);
+
+        //then
+        Assertions.assertThat(result).isTrue();
+    }
+
+    @Test
+    @DisplayName("미등록 이메일로 조회 시 false 반환한다")
+    void existsByEmail_returnsFalse() throws Exception {
+        //given
+        String email = "test@email.com";
+
+        //when
+        boolean result = userRepository.existsByEmail(email);
+
+        //then
+        Assertions.assertThat(result).isFalse();
+    }
 }

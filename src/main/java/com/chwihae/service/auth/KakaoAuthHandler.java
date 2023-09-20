@@ -35,8 +35,8 @@ public class KakaoAuthHandler {
                         GRANT_TYPE,
                         kakaoProperties.getClientId(),
                         kakaoProperties.getClientSecret(),
-                        redirectionUri,
-                        authorizationCode))
+                        authorizationCode,
+                        redirectionUri))
                 .filter(Objects::nonNull)
                 .map(KakaoTokenResponse::getAccessToken)
                 .filter(Objects::nonNull)

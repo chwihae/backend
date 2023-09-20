@@ -1,0 +1,11 @@
+[[question-create]]
+===== HTTP Request
+
+include::{snippets}/question-create/http-request.adoc[]
+include::../common/header.adoc[]
+include::{snippets}/question-create/request-fields.adoc[]
+
+===== HTTP Response
+
+include::{snippets}/question-create/http-response.adoc[]
+include::{snippets}/question-create/response-fields.adoc[]

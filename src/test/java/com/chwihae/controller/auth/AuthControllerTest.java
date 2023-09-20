@@ -15,7 +15,7 @@ class AuthControllerTest extends MockMvcTestSupport {
 
     @Test
     @DisplayName("POST /api/v1/auth/kakao-login - 실패 (유효하지 않은 파라미터)")
-    void kakaoLoginWithInvalidRequestParameterTest() throws Exception {
+    void kakaoLogin_withInvalidRequestParameter_returnsInvalidArgumentCode() throws Exception {
         //given
         KakaoLoginRequest request = KakaoLoginRequest.builder()
                 .authorizationCode("")
@@ -25,7 +25,7 @@ class AuthControllerTest extends MockMvcTestSupport {
         //when //then
         mockMvc.perform(post("/api/v1/auth/kakao-login")
                         .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request))
+                        .content(body(request))
                 )
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value(INVALID_ARGUMENT.code()));

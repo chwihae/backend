@@ -4,19 +4,20 @@ import com.chwihae.controller.ApiResponse;
 import com.chwihae.dto.auth.request.KakaoLoginRequest;
 import com.chwihae.dto.auth.response.LoginResponse;
 import com.chwihae.exception.CustomException;
-import com.chwihae.infra.MockTestSupport;
 import com.chwihae.service.auth.AuthService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static com.chwihae.exception.CustomExceptionError.INVALID_KAKAO_AUTHORIZATION_CODE;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
-@MockTestSupport
+@ExtendWith(MockitoExtension.class)
 class AuthControllerMockTest {
 
     @InjectMocks
@@ -27,7 +28,7 @@ class AuthControllerMockTest {
 
     @Test
     @DisplayName("POST /api/v1/auth/kakao-login - 성공")
-    void kakaoLoginSuccessTest() throws Exception {
+    void kakaoLogin_returnSuccessCode() throws Exception {
         //given
         KakaoLoginRequest request = KakaoLoginRequest.builder()
                 .authorizationCode("authorization code")
@@ -58,7 +59,7 @@ class AuthControllerMockTest {
 
     @Test
     @DisplayName("POST /api/v1/auth/kakao-login - 실패 (유효하지 않은 인가 코드)")
-    void kakaoLoginFailWithInvalidAuthorizationCodeTest() throws Exception {
+    void kakaoLogin_withInvalidAuthorizationCode_returnInvalidKakaoAuthorizationCode() throws Exception {
         //given
         KakaoLoginRequest request = KakaoLoginRequest.builder()
                 .authorizationCode("authorization code")
