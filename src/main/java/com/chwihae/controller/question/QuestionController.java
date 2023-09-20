@@ -2,8 +2,8 @@ package com.chwihae.controller.question;
 
 import com.chwihae.config.security.CurrentUser;
 import com.chwihae.controller.ApiResponse;
+import com.chwihae.dto.IdResponse;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
-import com.chwihae.dto.question.response.QuestionCreateResponse;
 import com.chwihae.dto.question.response.QuestionResponse;
 import com.chwihae.dto.user.UserContext;
 import com.chwihae.service.question.QuestionService;
@@ -21,10 +21,10 @@ public class QuestionController {
     private final QuestionValidator questionValidator;
 
     @PostMapping
-    public ApiResponse<QuestionCreateResponse> createQuestion(@RequestBody @Validated QuestionCreateRequest request,
-                                                              @CurrentUser UserContext userContext) throws BindException {
+    public ApiResponse<IdResponse> createQuestion(@RequestBody @Validated QuestionCreateRequest request,
+                                                  @CurrentUser UserContext userContext) throws BindException {
         questionValidator.verify(request);
-        return ApiResponse.ok(questionService.createQuestionWithOptions(request, userContext.getId()));
+        return ApiResponse.created(IdResponse.of(questionService.createQuestionWithOptions(request, userContext.getId())));
     }
 
     @GetMapping("/{questionId}")

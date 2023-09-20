@@ -2,7 +2,6 @@ package com.chwihae.controller.question;
 
 import com.chwihae.dto.option.request.OptionCreateRequest;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
-import com.chwihae.dto.question.response.QuestionCreateResponse;
 import com.chwihae.dto.question.response.QuestionResponse;
 import com.chwihae.infra.RestDocsSupport;
 import com.chwihae.infra.WithTestUser;
@@ -71,12 +70,8 @@ class QuestionControllerDocsTest extends RestDocsSupport {
                 .options(options)
                 .build();
 
-        QuestionCreateResponse questionCreateResponse = QuestionCreateResponse.builder()
-                .questionId(25L)
-                .build();
-
         given(questionService.createQuestionWithOptions(any(), any()))
-                .willReturn(questionCreateResponse);
+                .willReturn(25L);
 
         //when //then
         mockMvc.perform(
@@ -105,7 +100,7 @@ class QuestionControllerDocsTest extends RestDocsSupport {
                                 fieldWithPath("code").type(JsonFieldType.NUMBER).description("코드"),
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("메시지"),
                                 fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터"),
-                                fieldWithPath("data.questionId").type(JsonFieldType.NUMBER).description("생성된 질문 아이디")
+                                fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("질문 아이디")
                         )
                 ));
     }

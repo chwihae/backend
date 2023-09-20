@@ -8,7 +8,6 @@ import com.chwihae.domain.user.UserEntity;
 import com.chwihae.domain.user.UserRepository;
 import com.chwihae.dto.option.request.OptionCreateRequest;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
-import com.chwihae.dto.question.response.QuestionCreateResponse;
 import com.chwihae.dto.question.response.QuestionResponse;
 import com.chwihae.exception.CustomException;
 import lombok.RequiredArgsConstructor;
@@ -30,11 +29,11 @@ public class QuestionService {
     private final OptionRepository optionRepository;
 
     @Transactional
-    public QuestionCreateResponse createQuestionWithOptions(QuestionCreateRequest request, Long userId) {
+    public Long createQuestionWithOptions(QuestionCreateRequest request, Long userId) {
         UserEntity userEntity = findUserOrException(userId);
         QuestionEntity questionEntity = questionRepository.save(request.toEntity(userEntity));
         optionRepository.saveAll(buildOptionEntities(request.getOptions(), questionEntity));
-        return QuestionCreateResponse.of(questionEntity.getId());
+        return questionEntity.getId();
     }
 
     public QuestionResponse getQuestion(Long questionId, Long userId) {

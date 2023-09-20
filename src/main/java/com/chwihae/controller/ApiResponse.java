@@ -3,6 +3,7 @@ package com.chwihae.controller;
 import lombok.Getter;
 import lombok.Setter;
 
+import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
 @Setter
@@ -21,6 +22,10 @@ public class ApiResponse<T> {
 
     public static <T> ApiResponse<T> of(int code, String message, T data) {
         return new ApiResponse<>(code, message, data);
+    }
+
+    public static <T> ApiResponse<T> created(T id) {
+        return of(CREATED.value(), CREATED.name(), id);
     }
 
     public static <T> ApiResponse<T> ok(T data) {

@@ -8,7 +8,6 @@ import com.chwihae.domain.user.UserEntity;
 import com.chwihae.domain.user.UserRepository;
 import com.chwihae.dto.option.request.OptionCreateRequest;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
-import com.chwihae.dto.question.response.QuestionCreateResponse;
 import com.chwihae.dto.question.response.QuestionResponse;
 import com.chwihae.exception.CustomException;
 import com.chwihae.exception.CustomExceptionError;
@@ -68,10 +67,10 @@ class QuestionServiceTest {
                 .build();
 
         //when
-        QuestionCreateResponse response = questionService.createQuestionWithOptions(request, userEntity.getId());
+        Long id = questionService.createQuestionWithOptions(request, userEntity.getId());
 
         //then
-        Assertions.assertThat(response.getQuestionId()).isNotNull();
+        Assertions.assertThat(id).isNotNull();
         Assertions.assertThat(questionRepository.findAll()).hasSize(1);
         Assertions.assertThat(optionRepository.findAll()).hasSize(2);
     }

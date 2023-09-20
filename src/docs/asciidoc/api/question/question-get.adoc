@@ -3,10 +3,11 @@
 
 include::{snippets}/question-get/http-request.adoc[]
 
+include::{snippets}/question-get/path-parameters.adoc[]
+
 ===== Request Header
 
 include::{snippets}/question-get/request-headers.adoc[]
-include::{snippets}/question-get/path-parameters.adoc[]
 
 ===== HTTP Response
 
