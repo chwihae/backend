@@ -76,7 +76,7 @@ class QuestionControllerTest extends MockMvcTestSupport {
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.questionId").isNumber());
+                .andExpect(jsonPath("$.data.id").isNumber());
 
         Assertions.assertThat(questionRepository.findAll()).hasSize(1);
         Assertions.assertThat(optionRepository.findAll()).hasSize(optionSize);
