@@ -18,7 +18,10 @@ public enum CustomExceptionError {
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, 1001, "유효하지 않은 토큰입니다"),
 
     // 1100-1199: 사용자와 관련된 에러
-    USER_NOT_FOUND(HttpStatus.NOT_FOUND, 1100, "존재하지 않는 사용자입니다");
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, 1100, "존재하지 않는 사용자입니다"),
+
+    // 1200~1299: 질문과 관련된 에러
+    QUESTION_NOT_FOUND(HttpStatus.NOT_FOUND, 1200, "존재하지 않는 질문입니다");
 
     private final HttpStatus httpStatus;
     private final int errorCode;

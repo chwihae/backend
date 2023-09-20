@@ -1,6 +1,7 @@
 package com.chwihae.service.question;
 
 import com.chwihae.domain.option.OptionRepository;
+import com.chwihae.domain.question.QuestionEntity;
 import com.chwihae.domain.question.QuestionRepository;
 import com.chwihae.domain.question.QuestionType;
 import com.chwihae.domain.user.UserEntity;
@@ -8,7 +9,9 @@ import com.chwihae.domain.user.UserRepository;
 import com.chwihae.dto.option.request.OptionCreateRequest;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
 import com.chwihae.dto.question.response.QuestionCreateResponse;
+import com.chwihae.dto.question.response.QuestionResponse;
 import com.chwihae.exception.CustomException;
+import com.chwihae.exception.CustomExceptionError;
 import com.chwihae.fixture.UserEntityFixture;
 import com.chwihae.infra.IntegrationTestSupport;
 import org.assertj.core.api.Assertions;
@@ -86,5 +89,46 @@ class QuestionServiceTest {
                 .isInstanceOf(CustomException.class)
                 .extracting("error")
                 .isEqualTo(USER_NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("질문 아이디로 조회하여 질문을 반환한다")
+    void getQuestion_returnsQuestionResponse() throws Exception {
+        //given
+        UserEntity userEntity = userRepository.save(UserEntityFixture.of());
+        QuestionEntity questionEntity = questionRepository.save(createQuestion(userEntity));
+
+        //when
+        QuestionResponse response = questionService.getQuestion(questionEntity.getId(), userEntity.getId());
+
+        //then
+        Assertions.assertThat(response)
+                .extracting("title", "content", "type", "editable")
+                .containsExactly(questionEntity.getTitle(), questionEntity.getContent(), questionEntity.getType(), true);
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 질문 아이디로 조회하면 예외가 발생한다")
+    void getQuestion_withNotExistingQuestionId_throwsCustomException() throws Exception {
+        //given
+        //QuestionEntity questionEntity = questionRepository.save(createQuestion(userEntity));
+        long notExistingQuestionId = 0L;
+        long notExistingUserId = 0L;
+
+        //when //then
+        Assertions.assertThatThrownBy(() -> questionService.getQuestion(notExistingQuestionId, notExistingUserId))
+                .isInstanceOf(CustomException.class)
+                .extracting("error")
+                .isEqualTo(CustomExceptionError.QUESTION_NOT_FOUND);
+    }
+
+    public QuestionEntity createQuestion(UserEntity userEntity) {
+        return QuestionEntity.builder()
+                .userEntity(userEntity)
+                .title("title")
+                .content("content")
+                .closeAt(LocalDateTime.of(2023, 11, 11, 0, 0))
+                .type(QuestionType.SPEC)
+                .build();
     }
 }

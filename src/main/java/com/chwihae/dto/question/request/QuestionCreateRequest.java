@@ -22,7 +22,7 @@ import java.util.List;
 @Setter
 public class QuestionCreateRequest {
 
-    @Size(max = 30)
+    @Size(max = 50)
     @NotBlank
     private String title;
 

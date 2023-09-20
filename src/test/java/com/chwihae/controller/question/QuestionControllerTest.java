@@ -1,10 +1,14 @@
 package com.chwihae.controller.question;
 
 import com.chwihae.domain.option.OptionRepository;
+import com.chwihae.domain.question.QuestionEntity;
 import com.chwihae.domain.question.QuestionRepository;
 import com.chwihae.domain.question.QuestionType;
+import com.chwihae.domain.user.UserEntity;
+import com.chwihae.domain.user.UserRepository;
 import com.chwihae.dto.option.request.OptionCreateRequest;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
+import com.chwihae.fixture.UserEntityFixture;
 import com.chwihae.infra.MockMvcTestSupport;
 import com.chwihae.infra.WithTestUser;
 import org.assertj.core.api.Assertions;
@@ -19,10 +23,10 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.chwihae.exception.CustomExceptionError.INVALID_ARGUMENT;
-import static com.chwihae.exception.CustomExceptionError.INVALID_TOKEN;
+import static com.chwihae.exception.CustomExceptionError.*;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -36,6 +40,9 @@ class QuestionControllerTest extends MockMvcTestSupport {
 
     @Autowired
     QuestionRepository questionRepository;
+
+    @Autowired
+    UserRepository userRepository;
 
     @Test
     @DisplayName("POST /api/v1/questions - 성공")
@@ -130,6 +137,7 @@ class QuestionControllerTest extends MockMvcTestSupport {
 
     @Test
     @DisplayName("POST /api/v1/questions - 실패 (유효하지 않은 토큰)")
+    @WithAnonymousUser
     void createQuestion_withInvalidToken_returnsInvalidTokenCode() throws Exception {
         //given
         String invalidToken = "invalid token";
@@ -154,5 +162,96 @@ class QuestionControllerTest extends MockMvcTestSupport {
                 .andDo(print())
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.code").value(INVALID_TOKEN.code()));
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/questions/{questionId} - 성공 (질문 작성자)")
+    @WithTestUser("questioner@email.com")
+    void getQuestion_byQuestioner_returnsSuccessCode() throws Exception {
+        //given
+        UserEntity userEntity = userRepository.findByEmail("questioner@email.com").get();
+        QuestionEntity questionEntity = questionRepository.save(createQuestion(userEntity));
+
+        //when //then
+        mockMvc.perform(
+                        get("/api/v1/questions/{questionId}", questionEntity.getId())
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.editable").value(true));
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/questions/{questionId} - 성공 (질문 조회자)")
+    @WithTestUser("viewer@email.com")
+    void getQuestion_byViewer_returnsSuccessCode() throws Exception {
+        //given
+        UserEntity userEntity = userRepository.save(UserEntityFixture.of("questioner@email.com"));
+        QuestionEntity questionEntity = questionRepository.save(createQuestion(userEntity));
+
+        //when //then
+        mockMvc.perform(
+                        get("/api/v1/questions/{questionId}", questionEntity.getId())
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.editable").value(false));
+    }
+
+    // TODO GET /api/v1/questions/{questionId} - 성공 (북마크한 조회자)
+
+    @Test
+    @DisplayName("GET /api/v1/questions/{questionId} - 실패 (미인증 사용자)")
+    @WithAnonymousUser
+    void getQuestion_byUnauthenticated_returnsInvalidTokenCode() throws Exception {
+        //given
+        long questionId = 1L;
+
+        //when //then
+        mockMvc.perform(
+                        get("/api/v1/questions/{questionId}", questionId)
+                )
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.code").value(INVALID_TOKEN.code()));
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/questions/{questionId} - 실패 (존재하지 않는 질문 아이디)")
+    @WithTestUser
+    void getQuestion_byUnauthenticated_returnsQuestionNotFoundCode() throws Exception {
+        //given
+        long notExistingQuestionId = 0L;
+
+        //when //then
+        mockMvc.perform(
+                        get("/api/v1/questions/{questionId}", notExistingQuestionId)
+                )
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value(QUESTION_NOT_FOUND.code()));
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/questions/{questionId} - 실패 (올바르지 않은 경로 변수)")
+    @WithTestUser
+    void getQuestion_withInvalidPathVariable_returnsInvalidArgumentCode() throws Exception {
+        //given
+        String invalidPathVariable = "invalid";
+
+        //when //then
+        mockMvc.perform(
+                        get("/api/v1/questions/{questionId}", invalidPathVariable)
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value(INVALID_ARGUMENT.code()));
+    }
+
+    public QuestionEntity createQuestion(UserEntity userEntity) {
+        return QuestionEntity.builder()
+                .userEntity(userEntity)
+                .title("title")
+                .content("content")
+                .closeAt(LocalDateTime.of(2023, 11, 11, 0, 0))
+                .type(QuestionType.SPEC)
+                .build();
     }
 }

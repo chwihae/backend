@@ -9,6 +9,7 @@ import com.chwihae.domain.user.UserRepository;
 import com.chwihae.dto.option.request.OptionCreateRequest;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
 import com.chwihae.dto.question.response.QuestionCreateResponse;
+import com.chwihae.dto.question.response.QuestionResponse;
 import com.chwihae.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.chwihae.exception.CustomExceptionError.QUESTION_NOT_FOUND;
 import static com.chwihae.exception.CustomExceptionError.USER_NOT_FOUND;
 
 @Transactional(readOnly = true)
@@ -32,10 +34,13 @@ public class QuestionService {
         UserEntity userEntity = findUserOrException(userId);
         QuestionEntity questionEntity = questionRepository.save(request.toEntity(userEntity));
         optionRepository.saveAll(buildOptionEntities(request.getOptions(), questionEntity));
+        return QuestionCreateResponse.of(questionEntity.getId());
+    }
 
-        return QuestionCreateResponse.builder()
-                .questionId(questionEntity.getId())
-                .build();
+    public QuestionResponse getQuestion(Long questionId, Long userId) {
+        QuestionEntity questionEntity = findQuestionOrException(questionId);
+        boolean isEditable = questionEntity.isCreatedBy(userId);
+        return QuestionResponse.of(questionEntity, isEditable);
     }
 
     private List<OptionEntity> buildOptionEntities(List<OptionCreateRequest> options, QuestionEntity questionEntity) {
@@ -49,5 +54,9 @@ public class QuestionService {
 
     private UserEntity findUserOrException(Long userId) {
         return userRepository.findById(userId).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+    }
+
+    private QuestionEntity findQuestionOrException(Long questionId) {
+        return questionRepository.findById(questionId).orElseThrow(() -> new CustomException(QUESTION_NOT_FOUND));
     }
 }

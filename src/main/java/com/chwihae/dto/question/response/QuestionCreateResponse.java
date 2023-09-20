@@ -9,7 +9,14 @@ import lombok.Setter;
 @Getter
 @Setter
 public class QuestionCreateResponse {
+
     private Long questionId;
+
+    public static QuestionCreateResponse of(Long questionId) {
+        return QuestionCreateResponse.builder()
+                .questionId(questionId)
+                .build();
+    }
 
     @Builder
     private QuestionCreateResponse(Long questionId) {
