@@ -11,6 +11,7 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import static com.chwihae.domain.question.QuestionStatus.IN_PROGRESS;
 import static jakarta.persistence.EnumType.STRING;
@@ -50,12 +51,20 @@ public class QuestionEntity extends BaseEntity {
     private UserEntity userEntity;
 
     @Builder
-    private QuestionEntity(UserEntity userEntity, String title, String content, QuestionType type, LocalDateTime closeAt) {
+    private QuestionEntity(UserEntity userEntity,
+                           String title,
+                           String content,
+                           QuestionType type,
+                           LocalDateTime closeAt) {
         this.userEntity = userEntity;
         this.title = title;
         this.content = content;
         this.status = IN_PROGRESS;
         this.type = type;
         this.closeAt = closeAt;
+    }
+
+    public boolean isCreatedBy(Long userId) {
+        return Objects.equals(this.userEntity.getId(), userId);
     }
 }

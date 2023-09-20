@@ -5,3 +5,8 @@
 ==== 질문 등록
 
 include::question-create.adoc[]
+
+[[question-get]]
+==== 질문 단건 조회
+
+include::question-get.adoc[]

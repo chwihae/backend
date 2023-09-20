@@ -9,4 +9,8 @@ public class UserEntityFixture {
                 .email(email)
                 .build();
     }
+
+    public static UserEntity of() {
+        return of("test@email.com");
+    }
 }

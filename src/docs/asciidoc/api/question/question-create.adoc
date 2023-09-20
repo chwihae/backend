@@ -2,7 +2,9 @@
 ===== HTTP Request
 
 include::{snippets}/question-create/http-request.adoc[]
-include::../common/header.adoc[]
+===== Request Header
+
+include::{snippets}/question-get/request-headers.adoc[]
 include::{snippets}/question-create/request-fields.adoc[]
 
 ===== HTTP Response

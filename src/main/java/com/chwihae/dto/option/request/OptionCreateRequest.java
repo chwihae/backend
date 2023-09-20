@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 public class OptionCreateRequest {
 
-    @Size(max = 100)
+    @Size(max = 50)
     @NotBlank
     private String name;
 
