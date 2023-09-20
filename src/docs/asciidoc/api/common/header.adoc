@@ -1,0 +1,10 @@
+===== Request Headers
+
+|===
+|Name|Requried|Description
+
+|`+Authorization+`
+|O
+|인증 토큰
+
+|===

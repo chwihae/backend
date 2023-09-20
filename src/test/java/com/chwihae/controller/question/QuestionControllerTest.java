@@ -1,12 +1,16 @@
 package com.chwihae.controller.question;
 
+import com.chwihae.domain.option.OptionRepository;
+import com.chwihae.domain.question.QuestionRepository;
 import com.chwihae.domain.question.QuestionType;
-import com.chwihae.domain.user.UserEntity;
 import com.chwihae.dto.option.request.OptionCreateRequest;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
 import com.chwihae.infra.MockMvcTestSupport;
+import com.chwihae.infra.WithTestUser;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -26,12 +30,55 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 class QuestionControllerTest extends MockMvcTestSupport {
 
+    @Autowired
+    OptionRepository optionRepository;
+
+    @Autowired
+    QuestionRepository questionRepository;
+
+    @Test
+    @DisplayName("POST /api/v1/questions - 성공")
+    @WithTestUser
+    void createQuestion_returnsSuccessCode() throws Exception {
+        //given
+        LocalDateTime closeAt = LocalDateTime.now(ZoneId.of("Asia/Seoul")).plusMinutes(30);
+
+        final int optionSize = 2;
+        List<OptionCreateRequest> options = new ArrayList<>();
+        for (int optionName = 1; optionName <= optionSize; optionName++) {
+            options.add(OptionCreateRequest.builder()
+                    .name("option name " + optionName)
+                    .build()
+            );
+        }
+
+        QuestionCreateRequest request = QuestionCreateRequest.builder()
+                .title("title")
+                .type(QuestionType.SPEC)
+                .closeAt(closeAt)
+                .content("content")
+                .options(options)
+                .build();
+
+        //when //then
+        mockMvc.perform(
+                        post("/api/v1/questions")
+                                .contentType(APPLICATION_JSON)
+                                .content(body(request))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.questionId").isNumber());
+
+        Assertions.assertThat(questionRepository.findAll()).hasSize(1);
+        Assertions.assertThat(optionRepository.findAll()).hasSize(optionSize);
+    }
+
     @Test
     @DisplayName("POST /api/v1/questions - 실패 (질문 마감 시간이 유효하지 않은 경우)")
-    void createQuestion_withInvalidCloseAt_returnsInvalidParameter() throws Exception {
+    @WithTestUser
+    void createQuestion_withInvalidCloseAt_returnsInvalidParameterCode() throws Exception {
         //given
-        UserEntity userEntity = createUser("test@email.com");
-
         LocalDateTime closeAt = LocalDateTime.now(ZoneId.of("Asia/Seoul")).minusMinutes(1);
 
         List<OptionCreateRequest> options = new ArrayList<>();
@@ -53,7 +100,6 @@ class QuestionControllerTest extends MockMvcTestSupport {
         //when //then
         mockMvc.perform(
                         post("/api/v1/questions")
-                                .header(AUTHORIZATION, token(userEntity.getId()))
                                 .contentType(APPLICATION_JSON)
                                 .content(body(request))
                 )
@@ -64,16 +110,15 @@ class QuestionControllerTest extends MockMvcTestSupport {
 
     @Test
     @DisplayName("POST /api/v1/questions - 실패 (유효하지 않은 요청 파라미터)")
-    void createQuestion_withInvalidParameter_returnsInvalidParameter() throws Exception {
+    @WithTestUser
+    void createQuestion_withInvalidParameter_returnsInvalidParameterCode() throws Exception {
         //given
-        UserEntity userEntity = createUser("test@email.com");
         QuestionCreateRequest request = QuestionCreateRequest.builder()
                 .build();
 
         //when //then
         mockMvc.perform(
                         post("/api/v1/questions")
-                                .header(AUTHORIZATION, token(userEntity.getId()))
                                 .contentType(APPLICATION_JSON)
                                 .content(body(request))
                 )
@@ -84,7 +129,7 @@ class QuestionControllerTest extends MockMvcTestSupport {
 
     @Test
     @DisplayName("POST /api/v1/questions - 실패 (인증 토큰 없이)")
-    void createQuestion_withInvalidToken_returnsInvalidToken() throws Exception {
+    void createQuestion_withInvalidToken_returnsInvalidTokenCode() throws Exception {
         //given
         String invalidToken = "invalid token";
 
@@ -99,11 +144,12 @@ class QuestionControllerTest extends MockMvcTestSupport {
 
     @Test
     @DisplayName("POST /api/v1/questions - 실패 (인증 토큰 없이)")
-    void createQuestion_withoutToken_returnsInvalidToken() throws Exception {
+    void createQuestion_withoutToken_returnsInvalidTokenCode() throws Exception {
         //when //then
         mockMvc.perform(
                         post("/api/v1/questions")
                 )
+                .andDo(print())
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.code").value(INVALID_TOKEN.code()));
     }

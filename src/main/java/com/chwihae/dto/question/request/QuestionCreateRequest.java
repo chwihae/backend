@@ -21,7 +21,7 @@ import java.util.List;
 @Setter
 public class QuestionCreateRequest {
 
-    @Size(max = 50)
+    @Size(max = 30)
     @NotBlank
     private String title;
 

@@ -1,0 +1,7 @@
+[[Question]]
+=== 질문
+
+[[question-create]]
+==== 질문 등록
+
+include::question-create.adoc[]

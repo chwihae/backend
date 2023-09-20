@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
@@ -20,10 +19,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.time.Duration;
 import java.util.List;
-import java.util.Map;
-
-import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpMethod.POST;
 
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -37,33 +32,22 @@ public class CustomSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        String secretKey = jwtTokenProperties.getSecretKey();
+
         return http
                 .httpBasic(HttpBasicConfigurer::disable)
                 .csrf(CsrfConfigurer::disable)
                 .cors(configurer -> configurer.configurationSource(corsConfigurationSource()))
                 .sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(
-                        it -> it.requestMatchers("/", "/docs/**", "/api/**").permitAll()
-                                .anyRequest().authenticated()
+                        it -> it.requestMatchers("/", "/docs/**").permitAll()
+                                .requestMatchers("/api/*/auth/kakao-login").permitAll()
+                                .requestMatchers("/api/**").authenticated()
+                                .anyRequest().permitAll()
                 )
-                .addFilterBefore(jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtTokenFilter(secretKey, jwtTokenHandler, userService), UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(configurer -> configurer.authenticationEntryPoint(new CustomAuthenticationEntryPoint(objectMapper)))
                 .build();
-    }
-
-    public JwtTokenFilter jwtAuthFilter() {
-        String secretKey = jwtTokenProperties.getSecretKey();
-
-        Map<String, List<HttpMethod>> whitelistMap = Map.of(
-                "/", List.of(GET),
-                "/docs/index.html", List.of(GET),
-                "/api/.+/auth/kakao-login", List.of(POST)
-        );
-
-        return new JwtTokenFilter(secretKey,
-                jwtTokenHandler,
-                userService,
-                objectMapper,
-                whitelistMap);
     }
 
     public CorsConfigurationSource corsConfigurationSource() {
