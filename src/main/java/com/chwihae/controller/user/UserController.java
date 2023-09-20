@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/users")
 public class UserController {
 
+    // TODO
     @GetMapping("/statistics")
     public ApiResponse<UserStatisticsResponse> getUserStatistics(@CurrentUser UserContext userContext) {
         return ApiResponse.ok(UserStatisticsResponse.of(0, 0));
