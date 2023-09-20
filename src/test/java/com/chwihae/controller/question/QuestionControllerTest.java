@@ -11,6 +11,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -128,7 +129,7 @@ class QuestionControllerTest extends MockMvcTestSupport {
     }
 
     @Test
-    @DisplayName("POST /api/v1/questions - 실패 (인증 토큰 없이)")
+    @DisplayName("POST /api/v1/questions - 실패 (유효하지 않은 토큰)")
     void createQuestion_withInvalidToken_returnsInvalidTokenCode() throws Exception {
         //given
         String invalidToken = "invalid token";
@@ -144,6 +145,7 @@ class QuestionControllerTest extends MockMvcTestSupport {
 
     @Test
     @DisplayName("POST /api/v1/questions - 실패 (인증 토큰 없이)")
+    @WithAnonymousUser
     void createQuestion_withoutToken_returnsInvalidTokenCode() throws Exception {
         //when //then
         mockMvc.perform(

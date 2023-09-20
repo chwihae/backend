@@ -4,6 +4,7 @@ import com.chwihae.domain.question.QuestionEntity;
 import com.chwihae.domain.question.QuestionType;
 import com.chwihae.domain.user.UserEntity;
 import com.chwihae.dto.option.request.OptionCreateRequest;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -32,6 +33,7 @@ public class QuestionCreateRequest {
     private QuestionType type;
 
     @NotNull
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime closeAt;
 
     @Size(min = 2, max = 10)

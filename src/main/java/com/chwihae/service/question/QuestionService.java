@@ -31,14 +31,14 @@ public class QuestionService {
     public QuestionCreateResponse createQuestionWithOptions(QuestionCreateRequest request, Long userId) {
         UserEntity userEntity = findUserOrException(userId);
         QuestionEntity questionEntity = questionRepository.save(request.toEntity(userEntity));
-        optionRepository.saveAll(createOptionEntities(request.getOptions(), questionEntity));
+        optionRepository.saveAll(buildOptionEntities(request.getOptions(), questionEntity));
 
         return QuestionCreateResponse.builder()
                 .questionId(questionEntity.getId())
                 .build();
     }
 
-    private List<OptionEntity> createOptionEntities(List<OptionCreateRequest> options, QuestionEntity questionEntity) {
+    private List<OptionEntity> buildOptionEntities(List<OptionCreateRequest> options, QuestionEntity questionEntity) {
         return options.stream()
                 .map(option -> OptionEntity.builder()
                         .questionEntity(questionEntity)

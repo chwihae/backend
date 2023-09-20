@@ -1,6 +1,5 @@
 package com.chwihae.controller.question;
 
-import com.chwihae.domain.question.QuestionType;
 import com.chwihae.dto.option.request.OptionCreateRequest;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
 import com.chwihae.dto.question.response.QuestionCreateResponse;
@@ -17,6 +16,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.chwihae.domain.question.QuestionType.SPEC;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -57,7 +57,7 @@ class QuestionControllerDocsTest extends RestDocsSupport {
 
         QuestionCreateRequest request = QuestionCreateRequest.builder()
                 .title("title")
-                .type(QuestionType.SPEC)
+                .type(SPEC)
                 .content("content")
                 .closeAt(closeAt)
                 .options(options)
@@ -84,7 +84,7 @@ class QuestionControllerDocsTest extends RestDocsSupport {
                                 fieldWithPath("title").type(JsonFieldType.STRING).description("질문 제목"),
                                 fieldWithPath("type").type(JsonFieldType.STRING).description("질문 타입, 가능한 값 [SPEC, STUDY, COMPANY, ETC]"),
                                 fieldWithPath("content").type(JsonFieldType.STRING).description("질문 내용"),
-                                fieldWithPath("closeAt").type(JsonFieldType.STRING).description("질문 마감 시간"),
+                                fieldWithPath("closeAt").type(JsonFieldType.STRING).description("질문 마감 시간, 시간 형식(yyyy-mm-ddThh:mm:ss)"),
                                 fieldWithPath("options[]").type(JsonFieldType.ARRAY).description("질문 옵션"),
                                 fieldWithPath("options[].name").type(JsonFieldType.STRING).description("옵션 이름")
                         ),
