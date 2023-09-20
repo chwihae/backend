@@ -67,7 +67,7 @@ class QuestionServiceTest {
                 .build();
 
         //when
-        Long id = questionService.createQuestionWithOptions(request, userEntity.getId());
+        Long id = questionService.createQuestion(request, userEntity.getId());
 
         //then
         Assertions.assertThat(id).isNotNull();
@@ -84,7 +84,7 @@ class QuestionServiceTest {
                 .build();
 
         //when //then
-        Assertions.assertThatThrownBy(() -> questionService.createQuestionWithOptions(request, notExistingUserId))
+        Assertions.assertThatThrownBy(() -> questionService.createQuestion(request, notExistingUserId))
                 .isInstanceOf(CustomException.class)
                 .extracting("error")
                 .isEqualTo(USER_NOT_FOUND);
@@ -110,7 +110,6 @@ class QuestionServiceTest {
     @DisplayName("존재하지 않는 질문 아이디로 조회하면 예외가 발생한다")
     void getQuestion_withNotExistingQuestionId_throwsCustomException() throws Exception {
         //given
-        //QuestionEntity questionEntity = questionRepository.save(createQuestion(userEntity));
         long notExistingQuestionId = 0L;
         long notExistingUserId = 0L;
 

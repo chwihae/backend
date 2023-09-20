@@ -29,7 +29,7 @@ public class QuestionService {
     private final OptionRepository optionRepository;
 
     @Transactional
-    public Long createQuestionWithOptions(QuestionCreateRequest request, Long userId) {
+    public Long createQuestion(QuestionCreateRequest request, Long userId) {
         UserEntity userEntity = findUserOrException(userId);
         QuestionEntity questionEntity = questionRepository.save(request.toEntity(userEntity));
         optionRepository.saveAll(buildOptionEntities(request.getOptions(), questionEntity));

@@ -6,12 +6,12 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
+
+import static com.chwihae.utils.TimeZone.KST;
 
 @Component
 public class QuestionValidator {
-
-    private static final ZoneId KST = ZoneId.of("Asia/Seoul");
+    ;
     private static final int MAX_DAYS_LIMIT = 4;
 
     public void verify(QuestionCreateRequest request) throws BindException {

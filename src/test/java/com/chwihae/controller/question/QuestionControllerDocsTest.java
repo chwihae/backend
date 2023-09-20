@@ -6,6 +6,7 @@ import com.chwihae.dto.question.response.QuestionResponse;
 import com.chwihae.infra.RestDocsSupport;
 import com.chwihae.infra.WithTestUser;
 import com.chwihae.service.question.QuestionService;
+import com.chwihae.service.vote.VoteService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.restdocs.payload.JsonFieldType;
@@ -41,10 +42,11 @@ class QuestionControllerDocsTest extends RestDocsSupport {
 
     private final QuestionService questionService = mock(QuestionService.class);
     private final QuestionValidator questionValidator = mock(QuestionValidator.class);
+    private final VoteService voteService = mock(VoteService.class);
 
     @Override
     protected Object initController() {
-        return new QuestionController(questionService, questionValidator);
+        return new QuestionController(questionService, questionValidator, voteService);
     }
 
     @Test
@@ -70,7 +72,7 @@ class QuestionControllerDocsTest extends RestDocsSupport {
                 .options(options)
                 .build();
 
-        given(questionService.createQuestionWithOptions(any(), any()))
+        given(questionService.createQuestion(any(), any()))
                 .willReturn(25L);
 
         //when //then
