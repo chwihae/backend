@@ -1,5 +1,6 @@
 package com.chwihae.dto.option.response;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,6 +19,7 @@ public class Option {
         this.name = name;
     }
 
+    @Builder
     public Option(Long id, String name, Long voteCount) {
         this.id = id;
         this.name = name;

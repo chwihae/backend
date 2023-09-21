@@ -1,6 +1,8 @@
 package com.chwihae.controller.question;
 
 import com.chwihae.dto.option.request.OptionCreateRequest;
+import com.chwihae.dto.option.response.Option;
+import com.chwihae.dto.option.response.VoteOptionResponse;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
 import com.chwihae.dto.question.response.QuestionResponse;
 import com.chwihae.infra.RestDocsSupport;
@@ -159,6 +161,59 @@ class QuestionControllerDocsTest extends RestDocsSupport {
                                 fieldWithPath("data.voteCount").type(JsonFieldType.NUMBER).description("질문 투표 수"),
                                 fieldWithPath("data.bookmarkCount").type(JsonFieldType.NUMBER).description("질문 저장 수"),
                                 fieldWithPath("data.bookmarked").type(JsonFieldType.BOOLEAN).description("질문 저장 여부(질문 저장시 true, 아니면 false)")
+                        )
+                ));
+    }
+
+    @Test
+    @DisplayName("질문 옵션 조회 API")
+    @WithTestUser
+    void getOptions_restDocs() throws Exception {
+        //given
+        final int optionSize = 5;
+        List<Option> options = new ArrayList<>();
+        for (int i = 1; i <= optionSize; i++) {
+            options.add(Option.builder()
+                    .id((long) i)
+                    .name("option name " + i)
+                    .voteCount((long) i)
+                    .build());
+        }
+
+        VoteOptionResponse response = VoteOptionResponse.builder()
+                .canViewVoteResult(true)
+                .options(options)
+                .build();
+
+        given(voteService.getVoteOptions(any(), any()))
+                .willReturn(response);
+
+        //when //then
+        mockMvc.perform(
+                        get("/api/v1/questions/{questionId}/options", 25L)
+                                .header(AUTHORIZATION, token(1L))
+                                .contentType(APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("question-options",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestHeaders(
+                                headerWithName(AUTHORIZATION).description("인증 토큰 (타입: 문자열) (필수값)")
+                        ),
+                        pathParameters(
+                                parameterWithName("questionId").description("질문 아이디 (타입: 숫자) (필수값)")
+                        ),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.NUMBER).description("코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("메시지"),
+                                fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터"),
+                                fieldWithPath("data.canViewVoteResult").type(JsonFieldType.BOOLEAN).description("옵션에 대한 투표 결과를 볼 수 있는 권한 여부"),
+                                fieldWithPath("data.options[]").type(JsonFieldType.ARRAY).description("질문 옵션 리스트"),
+                                fieldWithPath("data.options[].id").type(JsonFieldType.NUMBER).description("질문 옵션 아이디"),
+                                fieldWithPath("data.options[].name").type(JsonFieldType.STRING).description("질문 옵션 이름"),
+                                fieldWithPath("data.options[].voteCount").type(JsonFieldType.NUMBER).description("질문 옵션 투표 수 (투표 결과를 볼 수 있으면 숫자, 없으면 null)").optional()
                         )
                 ));
     }
