@@ -9,7 +9,7 @@ import com.chwihae.domain.user.UserEntity;
 import com.chwihae.domain.user.UserRepository;
 import com.chwihae.domain.vote.VoteEntity;
 import com.chwihae.domain.vote.VoteRepository;
-import com.chwihae.dto.option.response.OptionVoteResponse;
+import com.chwihae.dto.option.response.VoteOptionResponse;
 import com.chwihae.fixture.UserEntityFixture;
 import com.chwihae.infra.IntegrationTestSupport;
 import org.assertj.core.api.Assertions;
@@ -66,7 +66,7 @@ class VoteServiceTest {
         voteRepository.saveAll(List.of(vote1, vote2, vote3, vote4));
 
         //when
-        OptionVoteResponse response = voteService.getOptions(questionEntity.getId(), questioner.getId());
+        VoteOptionResponse response = voteService.getVoteOptions(questionEntity.getId(), questioner.getId());
 
         //then
         Assertions.assertThat(response.isCanViewVoteResult()).isTrue();
@@ -103,7 +103,7 @@ class VoteServiceTest {
         voteRepository.saveAll(List.of(vote1, vote2, vote3, vote4));
 
         //when
-        OptionVoteResponse response = voteService.getOptions(questionEntity.getId(), voter1.getId());
+        VoteOptionResponse response = voteService.getVoteOptions(questionEntity.getId(), voter1.getId());
 
         //then
         Assertions.assertThat(response.isCanViewVoteResult()).isTrue();
@@ -141,7 +141,7 @@ class VoteServiceTest {
         voteRepository.saveAll(List.of(vote1, vote2, vote3, vote4));
 
         //when
-        OptionVoteResponse response = voteService.getOptions(questionEntity.getId(), other.getId());
+        VoteOptionResponse response = voteService.getVoteOptions(questionEntity.getId(), other.getId());
 
         //then
         Assertions.assertThat(response.isCanViewVoteResult()).isFalse();
@@ -179,7 +179,7 @@ class VoteServiceTest {
         voteRepository.saveAll(List.of(vote1, vote2, vote3, vote4));
 
         //when
-        OptionVoteResponse response = voteService.getOptions(questionEntity.getId(), other.getId());
+        VoteOptionResponse response = voteService.getVoteOptions(questionEntity.getId(), other.getId());
 
         //then
         Assertions.assertThat(response.isCanViewVoteResult()).isTrue();

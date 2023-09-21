@@ -4,7 +4,7 @@ import com.chwihae.domain.option.OptionRepository;
 import com.chwihae.domain.question.QuestionEntity;
 import com.chwihae.domain.question.QuestionRepository;
 import com.chwihae.domain.vote.VoteRepository;
-import com.chwihae.dto.option.response.OptionVoteResponse;
+import com.chwihae.dto.option.response.VoteOptionResponse;
 import com.chwihae.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,12 +24,12 @@ public class VoteService {
     private final OptionRepository optionRepository;
     private final VoteRepository voteRepository;
 
-    public OptionVoteResponse getOptions(Long questionId, Long userId) {
+    public VoteOptionResponse getVoteOptions(Long questionId, Long userId) {
         QuestionEntity questionEntity = findQuestionOrException(questionId);
         if (canUserViewVoteResults(questionId, userId, questionEntity)) {
-            return OptionVoteResponse.of(true, optionRepository.findWithVoteCountByQuestionEntityId(questionId));
+            return VoteOptionResponse.of(true, optionRepository.findWithVoteCountByQuestionEntityId(questionId));
         }
-        return OptionVoteResponse.of(false, optionRepository.findWithoutVoteCountByQuestionEntityId(questionId));
+        return VoteOptionResponse.of(false, optionRepository.findWithoutVoteCountByQuestionEntityId(questionId));
     }
 
     private boolean canUserViewVoteResults(Long questionId, Long userId, QuestionEntity questionEntity) {

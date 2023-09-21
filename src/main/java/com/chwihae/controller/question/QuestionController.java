@@ -3,7 +3,7 @@ package com.chwihae.controller.question;
 import com.chwihae.config.security.CurrentUser;
 import com.chwihae.controller.ApiResponse;
 import com.chwihae.dto.IdResponse;
-import com.chwihae.dto.option.response.OptionVoteResponse;
+import com.chwihae.dto.option.response.VoteOptionResponse;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
 import com.chwihae.dto.question.response.QuestionResponse;
 import com.chwihae.dto.user.UserContext;
@@ -37,9 +37,9 @@ public class QuestionController {
     }
 
     @GetMapping("/{questionId}/options")
-    public ApiResponse<OptionVoteResponse> getOptions(@PathVariable Long questionId,
+    public ApiResponse<VoteOptionResponse> getOptions(@PathVariable Long questionId,
                                                       @CurrentUser UserContext userContext) {
-        return ApiResponse.ok(voteService.getOptions(questionId, userContext.getId()));
+        return ApiResponse.ok(voteService.getVoteOptions(questionId, userContext.getId()));
     }
 
     @PostMapping("/{questionId}/options/{optionId}")

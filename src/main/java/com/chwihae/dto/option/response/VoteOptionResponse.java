@@ -10,20 +10,20 @@ import java.util.List;
 @NoArgsConstructor
 @Setter
 @Getter
-public class OptionVoteResponse {
+public class VoteOptionResponse {
 
     private boolean canViewVoteResult;
     private List<Option> options;
 
-    public static OptionVoteResponse of(boolean canViewVoteResult, List<Option> options) {
-        return OptionVoteResponse.builder()
+    public static VoteOptionResponse of(boolean canViewVoteResult, List<Option> options) {
+        return VoteOptionResponse.builder()
                 .canViewVoteResult(canViewVoteResult)
                 .options(options)
                 .build();
     }
 
     @Builder
-    private OptionVoteResponse(boolean canViewVoteResult, List<Option> options) {
+    private VoteOptionResponse(boolean canViewVoteResult, List<Option> options) {
         this.canViewVoteResult = canViewVoteResult;
         this.options = options;
     }
