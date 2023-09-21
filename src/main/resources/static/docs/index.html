@@ -470,7 +470,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#Question">2.3. 질문</a>
 <ul class="sectlevel3">
 <li><a href="#question-create">2.3.1. 질문 등록</a></li>
-<li><a href="#question-list">2.3.2. 질문 전체 리스트 조회</a></li>
+<li><a href="#question-list">2.3.2. 질문 리스트 조회</a></li>
 <li><a href="#question-get">2.3.3. 질문 단건 조회</a></li>
 <li><a href="#question-options">2.3.4. 질문 옵션 조회</a></li>
 </ul>
@@ -753,7 +753,7 @@ Content-Length: 166
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/v1/users/statistics HTTP/1.1
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTMwODk3NCwiZXhwIjoxNjk1Mzk1Mzc0fQ.gywgAhHosQxl8iZT3Y6piQVyaI69O5O9GIM5ssBdNQk
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTMwOTM5MCwiZXhwIjoxNjk1Mzk1NzkwfQ.Ndyrb1ZezqiWR5sqv_Z8acuA3viNt2g6OokFuQZUI1I
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -868,7 +868,7 @@ Content-Length: 126
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/v1/questions HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTMwODk3MywiZXhwIjoxNjk1Mzk1MzczfQ.SVJ3vsHc5EU9TgcLwEX-i7MollHmuq8MsQy74ImbCd0
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTMwOTM4OSwiZXhwIjoxNjk1Mzk1Nzg5fQ.q9SMBLal4AyPlCnouAPuLWRwonqQMKFc8kWqLgcbktI
 Content-Length: 194
 Host: localhost:8080
 
@@ -876,7 +876,7 @@ Host: localhost:8080
   "title" : "title",
   "content" : "content",
   "type" : "SPEC",
-  "closeAt" : "2023-09-22T00:39:33",
+  "closeAt" : "2023-09-22T00:46:29",
   "options" : [ {
     "name" : "option name 1"
   }, {
@@ -1029,13 +1029,13 @@ Content-Length: 75
 </div>
 </div>
 <div class="sect3">
-<h4 id="question-list"><a class="link" href="#question-list">2.3.2. 질문 전체 리스트 조회</a></h4>
+<h4 id="question-list"><a class="link" href="#question-list">2.3.2. 질문 리스트 조회</a></h4>
 <div class="sect4">
 <h5 id="question-list"><a class="link" href="#question-list">HTTP Request</a></h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/v1/questions?type=COMPANY&amp;status=IN_PROGRESS&amp;page=0&amp;size=2 HTTP/1.1
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTMwODk3MywiZXhwIjoxNjk1Mzk1MzczfQ.SVJ3vsHc5EU9TgcLwEX-i7MollHmuq8MsQy74ImbCd0
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTMwOTM4OSwiZXhwIjoxNjk1Mzk1Nzg5fQ.q9SMBLal4AyPlCnouAPuLWRwonqQMKFc8kWqLgcbktI
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -1152,23 +1152,23 @@ Content-Length: 1547
       "pageSize" : 2,
       "sort" : {
         "empty" : true,
-        "unsorted" : true,
-        "sorted" : false
+        "sorted" : false,
+        "unsorted" : true
       },
       "offset" : 0,
       "paged" : true,
       "unpaged" : false
     },
     "last" : false,
-    "totalElements" : 5,
     "totalPages" : 3,
+    "totalElements" : 5,
     "first" : true,
     "size" : 2,
     "number" : 0,
     "sort" : {
       "empty" : true,
-      "unsorted" : true,
-      "sorted" : false
+      "sorted" : false,
+      "unsorted" : true
     },
     "numberOfElements" : 5,
     "empty" : false
@@ -1315,7 +1315,7 @@ Content-Length: 1547
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/v1/questions/1 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTMwODk3MywiZXhwIjoxNjk1Mzk1MzczfQ.SVJ3vsHc5EU9TgcLwEX-i7MollHmuq8MsQy74ImbCd0
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTMwOTM4OSwiZXhwIjoxNjk1Mzk1Nzg5fQ.q9SMBLal4AyPlCnouAPuLWRwonqQMKFc8kWqLgcbktI
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -1376,7 +1376,7 @@ Content-Length: 353
     "title" : "title",
     "content" : "content",
     "type" : "COMPANY",
-    "closeAt" : "2023-09-22T00:39:33",
+    "closeAt" : "2023-09-22T00:46:29",
     "status" : "IN_PROGRESS",
     "viewCount" : 0,
     "commentCount" : 0,
@@ -1509,7 +1509,7 @@ Content-Length: 353
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/v1/questions/25/options HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTMwODk3MywiZXhwIjoxNjk1Mzk1MzczfQ.SVJ3vsHc5EU9TgcLwEX-i7MollHmuq8MsQy74ImbCd0
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTMwOTM4OSwiZXhwIjoxNjk1Mzk1Nzg5fQ.q9SMBLal4AyPlCnouAPuLWRwonqQMKFc8kWqLgcbktI
 Host: localhost:8080</code></pre>
 </div>
 </div>
