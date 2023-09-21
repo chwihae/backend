@@ -23,7 +23,7 @@ public class UserService {
                 .email(email)
                 .build());
     }
-
+    
     public UserContext getUserContextOrException(Long userId) {
         return userRepository.findById(userId)
                 .map(UserContext::fromEntity)

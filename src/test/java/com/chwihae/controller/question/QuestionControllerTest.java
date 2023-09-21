@@ -1,11 +1,14 @@
 package com.chwihae.controller.question;
 
+import com.chwihae.domain.option.OptionEntity;
 import com.chwihae.domain.option.OptionRepository;
 import com.chwihae.domain.question.QuestionEntity;
 import com.chwihae.domain.question.QuestionRepository;
 import com.chwihae.domain.question.QuestionType;
 import com.chwihae.domain.user.UserEntity;
 import com.chwihae.domain.user.UserRepository;
+import com.chwihae.domain.vote.VoteEntity;
+import com.chwihae.domain.vote.VoteRepository;
 import com.chwihae.dto.option.request.OptionCreateRequest;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
 import com.chwihae.fixture.UserEntityFixture;
@@ -44,6 +47,9 @@ class QuestionControllerTest extends MockMvcTestSupport {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    VoteRepository voteRepository;
 
     @Test
     @DisplayName("POST /api/v1/questions - 성공")
@@ -172,7 +178,8 @@ class QuestionControllerTest extends MockMvcTestSupport {
     void getQuestion_byQuestioner_returnsSuccessCode() throws Exception {
         //given
         UserEntity userEntity = userRepository.findByEmail("questioner@email.com").get();
-        QuestionEntity questionEntity = questionRepository.save(createQuestion(userEntity));
+        LocalDateTime closeAt = LocalDateTime.now(ZoneId.of("Asia/Seoul")).plusMinutes(30);
+        QuestionEntity questionEntity = questionRepository.save(createQuestion(userEntity, closeAt));
 
         //when //then
         mockMvc.perform(
@@ -189,7 +196,8 @@ class QuestionControllerTest extends MockMvcTestSupport {
     void getQuestion_byViewer_returnsSuccessCode() throws Exception {
         //given
         UserEntity userEntity = userRepository.save(UserEntityFixture.of("questioner@email.com"));
-        QuestionEntity questionEntity = questionRepository.save(createQuestion(userEntity));
+        LocalDateTime closeAt = LocalDateTime.now(ZoneId.of("Asia/Seoul")).plusMinutes(30);
+        QuestionEntity questionEntity = questionRepository.save(createQuestion(userEntity, closeAt));
 
         //when //then
         mockMvc.perform(
@@ -247,13 +255,180 @@ class QuestionControllerTest extends MockMvcTestSupport {
                 .andExpect(jsonPath("$.code").value(INVALID_ARGUMENT.code()));
     }
 
-    public QuestionEntity createQuestion(UserEntity userEntity) {
+    @Test
+    @DisplayName("GET /api/v1/questions/{questionId}/options - 성공 (질문자)")
+    @WithTestUser("questioner@email.com")
+    void getOptions_byQuestioner_returnSuccessCode() throws Exception {
+        //given
+        UserEntity questioner = userRepository.findByEmail("questioner@email.com").get();
+        UserEntity voter1 = UserEntityFixture.of("voter1@email.com");
+        UserEntity voter2 = UserEntityFixture.of("voter2@email.com");
+        UserEntity voter3 = UserEntityFixture.of("voter3@email.com");
+        userRepository.saveAll(List.of(voter1, voter2, voter3));
+
+        LocalDateTime closeAt = LocalDateTime.now(ZoneId.of("Asia/Seoul")).plusMinutes(30);
+        QuestionEntity questionEntity = questionRepository.save(createQuestion(questioner, closeAt));
+        OptionEntity option1 = createOption(questionEntity, "name1");
+        OptionEntity option2 = createOption(questionEntity, "name2");
+        optionRepository.saveAll(List.of(option1, option2));
+
+        VoteEntity vote1 = createVote(voter1, option1);
+        VoteEntity vote2 = createVote(voter2, option2);
+        VoteEntity vote3 = createVote(voter3, option2);
+        voteRepository.saveAll(List.of(vote1, vote2, vote3));
+
+        //when //then
+        mockMvc.perform(
+                        get("/api/v1/questions/{questionId}/options", questionEntity.getId())
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.canViewVoteResult").value(true));
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/questions/{questionId}/options - 성공 (투표자)")
+    @WithTestUser("voter1@email.com")
+    void getOptions_byVoter_returnSuccessCode() throws Exception {
+        //given
+        UserEntity questioner = UserEntityFixture.of("questioner@email.com");
+        UserEntity voter1 = userRepository.findByEmail("voter1@email.com").get();
+        UserEntity voter2 = UserEntityFixture.of("voter2@email.com");
+        UserEntity voter3 = UserEntityFixture.of("voter3@email.com");
+        userRepository.saveAll(List.of(questioner, voter2, voter3));
+
+        LocalDateTime closeAt = LocalDateTime.now(ZoneId.of("Asia/Seoul")).plusMinutes(30);
+        QuestionEntity questionEntity = questionRepository.save(createQuestion(questioner, closeAt));
+        OptionEntity option1 = createOption(questionEntity, "name1");
+        OptionEntity option2 = createOption(questionEntity, "name2");
+        optionRepository.saveAll(List.of(option1, option2));
+
+        VoteEntity vote1 = createVote(voter1, option1);
+        VoteEntity vote2 = createVote(voter2, option2);
+        VoteEntity vote3 = createVote(voter3, option2);
+        voteRepository.saveAll(List.of(vote1, vote2, vote3));
+
+        //when //then
+        mockMvc.perform(
+                        get("/api/v1/questions/{questionId}/options", questionEntity.getId())
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.canViewVoteResult").value(true));
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/questions/{questionId}/options - 성공 (마감되지 않은 질문에 투표하지 않은 사용자)")
+    @WithTestUser
+    void getOptions_byViewer_returnSuccessCode() throws Exception {
+        //given
+        UserEntity questioner = UserEntityFixture.of("questioner@email.com");
+        UserEntity voter1 = UserEntityFixture.of("voter1@email.com");
+        UserEntity voter2 = UserEntityFixture.of("voter2@email.com");
+        UserEntity voter3 = UserEntityFixture.of("voter3@email.com");
+        userRepository.saveAll(List.of(questioner, voter1, voter2, voter3));
+
+        LocalDateTime closeAt = LocalDateTime.now(ZoneId.of("Asia/Seoul")).plusMinutes(30);
+        QuestionEntity questionEntity = questionRepository.save(createQuestion(questioner, closeAt));
+        OptionEntity option1 = createOption(questionEntity, "name1");
+        OptionEntity option2 = createOption(questionEntity, "name2");
+        optionRepository.saveAll(List.of(option1, option2));
+
+        VoteEntity vote1 = createVote(voter1, option1);
+        VoteEntity vote2 = createVote(voter2, option2);
+        VoteEntity vote3 = createVote(voter3, option2);
+        voteRepository.saveAll(List.of(vote1, vote2, vote3));
+
+        //when //then
+        mockMvc.perform(
+                        get("/api/v1/questions/{questionId}/options", questionEntity.getId())
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.canViewVoteResult").value(false));
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/questions/{questionId}/options - 성공 (마감된 질문에 투표하지 않은 사용자)")
+    @WithTestUser
+    void getOptions_byViewer_whenQuestionClosed_returnSuccessCode() throws Exception {
+        //given
+        UserEntity questioner = UserEntityFixture.of("questioner@email.com");
+        UserEntity voter1 = UserEntityFixture.of("voter1@email.com");
+        UserEntity voter2 = UserEntityFixture.of("voter2@email.com");
+        UserEntity voter3 = UserEntityFixture.of("voter3@email.com");
+        userRepository.saveAll(List.of(questioner, voter1, voter2, voter3));
+
+        LocalDateTime closeAt = LocalDateTime.now(ZoneId.of("Asia/Seoul")).minusDays(30);
+        QuestionEntity questionEntity = questionRepository.save(createQuestion(questioner, closeAt));
+        OptionEntity option1 = createOption(questionEntity, "name1");
+        OptionEntity option2 = createOption(questionEntity, "name2");
+        optionRepository.saveAll(List.of(option1, option2));
+
+        VoteEntity vote1 = createVote(voter1, option1);
+        VoteEntity vote2 = createVote(voter2, option2);
+        VoteEntity vote3 = createVote(voter3, option2);
+        voteRepository.saveAll(List.of(vote1, vote2, vote3));
+
+        //when //then
+        mockMvc.perform(
+                        get("/api/v1/questions/{questionId}/options", questionEntity.getId())
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.canViewVoteResult").value(true));
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/questions/{questionId}/options - 실패 (존재하지 않는 질문)")
+    @WithTestUser
+    void getOptions_byViewer_whenQuestionNotExists_returnNotFoundCode() throws Exception {
+        //given
+        long notExistingQuestionId = 0L;
+        //when //then
+        mockMvc.perform(
+                        get("/api/v1/questions/{questionId}/options", notExistingQuestionId)
+                )
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value(QUESTION_NOT_FOUND.code()));
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/questions/{questionId}/options - 실패 (인증되지 않은 사용자)")
+    @WithAnonymousUser
+    void getOptions_byUnAuthenticated_returnInvalidTokenCode() throws Exception {
+        //given
+        long notExistingQuestionId = 0L;
+
+        //when //then
+        mockMvc.perform(
+                        get("/api/v1/questions/{questionId}/options", notExistingQuestionId)
+                )
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.code").value(INVALID_TOKEN.code()));
+    }
+
+    public QuestionEntity createQuestion(UserEntity userEntity, LocalDateTime closeAt) {
         return QuestionEntity.builder()
                 .userEntity(userEntity)
                 .title("title")
                 .content("content")
-                .closeAt(LocalDateTime.of(2023, 11, 11, 0, 0))
+                .closeAt(closeAt)
                 .type(QuestionType.SPEC)
+                .build();
+    }
+
+    public OptionEntity createOption(QuestionEntity questionEntity, String name) {
+        return OptionEntity.builder()
+                .name(name)
+                .questionEntity(questionEntity)
+                .build();
+    }
+
+    public VoteEntity createVote(UserEntity userEntity, OptionEntity optionEntity) {
+        return VoteEntity.builder()
+                .userEntity(userEntity)
+                .optionEntity(optionEntity)
                 .build();
     }
 }
