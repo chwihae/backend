@@ -61,7 +61,8 @@ public class QuestionController {
     public ApiResponse<Void> createVote(@PathVariable Long questionId,
                                         @PathVariable Long optionId,
                                         @CurrentUser UserContext userContext) {
-        return ApiResponse.ok();
+        voteService.createVote(questionId, optionId, userContext.getId());
+        return ApiResponse.created();
     }
 
     @DeleteMapping("/{questionId}/options/{optionId}")

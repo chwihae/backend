@@ -7,7 +7,7 @@ import com.chwihae.dto.option.response.VoteOptionResponse;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
 import com.chwihae.dto.question.response.QuestionDetailResponse;
 import com.chwihae.dto.question.response.QuestionListResponse;
-import com.chwihae.infra.RestDocsSupport;
+import com.chwihae.infra.RestDocsTest;
 import com.chwihae.infra.WithTestUser;
 import com.chwihae.service.question.QuestionService;
 import com.chwihae.service.vote.VoteService;
@@ -44,7 +44,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Transactional
-class QuestionControllerDocsTest extends RestDocsSupport {
+class QuestionControllerDocsTest extends RestDocsTest {
 
     private final QuestionService questionService = mock(QuestionService.class);
     private final QuestionValidator questionValidator = mock(QuestionValidator.class);
@@ -286,6 +286,35 @@ class QuestionControllerDocsTest extends RestDocsSupport {
                                 fieldWithPath("data.options[].id").type(JsonFieldType.NUMBER).description("질문 옵션 아이디"),
                                 fieldWithPath("data.options[].name").type(JsonFieldType.STRING).description("질문 옵션 이름"),
                                 fieldWithPath("data.options[].voteCount").type(JsonFieldType.NUMBER).description("질문 옵션 투표 수 (투표 결과를 볼 수 있으면 숫자, 없으면 null)").optional()
+                        )
+                ));
+    }
+
+    @Test
+    @DisplayName("투표 등록 API")
+    @WithTestUser
+    void createVote_restDocs() throws Exception {
+        //when //then
+        mockMvc.perform(
+                        post("/api/v1/questions/{questionId}/options/{optionId}", 25L, 100L)
+                                .header(AUTHORIZATION, token(1L))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("question-vote-create",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestHeaders(
+                                headerWithName(AUTHORIZATION).description("[Required] 인증 토큰 (타입: 문자열)")
+                        ),
+                        pathParameters(
+                                parameterWithName("questionId").description("[Required] 질문 아이디 (타입: 숫자)"),
+                                parameterWithName("optionId").description("[Required] 옵션 아이디 (타입: 숫자)")
+                        ),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.NUMBER).description("코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("메시지"),
+                                fieldWithPath("data").type(JsonFieldType.NULL).description("응답 데이터")
                         )
                 ));
     }

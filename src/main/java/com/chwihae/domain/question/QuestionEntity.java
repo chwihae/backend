@@ -13,7 +13,9 @@ import org.hibernate.annotations.Where;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import static com.chwihae.domain.question.QuestionStatus.COMPLETED;
 import static com.chwihae.domain.question.QuestionStatus.IN_PROGRESS;
+import static com.chwihae.utils.TimeZone.KST;
 import static jakarta.persistence.EnumType.STRING;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -66,5 +68,9 @@ public class QuestionEntity extends BaseEntity {
 
     public boolean isCreatedBy(Long userId) {
         return Objects.equals(this.userEntity.getId(), userId);
+    }
+
+    public boolean isClosed() {
+        return Objects.equals(this.status, COMPLETED) || this.closeAt.isBefore(LocalDateTime.now(KST));
     }
 }

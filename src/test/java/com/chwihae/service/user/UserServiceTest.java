@@ -1,27 +1,18 @@
 package com.chwihae.service.user;
 
 import com.chwihae.domain.user.UserEntity;
-import com.chwihae.domain.user.UserRepository;
 import com.chwihae.dto.user.UserContext;
 import com.chwihae.exception.CustomException;
-import com.chwihae.infra.IntegrationTestSupport;
+import com.chwihae.infra.IntegrationTest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.chwihae.exception.CustomExceptionError.USER_NOT_FOUND;
 
 @Transactional
-@IntegrationTestSupport
-class UserServiceTest {
-
-    @Autowired
-    UserService userService;
-
-    @Autowired
-    UserRepository userRepository;
+class UserServiceTest extends IntegrationTest {
 
     @Test
     @DisplayName("이메일로 사용자를 저장하여 반환한다")

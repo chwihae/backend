@@ -34,7 +34,7 @@ public class QuestionService {
     private final OptionRepository optionRepository;
 
     public Page<QuestionListResponse> getQuestionsByTypeAndStatus(QuestionType type, QuestionStatus status, Pageable pageable) {
-        return questionRepository.findByStatusAndType(status, type, pageable).map(QuestionListResponse::of);
+        return questionRepository.findByTypeAndStatus(status, type, pageable).map(QuestionListResponse::of);
     }
 
     @Transactional

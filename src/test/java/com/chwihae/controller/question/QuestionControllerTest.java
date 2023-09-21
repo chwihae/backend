@@ -1,24 +1,19 @@
 package com.chwihae.controller.question;
 
 import com.chwihae.domain.option.OptionEntity;
-import com.chwihae.domain.option.OptionRepository;
 import com.chwihae.domain.question.QuestionEntity;
-import com.chwihae.domain.question.QuestionRepository;
 import com.chwihae.domain.question.QuestionStatus;
 import com.chwihae.domain.question.QuestionType;
 import com.chwihae.domain.user.UserEntity;
-import com.chwihae.domain.user.UserRepository;
 import com.chwihae.domain.vote.VoteEntity;
-import com.chwihae.domain.vote.VoteRepository;
 import com.chwihae.dto.option.request.OptionCreateRequest;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
 import com.chwihae.fixture.UserEntityFixture;
-import com.chwihae.infra.MockMvcTestSupport;
+import com.chwihae.infra.MockMvcTest;
 import com.chwihae.infra.WithTestUser;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,19 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Transactional
-class QuestionControllerTest extends MockMvcTestSupport {
-
-    @Autowired
-    OptionRepository optionRepository;
-
-    @Autowired
-    QuestionRepository questionRepository;
-
-    @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    VoteRepository voteRepository;
+class QuestionControllerTest extends MockMvcTest {
 
     @Test
     @DisplayName("POST /api/v1/questions - 성공")
@@ -411,12 +394,11 @@ class QuestionControllerTest extends MockMvcTestSupport {
     }
 
     @Test
-    @DisplayName("GET /api/v1/questions?status={}&page={}&size={} - 성공 (without QuestionStatus 요청)")
+    @DisplayName("GET /api/v1/questions?type={type}&status={}&page={pageNumber}&size={size} - 성공 (without QuestionStatus 요청)")
     @WithTestUser
     void getQuestions_withoutQuestionStatus_returnsSuccessCode() throws Exception {
         //given
         UserEntity userEntity = userRepository.save(UserEntityFixture.of("questioner@email.com"));
-
         LocalDateTime closeAt = LocalDateTime.now(ZoneId.of("Asia/Seoul")).plusMinutes(30);
         QuestionEntity question1 = createQuestion(userEntity, closeAt);
         QuestionEntity question2 = createQuestion(userEntity, closeAt);
@@ -438,7 +420,7 @@ class QuestionControllerTest extends MockMvcTestSupport {
     }
 
     @Test
-    @DisplayName("GET /api/v1/questions?status={}&page={}&size={} - 성공 (with QuestionStatus 요청)")
+    @DisplayName("GET /api/v1/questions?type={type}&status={}&page={pageNumber}&size={size} - 성공 (with QuestionStatus 요청)")
     @WithTestUser
     void getQuestions_withQuestionStatus_returnsSuccessCode() throws Exception {
         //given
@@ -465,7 +447,7 @@ class QuestionControllerTest extends MockMvcTestSupport {
     }
 
     @Test
-    @DisplayName("GET /api/v1/questions?status={}&page={}&size={} - 실패 (with InvalidQuestionStatus 요청)")
+    @DisplayName("GET /api/v1/questions?type={type}&status={}&page={pageNumber}&size={size} - 실패 (with InvalidQuestionStatus 요청)")
     @WithTestUser
     void getQuestions_withInvalidQuestionStatus_returnsSuccessCode() throws Exception {
         //given
@@ -491,7 +473,7 @@ class QuestionControllerTest extends MockMvcTestSupport {
     }
 
     @Test
-    @DisplayName("GET /api/v1/questions?status={}&page={}&size={} - 실패 (미인증 사용자)")
+    @DisplayName("GET /api/v1/questions?type={type}&status={}&page={pageNumber}&size={size} - 실패 (미인증 사용자)")
     @WithAnonymousUser
     void getQuestions_byAnonymousUser_returnsSuccessCode() throws Exception {
         //given
@@ -505,6 +487,140 @@ class QuestionControllerTest extends MockMvcTestSupport {
                 )
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.code").value(INVALID_TOKEN.code()));
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/questions/{questionId}/options/{optionId} - 성공")
+    @WithTestUser("voter@email.com")
+    void createVote_byVoter_returnsSuccessCode() throws Exception {
+        //given
+        UserEntity questioner = userRepository.save(UserEntityFixture.of("questioner@email.com"));
+        LocalDateTime closeAt = LocalDateTime.now(ZoneId.of("Asia/Seoul")).plusMinutes(1);
+        QuestionEntity questionEntity = questionRepository.save(createQuestion(questioner, closeAt));
+        OptionEntity option1 = createOption(questionEntity, "name1");
+        OptionEntity option2 = createOption(questionEntity, "name2");
+        optionRepository.saveAll(List.of(option1, option2));
+
+        //when //then
+        mockMvc.perform(
+                        post("/api/v1/questions/{questionId}/options/{optionId}", questionEntity.getId(), option1.getId())
+                )
+                .andExpect(status().isOk());
+
+        Assertions.assertThat(voteRepository.findAll()).hasSize(1);
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/questions/{questionId}/options/{optionId} - 실패 (미인증 사용자)")
+    @WithAnonymousUser
+    void createVote_byAnonymousUser_returnsUnauthorizedCode() throws Exception {
+        //given
+        long notExistingQuestionId = 0L;
+        long notExistingOptionId = 0L;
+
+        //when //then
+        mockMvc.perform(
+                        post("/api/v1/questions/{questionId}/options/{optionId}", notExistingQuestionId, notExistingOptionId)
+                )
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.code").value(INVALID_TOKEN.code()));
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/questions/{questionId}/options/{optionId} - 실패 (질문 작성자)")
+    @WithTestUser("questioner@email.com")
+    void createVote_byQuestioner_returnsUnauthorizedCode() throws Exception {
+        //given
+        UserEntity questioner = userRepository.findByEmail("questioner@email.com").get();
+        LocalDateTime closeAt = LocalDateTime.now(ZoneId.of("Asia/Seoul")).plusMinutes(1);
+        QuestionEntity questionEntity = questionRepository.save(createQuestion(questioner, closeAt));
+        OptionEntity option1 = createOption(questionEntity, "name1");
+        OptionEntity option2 = createOption(questionEntity, "name2");
+        optionRepository.saveAll(List.of(option1, option2));
+
+        //when //then
+        mockMvc.perform(
+                        post("/api/v1/questions/{questionId}/options/{optionId}", questionEntity.getId(), option1.getId())
+                )
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.code").value(FORBIDDEN.code()));
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/questions/{questionId}/options/{optionId} - 실패 (이미 투표한 투표자)")
+    @WithTestUser("voter@email.com")
+    void createVote_byVoterWhoAlreadyVote_returnsDuplicateVoteCode() throws Exception {
+        //given
+        UserEntity questioner = userRepository.save(UserEntityFixture.of("questioner@email.com"));
+        UserEntity voter = userRepository.findByEmail("voter@email.com").get();
+        LocalDateTime closeAt = LocalDateTime.now(ZoneId.of("Asia/Seoul")).plusMinutes(1);
+        QuestionEntity questionEntity = questionRepository.save(createQuestion(questioner, closeAt));
+        OptionEntity option1 = createOption(questionEntity, "name1");
+        OptionEntity option2 = createOption(questionEntity, "name2");
+        optionRepository.saveAll(List.of(option1, option2));
+
+        voteRepository.save(createVote(voter, option1));
+
+        //when //then
+        mockMvc.perform(
+                        post("/api/v1/questions/{questionId}/options/{optionId}", questionEntity.getId(), option1.getId())
+                )
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.code").value(DUPLICATE_VOTE.code()));
+
+        Assertions.assertThat(voteRepository.findAll()).hasSize(1);
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/questions/{questionId}/options/{optionId} - 실패 (마감된 질문)")
+    @WithTestUser("voter@email.com")
+    void createVote_whenQuestionClosed_returnsQuestionClosedCode() throws Exception {
+        //given
+        UserEntity questioner = userRepository.save(UserEntityFixture.of("questioner@email.com"));
+        LocalDateTime closeAt = LocalDateTime.now(ZoneId.of("Asia/Seoul")).minusDays(1);
+        QuestionEntity questionEntity = questionRepository.save(createQuestion(questioner, closeAt));
+        long notExistingOptionId = 0L;
+
+        //when //then
+        mockMvc.perform(
+                        post("/api/v1/questions/{questionId}/options/{optionId}", questionEntity.getId(), notExistingOptionId)
+                )
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.code").value(QUESTION_CLOSED.code()));
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/questions/{questionId}/options/{optionId} - 실패 (존재하지 않는 질문)")
+    @WithTestUser("voter@email.com")
+    void createVote_whenQuestionNotFound_returnsNotFoundCode() throws Exception {
+        //given
+        long notExistingQuestionId = 0L;
+        long notExistingOptionId = 0L;
+
+        //when //then
+        mockMvc.perform(
+                        post("/api/v1/questions/{questionId}/options/{optionId}", notExistingQuestionId, notExistingOptionId)
+                )
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value(QUESTION_NOT_FOUND.code()));
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/questions/{questionId}/options/{optionId} - 실패 (존재하지 않는 질문)")
+    @WithTestUser("voter@email.com")
+    void createVote_whenOptionNotFound_returnsNotFoundCode() throws Exception {
+        //given
+        UserEntity questioner = userRepository.save(UserEntityFixture.of("questioner@email.com"));
+        LocalDateTime closeAt = LocalDateTime.now(ZoneId.of("Asia/Seoul")).plusMinutes(1);
+        QuestionEntity questionEntity = questionRepository.save(createQuestion(questioner, closeAt));
+        long notExistingOptionId = 0L;
+
+        //when //then
+        mockMvc.perform(
+                        post("/api/v1/questions/{questionId}/options/{optionId}", questionEntity.getId(), notExistingOptionId)
+                )
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value(OPTION_NOT_FOUND.code()));
     }
 
     public QuestionEntity createQuestion(UserEntity userEntity, LocalDateTime closeAt) {
@@ -526,8 +642,9 @@ class QuestionControllerTest extends MockMvcTestSupport {
 
     public VoteEntity createVote(UserEntity userEntity, OptionEntity optionEntity) {
         return VoteEntity.builder()
-                .userEntity(userEntity)
+                .questionEntity(optionEntity.getQuestionEntity())
                 .optionEntity(optionEntity)
+                .userEntity(userEntity)
                 .build();
     }
 }

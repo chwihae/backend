@@ -1,46 +1,27 @@
 package com.chwihae.service.vote;
 
 import com.chwihae.domain.option.OptionEntity;
-import com.chwihae.domain.option.OptionRepository;
 import com.chwihae.domain.question.QuestionEntity;
-import com.chwihae.domain.question.QuestionRepository;
 import com.chwihae.domain.question.QuestionType;
 import com.chwihae.domain.user.UserEntity;
-import com.chwihae.domain.user.UserRepository;
 import com.chwihae.domain.vote.VoteEntity;
-import com.chwihae.domain.vote.VoteRepository;
 import com.chwihae.dto.option.response.VoteOptionResponse;
+import com.chwihae.exception.CustomException;
 import com.chwihae.fixture.UserEntityFixture;
-import com.chwihae.infra.IntegrationTestSupport;
+import com.chwihae.infra.IntegrationTest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.chwihae.exception.CustomExceptionError.*;
 import static org.assertj.core.groups.Tuple.tuple;
 
 @Transactional
-@IntegrationTestSupport
-class VoteServiceTest {
-
-    @Autowired
-    VoteService voteService;
-
-    @Autowired
-    VoteRepository voteRepository;
-
-    @Autowired
-    QuestionRepository questionRepository;
-
-    @Autowired
-    OptionRepository optionRepository;
-
-    @Autowired
-    UserRepository userRepository;
+class VoteServiceTest extends IntegrationTest {
 
     @Test
     @DisplayName("질문자는 투표 결과를 조회할 수 있다")
@@ -192,6 +173,130 @@ class VoteServiceTest {
                 );
     }
 
+    @Test
+    @DisplayName("마감되지 않은 질문에 질문 작성자가 아닌 투표자는 투표를 할 수 있다")
+    void createVote_byUserNotVoteToNotClosedQuestion_pass() throws Exception {
+        //given
+        UserEntity questioner = UserEntityFixture.of("questioner@email.com");
+        UserEntity voter = UserEntityFixture.of("voter@email.com");
+        userRepository.saveAll(List.of(questioner, voter));
+
+        LocalDateTime closeAt = LocalDateTime.now().plusDays(1);
+        QuestionEntity questionEntity = questionRepository.save(createQuestion(questioner, closeAt));
+        OptionEntity option = optionRepository.save(createOption(questionEntity, "name"));
+
+        //when
+        voteService.createVote(questionEntity.getId(), option.getId(), voter.getId());
+
+        //then
+        Assertions.assertThat(optionRepository.findAll()).hasSize(1);
+    }
+
+    @Test
+    @DisplayName("질문 작성자는 투표를 할 수 없다")
+    void createVote_byQuestioner_throwsException() throws Exception {
+        //given
+        UserEntity questioner = userRepository.save(UserEntityFixture.of("questioner@email.com"));
+        LocalDateTime closeAt = LocalDateTime.now().plusDays(1);
+        QuestionEntity questionEntity = questionRepository.save(createQuestion(questioner, closeAt));
+        OptionEntity option = optionRepository.save(createOption(questionEntity, "name"));
+
+        //when //then
+        Assertions.assertThatThrownBy(() -> voteService.createVote(questionEntity.getId(), option.getId(), questioner.getId()))
+                .isInstanceOf(CustomException.class)
+                .extracting("error")
+                .isEqualTo(FORBIDDEN);
+    }
+
+    @Test
+    @DisplayName("투표자는 마감된 질문에는 투표를 할 수 없다")
+    void createVote_whenQuestionClosed_throwsException() throws Exception {
+        //given
+        UserEntity questioner = UserEntityFixture.of("questioner@email.com");
+        UserEntity voter = UserEntityFixture.of("voter@email.com");
+        userRepository.saveAll(List.of(questioner, voter));
+        LocalDateTime closeAt = LocalDateTime.now().minusDays(1);
+        QuestionEntity questionEntity = questionRepository.save(createQuestion(questioner, closeAt));
+        OptionEntity option = optionRepository.save(createOption(questionEntity, "name"));
+
+        //when //then
+        Assertions.assertThatThrownBy(() -> voteService.createVote(questionEntity.getId(), option.getId(), voter.getId()))
+                .isInstanceOf(CustomException.class)
+                .extracting("error")
+                .isEqualTo(QUESTION_CLOSED);
+    }
+
+    @Test
+    @DisplayName("투표자는 중복 투표를 할 수 없다")
+    void createVote_whenDuplicatedVote_throwsException() throws Exception {
+        //given
+        UserEntity questioner = UserEntityFixture.of("questioner@email.com");
+        UserEntity voter = UserEntityFixture.of("voter@email.com");
+        userRepository.saveAll(List.of(questioner, voter));
+        LocalDateTime closeAt = LocalDateTime.now().plusDays(1);
+        QuestionEntity questionEntity = questionRepository.save(createQuestion(questioner, closeAt));
+        OptionEntity option = optionRepository.save(createOption(questionEntity, "name"));
+
+        voteService.createVote(questionEntity.getId(), option.getId(), voter.getId());
+
+        //when //then
+        Assertions.assertThatThrownBy(() -> voteService.createVote(questionEntity.getId(), option.getId(), voter.getId()))
+                .isInstanceOf(CustomException.class)
+                .extracting("error")
+                .isEqualTo(DUPLICATE_VOTE);
+    }
+
+    @Test
+    @DisplayName("투표자는 존재하지 않은 질문에 투표를 할 수 없다")
+    void createVote_whenQuestionNotExists_throwsException() throws Exception {
+        //given
+        UserEntity questioner = UserEntityFixture.of("questioner@email.com");
+        UserEntity voter = UserEntityFixture.of("voter@email.com");
+        userRepository.saveAll(List.of(questioner, voter));
+        long notExistingQuestionId = 0L;
+        long notExistingOptionId = 0L;
+        //when //then
+        Assertions.assertThatThrownBy(() -> voteService.createVote(notExistingQuestionId, notExistingOptionId, voter.getId()))
+                .isInstanceOf(CustomException.class)
+                .extracting("error")
+                .isEqualTo(QUESTION_NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("투표자는 존재하지 않은 옵션에 투표를 할 수 없다")
+    void createVote_whenOptionNotExists_throwsException() throws Exception {
+        //given
+        UserEntity questioner = UserEntityFixture.of("questioner@email.com");
+        UserEntity voter = UserEntityFixture.of("voter@email.com");
+        userRepository.saveAll(List.of(questioner, voter));
+        LocalDateTime closeAt = LocalDateTime.now().plusDays(1);
+        QuestionEntity questionEntity = questionRepository.save(createQuestion(questioner, closeAt));
+        long notExistingOptionId = 0L;
+        //when //then
+        Assertions.assertThatThrownBy(() -> voteService.createVote(questionEntity.getId(), notExistingOptionId, voter.getId()))
+                .isInstanceOf(CustomException.class)
+                .extracting("error")
+                .isEqualTo(OPTION_NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("투표자는 존재하지 않은 옵션에 투표를 할 수 없다")
+    void createVote_whenVoterNotExists_throwsException() throws Exception {
+        //given
+        long notExistingVoterId = 0L;
+        UserEntity questioner = userRepository.save(UserEntityFixture.of("questioner@email.com"));
+        LocalDateTime closeAt = LocalDateTime.now().plusDays(1);
+        QuestionEntity questionEntity = questionRepository.save(createQuestion(questioner, closeAt));
+        OptionEntity optionEntity = optionRepository.save(createOption(questionEntity, "name"));
+        //when //then
+        Assertions.assertThatThrownBy(() -> voteService.createVote(questionEntity.getId(), optionEntity.getId(), notExistingVoterId))
+                .isInstanceOf(CustomException.class)
+                .extracting("error")
+                .isEqualTo(USER_NOT_FOUND);
+    }
+
+    // TODO 마감되지 않은 질문에 투표를 취소했던 사용자는 다시 투표를 할 수 있다
+
     public QuestionEntity createQuestion(UserEntity userEntity, LocalDateTime closeAt) {
         return QuestionEntity.builder()
                 .userEntity(userEntity)
@@ -211,6 +316,7 @@ class VoteServiceTest {
 
     public VoteEntity createVote(OptionEntity optionEntity, UserEntity userEntity) {
         return VoteEntity.builder()
+                .questionEntity(optionEntity.getQuestionEntity())
                 .optionEntity(optionEntity)
                 .userEntity(userEntity)
                 .build();

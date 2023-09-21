@@ -2,6 +2,8 @@ package com.chwihae.fixture;
 
 import com.chwihae.domain.user.UserEntity;
 
+import java.util.UUID;
+
 public class UserEntityFixture {
 
     public static UserEntity of(String email) {
@@ -11,6 +13,6 @@ public class UserEntityFixture {
     }
 
     public static UserEntity of() {
-        return of("test@email.com");
+        return of(UUID.randomUUID().toString() + System.currentTimeMillis() + Thread.currentThread().getId());
     }
 }
