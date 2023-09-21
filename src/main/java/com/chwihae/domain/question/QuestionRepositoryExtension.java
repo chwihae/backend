@@ -6,5 +6,5 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
 public interface QuestionRepositoryExtension {
-    Page<QuestionEntity> findByStatusAndType(QuestionStatus status, QuestionType type, Pageable pageable);
+    Page<QuestionEntity> findByTypeAndStatus(QuestionStatus status, QuestionType type, Pageable pageable);
 }

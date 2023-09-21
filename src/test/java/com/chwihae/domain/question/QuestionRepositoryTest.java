@@ -45,7 +45,7 @@ class QuestionRepositoryTest {
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
 
         //when
-        Page<QuestionEntity> questionEntities = questionRepository.findByStatusAndType(IN_PROGRESS, QuestionType.SPEC, pageRequest);
+        Page<QuestionEntity> questionEntities = questionRepository.findByTypeAndStatus(IN_PROGRESS, QuestionType.SPEC, pageRequest);
 
         //then
         Assertions.assertThat(questionEntities.getContent()).hasSize(pageSize);
