@@ -32,12 +32,13 @@ class AuthControllerDocsTest extends RestDocsSupport {
     @DisplayName("카카오 로그인 API")
     void kakaoLogin_restDocs() throws Exception {
         //given
+        String email = "user@email.com";
         Long userId = 1L;
         String token = "token";
         String refreshToken = "refresh token";
 
-        String authorizationCode = "authorization code";
-        String redirectionUri = "http://localhost:8080";
+        String authorizationCode = "kakao authorization code";
+        String redirectionUri = "http://localhost:3000";
 
         KakaoLoginRequest request = KakaoLoginRequest.builder()
                 .authorizationCode(authorizationCode)
@@ -45,6 +46,7 @@ class AuthControllerDocsTest extends RestDocsSupport {
                 .build();
 
         LoginResponse loginResponse = LoginResponse.builder()
+                .email(email)
                 .userId(userId)
                 .token(token)
                 .refreshToken(refreshToken)
@@ -70,6 +72,7 @@ class AuthControllerDocsTest extends RestDocsSupport {
                                 fieldWithPath("code").type(JsonFieldType.NUMBER).description("코드"),
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("메시지"),
                                 fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터"),
+                                fieldWithPath("data.email").type(JsonFieldType.STRING).description("사용자 이메일"),
                                 fieldWithPath("data.userId").type(JsonFieldType.NUMBER).description("사용자 아이디"),
                                 fieldWithPath("data.token").type(JsonFieldType.STRING).description("인증 토큰"),
                                 fieldWithPath("data.refreshToken").type(JsonFieldType.STRING).description("리프레시 토큰")
