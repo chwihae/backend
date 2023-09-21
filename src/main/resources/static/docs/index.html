@@ -470,8 +470,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#Question">2.3. 질문</a>
 <ul class="sectlevel3">
 <li><a href="#question-create">2.3.1. 질문 등록</a></li>
-<li><a href="#question-get">2.3.2. 질문 단건 조회</a></li>
-<li><a href="#question-options">2.3.3. 질문 옵션 조회</a></li>
+<li><a href="#question-list">2.3.2. 질문 전체 리스트 조회</a></li>
+<li><a href="#question-get">2.3.3. 질문 단건 조회</a></li>
+<li><a href="#question-options">2.3.4. 질문 옵션 조회</a></li>
 </ul>
 </li>
 </ul>
@@ -613,13 +614,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/v1/auth/kakao-login HTTP/1.1
-Content-Type: application/json
-Content-Length: 94
+Content-Type: application/json;charset=UTF-8
+Content-Length: 100
 Host: localhost:8080
 
 {
-  "authorizationCode" : "authorization code",
-  "redirectionUri" : "http://localhost:8080"
+  "authorizationCode" : "kakao authorization code",
+  "redirectionUri" : "http://localhost:3000"
 }</code></pre>
 </div>
 </div>
@@ -662,14 +663,15 @@ Host: localhost:8080
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
-Content-Type: application/json
-Content-Length: 134
+Content-Type: application/json;charset=UTF-8
+Content-Length: 166
 
 {
   "code" : 200,
   "message" : "OK",
   "data" : {
     "userId" : 1,
+    "email" : "user@email.com",
     "token" : "token",
     "refreshToken" : "refresh token"
   }
@@ -714,6 +716,12 @@ Content-Length: 134
 <td class="tableblock halign-left valign-top"><p class="tableblock">응답 데이터</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.email</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사용자 이메일</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.userId</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"></td>
@@ -745,7 +753,7 @@ Content-Length: 134
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/v1/users/statistics HTTP/1.1
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTI2OTc0OCwiZXhwIjoxNjk1MzU2MTQ4fQ.3nxr0Sa7PZ3TEjzedca9GKGbJLCiHkJ6LGHbxEoPl-8
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTMwNjQ1MCwiZXhwIjoxNjk1MzkyODUwfQ.boMXfcnyM3His2LE9fPvGyyQR6ykF7VnNvYDHa4SkZc
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -766,7 +774,7 @@ Host: localhost:8080</code></pre>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">인증 토큰 (타입: 문자열) (필수값)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[Required] 인증 토큰 (타입: 문자열)</p></td>
 </tr>
 </tbody>
 </table>
@@ -776,13 +784,14 @@ Host: localhost:8080</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
-Content-Type: application/json
-Content-Length: 100
+Content-Type: application/json;charset=UTF-8
+Content-Length: 126
 
 {
   "code" : 200,
   "message" : "OK",
   "data" : {
+    "level" : "BACHELOR",
     "commentCount" : 0,
     "voteCount" : 0
   }
@@ -827,6 +836,12 @@ Content-Length: 100
 <td class="tableblock halign-left valign-top"><p class="tableblock">응답 데이터</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.level</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">유저 레벨 [BACHELOR, MASTER, DOCTOR, PROFESSOR]</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.commentCount</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"></td>
@@ -852,8 +867,8 @@ Content-Length: 100
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/v1/questions HTTP/1.1
-Content-Type: application/json
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTI2OTc0OCwiZXhwIjoxNjk1MzU2MTQ4fQ.3nxr0Sa7PZ3TEjzedca9GKGbJLCiHkJ6LGHbxEoPl-8
+Content-Type: application/json;charset=UTF-8
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTMwNjQ0OSwiZXhwIjoxNjk1MzkyODQ5fQ.0w5BFDmpM5GcXKlva13gVdhSGnwIohGtww6YE0vndug
 Content-Length: 194
 Host: localhost:8080
 
@@ -861,7 +876,7 @@ Host: localhost:8080
   "title" : "title",
   "content" : "content",
   "type" : "SPEC",
-  "closeAt" : "2023-09-21T13:45:48",
+  "closeAt" : "2023-09-21T23:57:29",
   "options" : [ {
     "name" : "option name 1"
   }, {
@@ -887,7 +902,7 @@ Host: localhost:8080
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">인증 토큰 (타입: 문자열) (필수값)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[Required] 인증 토큰 (타입: 문자열)</p></td>
 </tr>
 </tbody>
 </table>
@@ -920,7 +935,7 @@ Host: localhost:8080
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>type</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">O</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">질문 타입, 가능한 값 [SPEC, STUDY, COMPANY, ETC]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">질문 타입 (가능한 값: [SPEC, STUDY, COMPANY, ETC])</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>content</code></p></td>
@@ -932,7 +947,7 @@ Host: localhost:8080
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>closeAt</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">O</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">질문 마감 시간, 시간 형식(yyyy-mm-ddThh:mm:ss)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">질문 마감 시간 (형식: yyyy-mm-ddThh:mm:ss)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>options[]</code></p></td>
@@ -954,7 +969,7 @@ Host: localhost:8080
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
-Content-Type: application/json
+Content-Type: application/json;charset=UTF-8
 Content-Length: 75
 
 {
@@ -1014,19 +1029,20 @@ Content-Length: 75
 </div>
 </div>
 <div class="sect3">
-<h4 id="question-get"><a class="link" href="#question-get">2.3.2. 질문 단건 조회</a></h4>
+<h4 id="question-list"><a class="link" href="#question-list">2.3.2. 질문 전체 리스트 조회</a></h4>
 <div class="sect4">
-<h5 id="question-create"><a class="link" href="#question-create">HTTP Request</a></h5>
+<h5 id="question-list"><a class="link" href="#question-list">HTTP Request</a></h5>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/v1/questions/1 HTTP/1.1
-Content-Type: application/json
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTI2OTc0OCwiZXhwIjoxNjk1MzU2MTQ4fQ.3nxr0Sa7PZ3TEjzedca9GKGbJLCiHkJ6LGHbxEoPl-8
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/v1/questions?status=IN_PROGRESS&amp;page=0&amp;size=2 HTTP/1.1
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTMwNjQ0OSwiZXhwIjoxNjk1MzkyODQ5fQ.0w5BFDmpM5GcXKlva13gVdhSGnwIohGtww6YE0vndug
 Host: localhost:8080</code></pre>
 </div>
 </div>
+</div>
+<div class="sect4">
+<h5 id="_request_query_parameter"><a class="link" href="#_request_query_parameter">Request Query Parameter</a></h5>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. /api/v1/questions/{questionId}</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -1039,8 +1055,16 @@ Host: localhost:8080</code></pre>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>questionId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">질문 아이디 (타입: 숫자) (필수값)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>status</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[Optional] 질문 상태 (가능한 값: [IN_PROGRESS, COMPLETED])</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>page</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[Optional] 페이지 번호 (default: 0)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>size</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[Optional] 페이지 사이즈 (default: 10)</p></td>
 </tr>
 </tbody>
 </table>
@@ -1061,7 +1085,7 @@ Host: localhost:8080</code></pre>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">인증 토큰 (타입: 문자열) (필수값)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[Required] 인증 토큰 (타입: 문자열)</p></td>
 </tr>
 </tbody>
 </table>
@@ -1071,7 +1095,273 @@ Host: localhost:8080</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
-Content-Type: application/json
+Content-Type: application/json;charset=UTF-8
+Content-Length: 1547
+
+{
+  "code" : 200,
+  "message" : "OK",
+  "data" : {
+    "content" : [ {
+      "id" : 1,
+      "title" : "question title 1",
+      "type" : "COMPANY",
+      "status" : "IN_PROGRESS",
+      "viewCount" : 0,
+      "commentCount" : 0,
+      "bookmarkCount" : 0
+    }, {
+      "id" : 2,
+      "title" : "question title 2",
+      "type" : "COMPANY",
+      "status" : "IN_PROGRESS",
+      "viewCount" : 0,
+      "commentCount" : 0,
+      "bookmarkCount" : 0
+    }, {
+      "id" : 3,
+      "title" : "question title 3",
+      "type" : "COMPANY",
+      "status" : "IN_PROGRESS",
+      "viewCount" : 0,
+      "commentCount" : 0,
+      "bookmarkCount" : 0
+    }, {
+      "id" : 4,
+      "title" : "question title 4",
+      "type" : "COMPANY",
+      "status" : "IN_PROGRESS",
+      "viewCount" : 0,
+      "commentCount" : 0,
+      "bookmarkCount" : 0
+    }, {
+      "id" : 5,
+      "title" : "question title 5",
+      "type" : "COMPANY",
+      "status" : "IN_PROGRESS",
+      "viewCount" : 0,
+      "commentCount" : 0,
+      "bookmarkCount" : 0
+    } ],
+    "pageable" : {
+      "pageNumber" : 0,
+      "pageSize" : 2,
+      "sort" : {
+        "empty" : true,
+        "sorted" : false,
+        "unsorted" : true
+      },
+      "offset" : 0,
+      "paged" : true,
+      "unpaged" : false
+    },
+    "last" : false,
+    "totalElements" : 5,
+    "totalPages" : 3,
+    "first" : true,
+    "size" : 2,
+    "number" : 0,
+    "sort" : {
+      "empty" : true,
+      "sorted" : false,
+      "unsorted" : true
+    },
+    "numberOfElements" : 5,
+    "empty" : false
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_response_fields_4"><a class="link" href="#_response_fields_4">Response Fields</a></h5>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Nullable</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">메시지</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">질문 목록</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">질문 아이디</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].title</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">질문 제목</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">질문 타입 [SPEC, STUDY, COMPANY, ETC]</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].status</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">질문 상태 [IN_PROGRESS, COMPLETED]</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].viewCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">질문 조회수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].commentCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">질문 댓글수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].bookmarkCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">질문 저장수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.totalPages</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">총 페이지 수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.totalElements</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">총 원소 개수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.last</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">마지막 페이지 여부</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.first</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">처음 페이지 여부</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.size</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">현재 페이지 크기</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.numberOfElements</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">현재 페이지 원소 개수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.empty</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">현재 페이지 원소 존재 여부</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">현재 페이지 번호</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="question-get"><a class="link" href="#question-get">2.3.3. 질문 단건 조회</a></h4>
+<div class="sect4">
+<h5 id="question-create"><a class="link" href="#question-create">HTTP Request</a></h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/v1/questions/1 HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTMwNjQ0OSwiZXhwIjoxNjk1MzkyODQ5fQ.0w5BFDmpM5GcXKlva13gVdhSGnwIohGtww6YE0vndug
+Host: localhost:8080</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. /api/v1/questions/{questionId}</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>questionId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[Required] 질문 아이디 (타입: 숫자)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_request_header_4"><a class="link" href="#_request_header_4">Request Header</a></h5>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[Required] 인증 토큰 (타입: 문자열)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_http_response_5"><a class="link" href="#_http_response_5">HTTP Response</a></h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
 Content-Length: 353
 
 {
@@ -1082,7 +1372,7 @@ Content-Length: 353
     "title" : "title",
     "content" : "content",
     "type" : "COMPANY",
-    "closeAt" : "2023-09-21T13:45:48",
+    "closeAt" : "2023-09-21T23:57:29",
     "status" : "IN_PROGRESS",
     "viewCount" : 0,
     "commentCount" : 0,
@@ -1096,7 +1386,7 @@ Content-Length: 353
 </div>
 </div>
 <div class="sect4">
-<h5 id="_response_fields_4"><a class="link" href="#_response_fields_4">Response Fields</a></h5>
+<h5 id="_response_fields_5"><a class="link" href="#_response_fields_5">Response Fields</a></h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -1153,19 +1443,19 @@ Content-Length: 353
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.type</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">질문 타입, [SPEC, STUDY, COMPANY, ETC]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">질문 타입 [SPEC, STUDY, COMPANY, ETC]</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.status</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">질문 상태, [IN_PROGRESS, COMPLETED]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">질문 상태 [IN_PROGRESS, COMPLETED]</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.closeAt</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">질문 마감 시간, 시간 형식(yyyy-mm-ddThh:mm:ss)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">질문 마감 시간 (형식: yyyy-mm-ddThh:mm:ss)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.editable</code></p></td>
@@ -1208,20 +1498,39 @@ Content-Length: 353
 </div>
 </div>
 <div class="sect3">
-<h4 id="question-options"><a class="link" href="#question-options">2.3.3. 질문 옵션 조회</a></h4>
+<h4 id="question-options"><a class="link" href="#question-options">2.3.4. 질문 옵션 조회</a></h4>
 <div class="sect4">
 <h5 id="question-options"><a class="link" href="#question-options">HTTP Request</a></h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/v1/questions/25/options HTTP/1.1
-Content-Type: application/json
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTI2OTc0OCwiZXhwIjoxNjk1MzU2MTQ4fQ.3nxr0Sa7PZ3TEjzedca9GKGbJLCiHkJ6LGHbxEoPl-8
+Content-Type: application/json;charset=UTF-8
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTMwNjQ0OSwiZXhwIjoxNjk1MzkyODQ5fQ.0w5BFDmpM5GcXKlva13gVdhSGnwIohGtww6YE0vndug
 Host: localhost:8080</code></pre>
 </div>
 </div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 2. /api/v1/questions/{questionId}/options</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>questionId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[Required] 질문 아이디 (타입: 숫자)</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect4">
-<h5 id="_request_header_4"><a class="link" href="#_request_header_4">Request Header</a></h5>
+<h5 id="_request_header_5"><a class="link" href="#_request_header_5">Request Header</a></h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -1236,17 +1545,17 @@ Host: localhost:8080</code></pre>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">인증 토큰 (타입: 문자열) (필수값)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[Required] 인증 토큰 (타입: 문자열)</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <div class="sect4">
-<h5 id="_http_response_5"><a class="link" href="#_http_response_5">HTTP Response</a></h5>
+<h5 id="_http_response_6"><a class="link" href="#_http_response_6">HTTP Response</a></h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
-Content-Type: application/json
+Content-Type: application/json;charset=UTF-8
 Content-Length: 502
 
 {
@@ -1281,7 +1590,7 @@ Content-Length: 502
 </div>
 </div>
 <div class="sect4">
-<h5 id="_response_fields_5"><a class="link" href="#_response_fields_5">Response Fields</a></h5>
+<h5 id="_response_fields_6"><a class="link" href="#_response_fields_6">Response Fields</a></h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">

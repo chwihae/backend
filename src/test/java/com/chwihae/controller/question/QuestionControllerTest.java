@@ -4,6 +4,7 @@ import com.chwihae.domain.option.OptionEntity;
 import com.chwihae.domain.option.OptionRepository;
 import com.chwihae.domain.question.QuestionEntity;
 import com.chwihae.domain.question.QuestionRepository;
+import com.chwihae.domain.question.QuestionStatus;
 import com.chwihae.domain.question.QuestionType;
 import com.chwihae.domain.user.UserEntity;
 import com.chwihae.domain.user.UserRepository;
@@ -26,6 +27,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.chwihae.domain.question.QuestionStatus.IN_PROGRESS;
 import static com.chwihae.exception.CustomExceptionError.*;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.CREATED;
@@ -403,6 +405,103 @@ class QuestionControllerTest extends MockMvcTestSupport {
         //when //then
         mockMvc.perform(
                         get("/api/v1/questions/{questionId}/options", notExistingQuestionId)
+                )
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.code").value(INVALID_TOKEN.code()));
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/questions?status={}&page={}&size={} - 성공 (without QuestionStatus 요청)")
+    @WithTestUser
+    void getQuestions_withoutQuestionStatus_returnsSuccessCode() throws Exception {
+        //given
+        UserEntity userEntity = userRepository.save(UserEntityFixture.of("questioner@email.com"));
+
+        LocalDateTime closeAt = LocalDateTime.now(ZoneId.of("Asia/Seoul")).plusMinutes(30);
+        QuestionEntity question1 = createQuestion(userEntity, closeAt);
+        QuestionEntity question2 = createQuestion(userEntity, closeAt);
+        QuestionEntity question3 = createQuestion(userEntity, closeAt);
+        QuestionEntity question4 = createQuestion(userEntity, closeAt);
+        questionRepository.saveAll(List.of(question1, question2, question3, question4));
+
+        final int pageNumber = 0;
+        final int pageSize = 2;
+
+        //when //then
+        mockMvc.perform(
+                        get("/api/v1/questions?page={pageNumber}&size={size}", pageNumber, pageSize)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.size").value(pageSize))
+                .andExpect(jsonPath("$.data.number").value(pageNumber));
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/questions?status={}&page={}&size={} - 성공 (with QuestionStatus 요청)")
+    @WithTestUser
+    void getQuestions_withQuestionStatus_returnsSuccessCode() throws Exception {
+        //given
+        UserEntity userEntity = userRepository.save(UserEntityFixture.of("questioner@email.com"));
+
+        LocalDateTime closeAt = LocalDateTime.now(ZoneId.of("Asia/Seoul")).plusMinutes(30);
+        QuestionEntity question1 = createQuestion(userEntity, closeAt);
+        QuestionEntity question2 = createQuestion(userEntity, closeAt);
+        QuestionEntity question3 = createQuestion(userEntity, closeAt);
+        QuestionEntity question4 = createQuestion(userEntity, closeAt);
+        questionRepository.saveAll(List.of(question1, question2, question3, question4));
+
+        QuestionStatus status = IN_PROGRESS;
+        final int pageNumber = 0;
+        final int pageSize = 2;
+
+        //when //then
+        mockMvc.perform(
+                        get("/api/v1/questions?status={status}&page={pageNumber}&size={size}", status, pageNumber, pageSize)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.size").value(pageSize))
+                .andExpect(jsonPath("$.data.number").value(pageNumber));
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/questions?status={}&page={}&size={} - 실패 (with InvalidQuestionStatus 요청)")
+    @WithTestUser
+    void getQuestions_withInvalidQuestionStatus_returnsSuccessCode() throws Exception {
+        //given
+        UserEntity userEntity = userRepository.save(UserEntityFixture.of("questioner@email.com"));
+
+        LocalDateTime closeAt = LocalDateTime.now(ZoneId.of("Asia/Seoul")).plusMinutes(30);
+        QuestionEntity question1 = createQuestion(userEntity, closeAt);
+        QuestionEntity question2 = createQuestion(userEntity, closeAt);
+        QuestionEntity question3 = createQuestion(userEntity, closeAt);
+        QuestionEntity question4 = createQuestion(userEntity, closeAt);
+        questionRepository.saveAll(List.of(question1, question2, question3, question4));
+
+        String notExistingStatus = "invalid";
+        final int pageNumber = 0;
+        final int pageSize = 2;
+
+        //when //then
+        mockMvc.perform(
+                        get("/api/v1/questions?status={status}&page={pageNumber}&size={size}", notExistingStatus, pageNumber, pageSize)
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value(INVALID_ARGUMENT.code()));
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/questions?status={}&page={}&size={} - 실패 (미인증 사용자)")
+    @WithAnonymousUser
+    void getQuestions_byAnonymousUser_returnsSuccessCode() throws Exception {
+        //given
+        QuestionStatus status = IN_PROGRESS;
+        final int pageNumber = 0;
+        final int pageSize = 2;
+
+        //when //then
+        mockMvc.perform(
+                        get("/api/v1/questions?status={status}&page={pageNumber}&size={size}", status, pageNumber, pageSize)
                 )
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.code").value(INVALID_TOKEN.code()));

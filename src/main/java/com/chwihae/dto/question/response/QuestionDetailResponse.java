@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Setter
-public class QuestionResponse {
+public class QuestionDetailResponse {
 
     private Long id;
     private String title;
@@ -30,8 +30,8 @@ public class QuestionResponse {
     private boolean bookmarked = false;
     private boolean editable;
 
-    public static QuestionResponse of(QuestionEntity questionEntity, boolean isEditable) {
-        return QuestionResponse.builder()
+    public static QuestionDetailResponse of(QuestionEntity questionEntity, boolean isEditable) {
+        return QuestionDetailResponse.builder()
                 .id(questionEntity.getId())
                 .title(questionEntity.getTitle())
                 .content(questionEntity.getContent())
@@ -43,13 +43,13 @@ public class QuestionResponse {
     }
 
     @Builder
-    private QuestionResponse(Long id,
-                             String title,
-                             String content,
-                             QuestionType type,
-                             LocalDateTime closeAt,
-                             QuestionStatus status,
-                             boolean editable) {
+    private QuestionDetailResponse(Long id,
+                                   String title,
+                                   String content,
+                                   QuestionType type,
+                                   LocalDateTime closeAt,
+                                   QuestionStatus status,
+                                   boolean editable) {
         this.id = id;
         this.title = title;
         this.content = content;

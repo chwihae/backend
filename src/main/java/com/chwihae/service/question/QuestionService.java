@@ -4,17 +4,22 @@ import com.chwihae.domain.option.OptionEntity;
 import com.chwihae.domain.option.OptionRepository;
 import com.chwihae.domain.question.QuestionEntity;
 import com.chwihae.domain.question.QuestionRepository;
+import com.chwihae.domain.question.QuestionStatus;
 import com.chwihae.domain.user.UserEntity;
 import com.chwihae.domain.user.UserRepository;
 import com.chwihae.dto.option.request.OptionCreateRequest;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
-import com.chwihae.dto.question.response.QuestionResponse;
+import com.chwihae.dto.question.response.QuestionDetailResponse;
+import com.chwihae.dto.question.response.QuestionListResponse;
 import com.chwihae.exception.CustomException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.chwihae.exception.CustomExceptionError.QUESTION_NOT_FOUND;
 import static com.chwihae.exception.CustomExceptionError.USER_NOT_FOUND;
@@ -28,6 +33,14 @@ public class QuestionService {
     private final QuestionRepository questionRepository;
     private final OptionRepository optionRepository;
 
+    public Page<QuestionListResponse> getQuestions(Optional<QuestionStatus> statusOptional, Pageable pageable) {
+        return statusOptional
+                .map(status -> questionRepository.findAllByStatus(status, pageable)
+                        .map(QuestionListResponse::of))
+                .orElseGet(() -> questionRepository.findAll(pageable)
+                        .map(QuestionListResponse::of));
+    }
+
     @Transactional
     public Long createQuestion(QuestionCreateRequest request, Long userId) {
         UserEntity userEntity = findUserOrException(userId);
@@ -36,10 +49,10 @@ public class QuestionService {
         return questionEntity.getId();
     }
 
-    public QuestionResponse getQuestion(Long questionId, Long userId) {
+    public QuestionDetailResponse getQuestion(Long questionId, Long userId) {
         QuestionEntity questionEntity = findQuestionOrException(questionId);
         boolean isEditable = questionEntity.isCreatedBy(userId);
-        return QuestionResponse.of(questionEntity, isEditable);
+        return QuestionDetailResponse.of(questionEntity, isEditable);
     }
 
     private List<OptionEntity> buildOptionEntities(List<OptionCreateRequest> options, QuestionEntity questionEntity) {

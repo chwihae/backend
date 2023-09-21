@@ -3,6 +3,8 @@
 
 include::{snippets}/question-options/http-request.adoc[]
 
+include::{snippets}/question-options/path-parameters.adoc[]
+
 ===== Request Header
 
 include::{snippets}/question-options/request-headers.adoc[]

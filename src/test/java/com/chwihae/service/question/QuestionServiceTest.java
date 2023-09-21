@@ -3,12 +3,14 @@ package com.chwihae.service.question;
 import com.chwihae.domain.option.OptionRepository;
 import com.chwihae.domain.question.QuestionEntity;
 import com.chwihae.domain.question.QuestionRepository;
+import com.chwihae.domain.question.QuestionStatus;
 import com.chwihae.domain.question.QuestionType;
 import com.chwihae.domain.user.UserEntity;
 import com.chwihae.domain.user.UserRepository;
 import com.chwihae.dto.option.request.OptionCreateRequest;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
-import com.chwihae.dto.question.response.QuestionResponse;
+import com.chwihae.dto.question.response.QuestionDetailResponse;
+import com.chwihae.dto.question.response.QuestionListResponse;
 import com.chwihae.exception.CustomException;
 import com.chwihae.exception.CustomExceptionError;
 import com.chwihae.fixture.UserEntityFixture;
@@ -17,13 +19,17 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import static com.chwihae.domain.question.QuestionType.SPEC;
 import static com.chwihae.exception.CustomExceptionError.USER_NOT_FOUND;
 
 @Transactional
@@ -60,7 +66,7 @@ class QuestionServiceTest {
 
         QuestionCreateRequest request = QuestionCreateRequest.builder()
                 .title("title")
-                .type(QuestionType.SPEC)
+                .type(SPEC)
                 .closeAt(closeAt)
                 .content("content")
                 .options(options)
@@ -95,10 +101,10 @@ class QuestionServiceTest {
     void getQuestion_returnsQuestionResponse() throws Exception {
         //given
         UserEntity userEntity = userRepository.save(UserEntityFixture.of());
-        QuestionEntity questionEntity = questionRepository.save(createQuestion(userEntity));
+        QuestionEntity questionEntity = questionRepository.save(createQuestion(userEntity, SPEC));
 
         //when
-        QuestionResponse response = questionService.getQuestion(questionEntity.getId(), userEntity.getId());
+        QuestionDetailResponse response = questionService.getQuestion(questionEntity.getId(), userEntity.getId());
 
         //then
         Assertions.assertThat(response)
@@ -120,13 +126,67 @@ class QuestionServiceTest {
                 .isEqualTo(CustomExceptionError.QUESTION_NOT_FOUND);
     }
 
-    public QuestionEntity createQuestion(UserEntity userEntity) {
+    @Test
+    @DisplayName("질문 전체를 질문 상태 상관없이 페이지네이션으로 조회한다")
+    void getQuestions_withoutQuestionStatus_returnsPageResponse() throws Exception {
+        //given
+        UserEntity userEntity = userRepository.save(UserEntityFixture.of("test@email.com"));
+        QuestionEntity questionEntity1 = createQuestion(userEntity, SPEC);
+        QuestionEntity questionEntity2 = createQuestion(userEntity, SPEC);
+        QuestionEntity questionEntity3 = createQuestion(userEntity, SPEC);
+        QuestionEntity questionEntity4 = createQuestion(userEntity, SPEC);
+        QuestionEntity questionEntity5 = createQuestion(userEntity, SPEC);
+        questionRepository.saveAll(List.of(questionEntity1, questionEntity2, questionEntity3, questionEntity4, questionEntity5));
+
+        final int totalElementsSize = questionRepository.findAll().size();
+        final int pageSize = 2;
+        final int pageNumber = 1;
+
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
+        Optional<QuestionStatus> questionStatus = Optional.empty();
+
+        //when
+        Page<QuestionListResponse> response = questionService.getQuestions(questionStatus, pageRequest);
+
+        //then
+        Assertions.assertThat(response.getContent()).hasSize(pageSize);
+        Assertions.assertThat(response.getTotalPages()).isEqualTo((int) Math.ceil((double) totalElementsSize / pageSize));
+    }
+
+    @Test
+    @DisplayName("질문 전체를 질문 상태를 가지고 페이지네이션으로 조회한다")
+    void getQuestions_withQuestionStatus_returnsPageResponse() throws Exception {
+        //given
+        UserEntity userEntity = userRepository.save(UserEntityFixture.of("test@email.com"));
+        QuestionEntity questionEntity1 = createQuestion(userEntity, SPEC);
+        QuestionEntity questionEntity2 = createQuestion(userEntity, SPEC);
+        QuestionEntity questionEntity3 = createQuestion(userEntity, SPEC);
+        QuestionEntity questionEntity4 = createQuestion(userEntity, SPEC);
+        QuestionEntity questionEntity5 = createQuestion(userEntity, SPEC);
+        questionRepository.saveAll(List.of(questionEntity1, questionEntity2, questionEntity3, questionEntity4, questionEntity5));
+
+        final int totalElementsSize = questionRepository.findAll().size();
+        final int pageSize = 2;
+        final int pageNumber = 1;
+
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
+        Optional<QuestionStatus> questionStatus = Optional.of(QuestionStatus.IN_PROGRESS);
+
+        //when
+        Page<QuestionListResponse> response = questionService.getQuestions(questionStatus, pageRequest);
+
+        //then
+        Assertions.assertThat(response.getContent()).hasSize(pageSize);
+        Assertions.assertThat(response.getTotalPages()).isEqualTo((int) Math.ceil((double) totalElementsSize / pageSize));
+    }
+    
+    public QuestionEntity createQuestion(UserEntity userEntity, QuestionType type) {
         return QuestionEntity.builder()
                 .userEntity(userEntity)
                 .title("title")
                 .content("content")
                 .closeAt(LocalDateTime.of(2023, 11, 11, 0, 0))
-                .type(QuestionType.SPEC)
+                .type(type)
                 .build();
     }
 }

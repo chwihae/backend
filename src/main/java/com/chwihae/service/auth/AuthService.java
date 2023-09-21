@@ -29,6 +29,7 @@ public class AuthService {
 
         return LoginResponse.builder()
                 .userId(userEntity.getId())
+                .email(userEmail)
                 .token(issuedToken)
                 .refreshToken(issuedRefreshToken)
                 .build();
