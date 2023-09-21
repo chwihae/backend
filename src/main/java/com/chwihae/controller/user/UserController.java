@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.chwihae.domain.user.UserLevel.BACHELOR;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/users")
@@ -17,6 +19,6 @@ public class UserController {
     // TODO
     @GetMapping("/statistics")
     public ApiResponse<UserStatisticsResponse> getUserStatistics(@CurrentUser UserContext userContext) {
-        return ApiResponse.ok(UserStatisticsResponse.of(0, 0));
+        return ApiResponse.ok(UserStatisticsResponse.of(BACHELOR, 0, 0));
     }
 }

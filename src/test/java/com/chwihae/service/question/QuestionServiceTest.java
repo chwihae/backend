@@ -8,7 +8,7 @@ import com.chwihae.domain.user.UserEntity;
 import com.chwihae.domain.user.UserRepository;
 import com.chwihae.dto.option.request.OptionCreateRequest;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
-import com.chwihae.dto.question.response.QuestionResponse;
+import com.chwihae.dto.question.response.QuestionDetailResponse;
 import com.chwihae.exception.CustomException;
 import com.chwihae.exception.CustomExceptionError;
 import com.chwihae.fixture.UserEntityFixture;
@@ -98,7 +98,7 @@ class QuestionServiceTest {
         QuestionEntity questionEntity = questionRepository.save(createQuestion(userEntity));
 
         //when
-        QuestionResponse response = questionService.getQuestion(questionEntity.getId(), userEntity.getId());
+        QuestionDetailResponse response = questionService.getQuestion(questionEntity.getId(), userEntity.getId());
 
         //then
         Assertions.assertThat(response)

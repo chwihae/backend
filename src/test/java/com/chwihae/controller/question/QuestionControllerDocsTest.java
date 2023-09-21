@@ -4,7 +4,7 @@ import com.chwihae.dto.option.request.OptionCreateRequest;
 import com.chwihae.dto.option.response.Option;
 import com.chwihae.dto.option.response.VoteOptionResponse;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
-import com.chwihae.dto.question.response.QuestionResponse;
+import com.chwihae.dto.question.response.QuestionDetailResponse;
 import com.chwihae.infra.RestDocsSupport;
 import com.chwihae.infra.WithTestUser;
 import com.chwihae.service.question.QuestionService;
@@ -90,13 +90,13 @@ class QuestionControllerDocsTest extends RestDocsSupport {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestHeaders(
-                                headerWithName(AUTHORIZATION).description("인증 토큰 (타입: 문자열) (필수값)")
+                                headerWithName(AUTHORIZATION).description("[필수값] 인증 토큰 (타입: 문자열)")
                         ),
                         requestFields(
                                 fieldWithPath("title").type(JsonFieldType.STRING).description("질문 제목"),
-                                fieldWithPath("type").type(JsonFieldType.STRING).description("질문 타입, 가능한 값 [SPEC, STUDY, COMPANY, ETC]"),
+                                fieldWithPath("type").type(JsonFieldType.STRING).description("질문 타입 (가능한 값: [SPEC, STUDY, COMPANY, ETC])"),
                                 fieldWithPath("content").type(JsonFieldType.STRING).description("질문 내용"),
-                                fieldWithPath("closeAt").type(JsonFieldType.STRING).description("질문 마감 시간, 시간 형식(yyyy-mm-ddThh:mm:ss)"),
+                                fieldWithPath("closeAt").type(JsonFieldType.STRING).description("질문 마감 시간 (형식: yyyy-mm-ddThh:mm:ss)"),
                                 fieldWithPath("options[]").type(JsonFieldType.ARRAY).description("질문 옵션"),
                                 fieldWithPath("options[].name").type(JsonFieldType.STRING).description("옵션 이름")
                         ),
@@ -115,7 +115,7 @@ class QuestionControllerDocsTest extends RestDocsSupport {
     @WithTestUser
     void getQuestion_restDocs() throws Exception {
         //given
-        QuestionResponse questionResponse = QuestionResponse.builder()
+        QuestionDetailResponse questionDetailResponse = QuestionDetailResponse.builder()
                 .id(43L)
                 .title("title")
                 .content("content")
@@ -126,7 +126,7 @@ class QuestionControllerDocsTest extends RestDocsSupport {
                 .build();
 
         given(questionService.getQuestion(any(), any()))
-                .willReturn(questionResponse);
+                .willReturn(questionDetailResponse);
 
         //when //then
         mockMvc.perform(
@@ -140,10 +140,10 @@ class QuestionControllerDocsTest extends RestDocsSupport {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestHeaders(
-                                headerWithName(AUTHORIZATION).description("인증 토큰 (타입: 문자열) (필수값)")
+                                headerWithName(AUTHORIZATION).description("[필수값] 인증 토큰 (타입: 문자열)")
                         ),
                         pathParameters(
-                                parameterWithName("questionId").description("질문 아이디 (타입: 숫자) (필수값)")
+                                parameterWithName("questionId").description("[필수값] 질문 아이디 (타입: 숫자)")
                         ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER).description("코드"),
@@ -152,9 +152,9 @@ class QuestionControllerDocsTest extends RestDocsSupport {
                                 fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("질문 아이디"),
                                 fieldWithPath("data.title").type(JsonFieldType.STRING).description("질문 제목"),
                                 fieldWithPath("data.content").type(JsonFieldType.STRING).description("질문 내용"),
-                                fieldWithPath("data.type").type(JsonFieldType.STRING).description("질문 타입, [SPEC, STUDY, COMPANY, ETC]"),
-                                fieldWithPath("data.status").type(JsonFieldType.STRING).description("질문 상태, [IN_PROGRESS, COMPLETED]"),
-                                fieldWithPath("data.closeAt").type(JsonFieldType.STRING).description("질문 마감 시간, 시간 형식(yyyy-mm-ddThh:mm:ss)"),
+                                fieldWithPath("data.type").type(JsonFieldType.STRING).description("질문 타입 [SPEC, STUDY, COMPANY, ETC]"),
+                                fieldWithPath("data.status").type(JsonFieldType.STRING).description("질문 상태 [IN_PROGRESS, COMPLETED]"),
+                                fieldWithPath("data.closeAt").type(JsonFieldType.STRING).description("질문 마감 시간 (형식: yyyy-mm-ddThh:mm:ss)"),
                                 fieldWithPath("data.editable").type(JsonFieldType.BOOLEAN).description("질문 수정 가능 여부(질문 작성자이면 true, 아니면 false)"),
                                 fieldWithPath("data.viewCount").type(JsonFieldType.NUMBER).description("질문 조회 수"),
                                 fieldWithPath("data.commentCount").type(JsonFieldType.NUMBER).description("질문에 달린 댓글 수"),
@@ -200,10 +200,10 @@ class QuestionControllerDocsTest extends RestDocsSupport {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestHeaders(
-                                headerWithName(AUTHORIZATION).description("인증 토큰 (타입: 문자열) (필수값)")
+                                headerWithName(AUTHORIZATION).description("[필수값] 인증 토큰 (타입: 문자열)")
                         ),
                         pathParameters(
-                                parameterWithName("questionId").description("질문 아이디 (타입: 숫자) (필수값)")
+                                parameterWithName("questionId").description("[필수값] 질문 아이디 (타입: 숫자)")
                         ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER).description("코드"),

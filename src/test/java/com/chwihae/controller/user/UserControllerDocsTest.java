@@ -37,12 +37,13 @@ class UserControllerDocsTest extends RestDocsSupport {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestHeaders(
-                                headerWithName(AUTHORIZATION).description("인증 토큰 (타입: 문자열) (필수값)")
+                                headerWithName(AUTHORIZATION).description("[필수값] 인증 토큰 (타입: 문자열)")
                         ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER).description("코드"),
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("메시지"),
                                 fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터"),
+                                fieldWithPath("level").type(JsonFieldType.OBJECT).description("유저 레벨"),
                                 fieldWithPath("data.commentCount").type(JsonFieldType.NUMBER).description("질문 개수"),
                                 fieldWithPath("data.voteCount").type(JsonFieldType.NUMBER).description("투표 개수")
                         ))

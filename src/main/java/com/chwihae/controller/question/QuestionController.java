@@ -2,17 +2,26 @@ package com.chwihae.controller.question;
 
 import com.chwihae.config.security.CurrentUser;
 import com.chwihae.controller.ApiResponse;
+import com.chwihae.domain.question.QuestionStatus;
 import com.chwihae.dto.IdResponse;
 import com.chwihae.dto.option.response.VoteOptionResponse;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
-import com.chwihae.dto.question.response.QuestionResponse;
+import com.chwihae.dto.question.response.QuestionDetailResponse;
+import com.chwihae.dto.question.response.QuestionListResponse;
 import com.chwihae.dto.user.UserContext;
 import com.chwihae.service.question.QuestionService;
 import com.chwihae.service.vote.VoteService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.BindException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
+
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @RequiredArgsConstructor
 @RestController
@@ -23,6 +32,12 @@ public class QuestionController {
     private final QuestionValidator questionValidator;
     private final VoteService voteService;
 
+    @GetMapping
+    public ApiResponse<Page<QuestionListResponse>> getQuestions(@RequestParam(value = "status", required = false) QuestionStatus status,
+                                                                @PageableDefault(sort = "createdAt", direction = DESC) Pageable pageable) {
+        return ApiResponse.ok(questionService.getQuestions(Optional.ofNullable(status), pageable));
+    }
+
     @PostMapping
     public ApiResponse<IdResponse> createQuestion(@RequestBody @Validated QuestionCreateRequest request,
                                                   @CurrentUser UserContext userContext) throws BindException {
@@ -31,8 +46,8 @@ public class QuestionController {
     }
 
     @GetMapping("/{questionId}")
-    public ApiResponse<QuestionResponse> getQuestion(@PathVariable Long questionId,
-                                                     @CurrentUser UserContext userContext) {
+    public ApiResponse<QuestionDetailResponse> getQuestion(@PathVariable Long questionId,
+                                                           @CurrentUser UserContext userContext) {
         return ApiResponse.ok(questionService.getQuestion(questionId, userContext.getId()));
     }
 
