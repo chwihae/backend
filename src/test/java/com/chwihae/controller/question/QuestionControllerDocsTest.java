@@ -5,12 +5,16 @@ import com.chwihae.dto.option.response.Option;
 import com.chwihae.dto.option.response.VoteOptionResponse;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
 import com.chwihae.dto.question.response.QuestionDetailResponse;
+import com.chwihae.dto.question.response.QuestionListResponse;
 import com.chwihae.infra.RestDocsSupport;
 import com.chwihae.infra.WithTestUser;
 import com.chwihae.service.question.QuestionService;
 import com.chwihae.service.vote.VoteService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,8 +38,7 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -90,7 +93,7 @@ class QuestionControllerDocsTest extends RestDocsSupport {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestHeaders(
-                                headerWithName(AUTHORIZATION).description("[필수값] 인증 토큰 (타입: 문자열)")
+                                headerWithName(AUTHORIZATION).description("[Required] 인증 토큰 (타입: 문자열)")
                         ),
                         requestFields(
                                 fieldWithPath("title").type(JsonFieldType.STRING).description("질문 제목"),
@@ -109,6 +112,72 @@ class QuestionControllerDocsTest extends RestDocsSupport {
                 ));
     }
 
+    @Test
+    @DisplayName("질문 전체 리스트 조회 API")
+    @WithTestUser
+    void getQuestions_restDocs() throws Exception {
+        //given
+        final int contentSize = 5;
+        List<QuestionListResponse> content = new ArrayList<>();
+        for (int number = 1; number <= contentSize; number++) {
+            content.add(
+                    QuestionListResponse.builder()
+                            .id((long) number)
+                            .status(IN_PROGRESS)
+                            .title("question title " + number)
+                            .type(COMPANY)
+                            .build()
+            );
+        }
+
+        final int pageNumber = 0;
+        final int pageSize = 2;
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
+        Page<QuestionListResponse> mockPage = new PageImpl<>(content, pageRequest, contentSize);
+
+        given(questionService.getQuestions(any(), any()))
+                .willReturn(mockPage);
+
+        //when //then
+        mockMvc.perform(
+                        get("/api/v1/questions?status={status}&page={page}&size={size}", IN_PROGRESS, pageNumber, pageSize)
+                                .header(AUTHORIZATION, token(1L))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("question-list",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestHeaders(
+                                headerWithName(AUTHORIZATION).description("[Required] 인증 토큰 (타입: 문자열)")
+                        ),
+                        queryParameters(
+                                parameterWithName("status").description("[Optional] 질문 상태 (가능한 값: [IN_PROGRESS, COMPLETED])"),
+                                parameterWithName("page").description("[Optional] 페이지 번호 (default: 0)"),
+                                parameterWithName("size").description("[Optional] 페이지 사이즈 (default: 10)")
+                        ),
+                        relaxedResponseFields(
+                                fieldWithPath("code").type(JsonFieldType.NUMBER).description("코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("메시지"),
+                                fieldWithPath("data.content[]").type(JsonFieldType.ARRAY).description("질문 목록"),
+                                fieldWithPath("data.content[].id").type(JsonFieldType.NUMBER).description("질문 아이디"),
+                                fieldWithPath("data.content[].title").type(JsonFieldType.STRING).description("질문 제목"),
+                                fieldWithPath("data.content[].type").type(JsonFieldType.STRING).description("질문 타입 [SPEC, STUDY, COMPANY, ETC]"),
+                                fieldWithPath("data.content[].status").type(JsonFieldType.STRING).description("질문 상태 [IN_PROGRESS, COMPLETED]"),
+                                fieldWithPath("data.content[].viewCount").type(JsonFieldType.NUMBER).description("질문 조회수"),
+                                fieldWithPath("data.content[].commentCount").type(JsonFieldType.NUMBER).description("질문 댓글수"),
+                                fieldWithPath("data.content[].bookmarkCount").type(JsonFieldType.NUMBER).description("질문 저장수"),
+                                fieldWithPath("data.totalPages").type(JsonFieldType.NUMBER).description("총 페이지 수"),
+                                fieldWithPath("data.totalElements").type(JsonFieldType.NUMBER).description("총 원소 개수"),
+                                fieldWithPath("data.last").type(JsonFieldType.BOOLEAN).description("마지막 페이지 여부"),
+                                fieldWithPath("data.first").type(JsonFieldType.BOOLEAN).description("처음 페이지 여부"),
+                                fieldWithPath("data.size").type(JsonFieldType.NUMBER).description("현재 페이지 크기"),
+                                fieldWithPath("data.numberOfElements").type(JsonFieldType.NUMBER).description("현재 페이지 원소 개수"),
+                                fieldWithPath("data.empty").type(JsonFieldType.BOOLEAN).description("현재 페이지 원소 존재 여부"),
+                                fieldWithPath("data.number").type(JsonFieldType.NUMBER).description("현재 페이지 번호")
+                        )
+                ));
+    }
 
     @Test
     @DisplayName("질문 조회 API")
@@ -140,10 +209,10 @@ class QuestionControllerDocsTest extends RestDocsSupport {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestHeaders(
-                                headerWithName(AUTHORIZATION).description("[필수값] 인증 토큰 (타입: 문자열)")
+                                headerWithName(AUTHORIZATION).description("[Required] 인증 토큰 (타입: 문자열)")
                         ),
                         pathParameters(
-                                parameterWithName("questionId").description("[필수값] 질문 아이디 (타입: 숫자)")
+                                parameterWithName("questionId").description("[Required] 질문 아이디 (타입: 숫자)")
                         ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER).description("코드"),
@@ -200,10 +269,10 @@ class QuestionControllerDocsTest extends RestDocsSupport {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestHeaders(
-                                headerWithName(AUTHORIZATION).description("[필수값] 인증 토큰 (타입: 문자열)")
+                                headerWithName(AUTHORIZATION).description("[Required] 인증 토큰 (타입: 문자열)")
                         ),
                         pathParameters(
-                                parameterWithName("questionId").description("[필수값] 질문 아이디 (타입: 숫자)")
+                                parameterWithName("questionId").description("[Required] 질문 아이디 (타입: 숫자)")
                         ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER).description("코드"),

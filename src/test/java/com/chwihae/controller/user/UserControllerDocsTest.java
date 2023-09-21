@@ -37,7 +37,7 @@ class UserControllerDocsTest extends RestDocsSupport {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestHeaders(
-                                headerWithName(AUTHORIZATION).description("[필수값] 인증 토큰 (타입: 문자열)")
+                                headerWithName(AUTHORIZATION).description("[Required] 인증 토큰 (타입: 문자열)")
                         ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER).description("코드"),

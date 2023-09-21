@@ -1,0 +1,17 @@
+[[question-list]]
+===== HTTP Request
+
+include::{snippets}/question-list/http-request.adoc[]
+
+===== Request Query Parameter
+
+include::{snippets}/question-list/query-parameters.adoc[]
+
+===== Request Header
+
+include::{snippets}/question-list/request-headers.adoc[]
+
+===== HTTP Response
+
+include::{snippets}/question-list/http-response.adoc[]
+include::{snippets}/question-list/response-fields.adoc[]
