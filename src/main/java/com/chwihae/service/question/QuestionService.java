@@ -5,6 +5,7 @@ import com.chwihae.domain.option.OptionRepository;
 import com.chwihae.domain.question.QuestionEntity;
 import com.chwihae.domain.question.QuestionRepository;
 import com.chwihae.domain.question.QuestionStatus;
+import com.chwihae.domain.question.QuestionType;
 import com.chwihae.domain.user.UserEntity;
 import com.chwihae.domain.user.UserRepository;
 import com.chwihae.dto.option.request.OptionCreateRequest;
@@ -19,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 import static com.chwihae.exception.CustomExceptionError.QUESTION_NOT_FOUND;
 import static com.chwihae.exception.CustomExceptionError.USER_NOT_FOUND;
@@ -33,12 +33,8 @@ public class QuestionService {
     private final QuestionRepository questionRepository;
     private final OptionRepository optionRepository;
 
-    public Page<QuestionListResponse> getQuestions(Optional<QuestionStatus> statusOptional, Pageable pageable) {
-        return statusOptional
-                .map(status -> questionRepository.findAllByStatus(status, pageable)
-                        .map(QuestionListResponse::of))
-                .orElseGet(() -> questionRepository.findAll(pageable)
-                        .map(QuestionListResponse::of));
+    public Page<QuestionListResponse> getQuestionsByTypeAndStatus(QuestionType type, QuestionStatus status, Pageable pageable) {
+        return questionRepository.findByStatusAndType(status, type, pageable).map(QuestionListResponse::of);
     }
 
     @Transactional

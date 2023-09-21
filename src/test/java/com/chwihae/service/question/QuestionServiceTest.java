@@ -27,9 +27,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-import static com.chwihae.domain.question.QuestionType.SPEC;
+import static com.chwihae.domain.question.QuestionType.*;
 import static com.chwihae.exception.CustomExceptionError.USER_NOT_FOUND;
 
 @Transactional
@@ -127,59 +126,32 @@ class QuestionServiceTest {
     }
 
     @Test
-    @DisplayName("질문 전체를 질문 상태 상관없이 페이지네이션으로 조회한다")
-    void getQuestions_withoutQuestionStatus_returnsPageResponse() throws Exception {
+    @DisplayName("질문 전체를 질문 타입,질문 상태 조건으로 페이지네이션으로 조회한다")
+    void getQuestions_byTypeAndStatus_returnsPageResponse() throws Exception {
         //given
         UserEntity userEntity = userRepository.save(UserEntityFixture.of("test@email.com"));
         QuestionEntity questionEntity1 = createQuestion(userEntity, SPEC);
-        QuestionEntity questionEntity2 = createQuestion(userEntity, SPEC);
-        QuestionEntity questionEntity3 = createQuestion(userEntity, SPEC);
+        QuestionEntity questionEntity2 = createQuestion(userEntity, COMPANY);
+        QuestionEntity questionEntity3 = createQuestion(userEntity, ETC);
         QuestionEntity questionEntity4 = createQuestion(userEntity, SPEC);
         QuestionEntity questionEntity5 = createQuestion(userEntity, SPEC);
         questionRepository.saveAll(List.of(questionEntity1, questionEntity2, questionEntity3, questionEntity4, questionEntity5));
 
-        final int totalElementsSize = questionRepository.findAll().size();
         final int pageSize = 2;
         final int pageNumber = 1;
 
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
-        Optional<QuestionStatus> questionStatus = Optional.empty();
+        QuestionStatus status = QuestionStatus.IN_PROGRESS;
+        QuestionType type = SPEC;
 
         //when
-        Page<QuestionListResponse> response = questionService.getQuestions(questionStatus, pageRequest);
+        Page<QuestionListResponse> response = questionService.getQuestionsByTypeAndStatus(type, status, pageRequest);
 
         //then
-        Assertions.assertThat(response.getContent()).hasSize(pageSize);
-        Assertions.assertThat(response.getTotalPages()).isEqualTo((int) Math.ceil((double) totalElementsSize / pageSize));
+        Assertions.assertThat(response.getContent()).hasSize(1);
+        Assertions.assertThat(response.getTotalPages()).isEqualTo(2);
     }
 
-    @Test
-    @DisplayName("질문 전체를 질문 상태를 가지고 페이지네이션으로 조회한다")
-    void getQuestions_withQuestionStatus_returnsPageResponse() throws Exception {
-        //given
-        UserEntity userEntity = userRepository.save(UserEntityFixture.of("test@email.com"));
-        QuestionEntity questionEntity1 = createQuestion(userEntity, SPEC);
-        QuestionEntity questionEntity2 = createQuestion(userEntity, SPEC);
-        QuestionEntity questionEntity3 = createQuestion(userEntity, SPEC);
-        QuestionEntity questionEntity4 = createQuestion(userEntity, SPEC);
-        QuestionEntity questionEntity5 = createQuestion(userEntity, SPEC);
-        questionRepository.saveAll(List.of(questionEntity1, questionEntity2, questionEntity3, questionEntity4, questionEntity5));
-
-        final int totalElementsSize = questionRepository.findAll().size();
-        final int pageSize = 2;
-        final int pageNumber = 1;
-
-        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
-        Optional<QuestionStatus> questionStatus = Optional.of(QuestionStatus.IN_PROGRESS);
-
-        //when
-        Page<QuestionListResponse> response = questionService.getQuestions(questionStatus, pageRequest);
-
-        //then
-        Assertions.assertThat(response.getContent()).hasSize(pageSize);
-        Assertions.assertThat(response.getTotalPages()).isEqualTo((int) Math.ceil((double) totalElementsSize / pageSize));
-    }
-    
     public QuestionEntity createQuestion(UserEntity userEntity, QuestionType type) {
         return QuestionEntity.builder()
                 .userEntity(userEntity)

@@ -3,6 +3,7 @@ package com.chwihae.controller.question;
 import com.chwihae.config.security.CurrentUser;
 import com.chwihae.controller.ApiResponse;
 import com.chwihae.domain.question.QuestionStatus;
+import com.chwihae.domain.question.QuestionType;
 import com.chwihae.dto.IdResponse;
 import com.chwihae.dto.option.response.VoteOptionResponse;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
@@ -19,8 +20,6 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @RequiredArgsConstructor
@@ -33,9 +32,10 @@ public class QuestionController {
     private final VoteService voteService;
 
     @GetMapping
-    public ApiResponse<Page<QuestionListResponse>> getQuestions(@RequestParam(value = "status", required = false) QuestionStatus status,
+    public ApiResponse<Page<QuestionListResponse>> getQuestions(@RequestParam(value = "type", required = false) QuestionType type,
+                                                                @RequestParam(value = "status", required = false) QuestionStatus status,
                                                                 @PageableDefault(sort = "createdAt", direction = DESC) Pageable pageable) {
-        return ApiResponse.ok(questionService.getQuestions(Optional.ofNullable(status), pageable));
+        return ApiResponse.ok(questionService.getQuestionsByTypeAndStatus(type, status, pageable));
     }
 
     @PostMapping

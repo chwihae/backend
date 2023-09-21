@@ -1,5 +1,6 @@
 package com.chwihae.controller.question;
 
+import com.chwihae.domain.question.QuestionType;
 import com.chwihae.dto.option.request.OptionCreateRequest;
 import com.chwihae.dto.option.response.Option;
 import com.chwihae.dto.option.response.VoteOptionResponse;
@@ -113,7 +114,7 @@ class QuestionControllerDocsTest extends RestDocsSupport {
     }
 
     @Test
-    @DisplayName("질문 전체 리스트 조회 API")
+    @DisplayName("질문 리스트 조회 API")
     @WithTestUser
     void getQuestions_restDocs() throws Exception {
         //given
@@ -132,15 +133,16 @@ class QuestionControllerDocsTest extends RestDocsSupport {
 
         final int pageNumber = 0;
         final int pageSize = 2;
+        QuestionType type = COMPANY;
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
         Page<QuestionListResponse> mockPage = new PageImpl<>(content, pageRequest, contentSize);
 
-        given(questionService.getQuestions(any(), any()))
+        given(questionService.getQuestionsByTypeAndStatus(any(), any(), any()))
                 .willReturn(mockPage);
 
         //when //then
         mockMvc.perform(
-                        get("/api/v1/questions?status={status}&page={page}&size={size}", IN_PROGRESS, pageNumber, pageSize)
+                        get("/api/v1/questions?type={type}&status={status}&page={page}&size={size}", COMPANY, IN_PROGRESS, pageNumber, pageSize)
                                 .header(AUTHORIZATION, token(1L))
                 )
                 .andDo(print())
@@ -152,6 +154,7 @@ class QuestionControllerDocsTest extends RestDocsSupport {
                                 headerWithName(AUTHORIZATION).description("[Required] 인증 토큰 (타입: 문자열)")
                         ),
                         queryParameters(
+                                parameterWithName("type").description("[Optional] 질문 타입 (가능한 값: [SPEC, STUDY, COMPANY, ETC])"),
                                 parameterWithName("status").description("[Optional] 질문 상태 (가능한 값: [IN_PROGRESS, COMPLETED])"),
                                 parameterWithName("page").description("[Optional] 페이지 번호 (default: 0)"),
                                 parameterWithName("size").description("[Optional] 페이지 사이즈 (default: 10)")
@@ -180,7 +183,7 @@ class QuestionControllerDocsTest extends RestDocsSupport {
     }
 
     @Test
-    @DisplayName("질문 조회 API")
+    @DisplayName("질문 단건 조회 API")
     @WithTestUser
     void getQuestion_restDocs() throws Exception {
         //given
