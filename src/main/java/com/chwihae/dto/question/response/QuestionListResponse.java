@@ -24,6 +24,7 @@ public class QuestionListResponse {
     public static QuestionListResponse of(QuestionEntity questionEntity) {
         return QuestionListResponse.builder()
                 .id(questionEntity.getId())
+                .title(questionEntity.getTitle())
                 .status(questionEntity.getStatus())
                 .type(questionEntity.getType())
                 .build();
