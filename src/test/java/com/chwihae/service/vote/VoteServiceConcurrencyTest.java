@@ -6,8 +6,8 @@ import com.chwihae.domain.question.QuestionType;
 import com.chwihae.domain.user.UserEntity;
 import com.chwihae.exception.CustomException;
 import com.chwihae.exception.CustomExceptionError;
-import com.chwihae.fixture.UserEntityFixture;
-import com.chwihae.infra.IntegrationTest;
+import com.chwihae.infra.fixture.UserEntityFixture;
+import com.chwihae.infra.AbstractIntegrationTest;
 import com.chwihae.utils.ClassUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.*;
 
-class VoteServiceConcurrencyTest extends IntegrationTest {
+class VoteServiceConcurrencyTest extends AbstractIntegrationTest {
 
     @AfterEach
     void tearDown() {

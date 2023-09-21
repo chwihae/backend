@@ -8,8 +8,8 @@ import com.chwihae.domain.user.UserEntity;
 import com.chwihae.domain.vote.VoteEntity;
 import com.chwihae.dto.option.request.OptionCreateRequest;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
-import com.chwihae.fixture.UserEntityFixture;
-import com.chwihae.infra.MockMvcTest;
+import com.chwihae.infra.fixture.UserEntityFixture;
+import com.chwihae.infra.AbstractMockMvcTest;
 import com.chwihae.infra.WithTestUser;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Transactional
-class QuestionControllerTest extends MockMvcTest {
+class QuestionControllerTest extends AbstractMockMvcTest {
 
     @Test
     @DisplayName("POST /api/v1/questions - 성공")

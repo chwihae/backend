@@ -1,12 +1,11 @@
 package com.chwihae.infra;
 
-import com.chwihae.config.properties.JwtTokenProperties;
 import com.chwihae.config.security.JwtTokenHandler;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
@@ -18,19 +17,11 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @ExtendWith(RestDocumentationExtension.class)
-@IntegrationTestSupport
-public abstract class RestDocsTest {
+public abstract class AbstractRestDocsTest {
 
     protected MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
-    private JwtTokenProperties jwtTokenProperties;
-
-    @Autowired
-    private JwtTokenHandler jwtTokenHandler;
+    protected ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    protected JwtTokenHandler jwtTokenHandler = new JwtTokenHandler();
 
     @BeforeEach
     void setUp(RestDocumentationContextProvider provider) {
@@ -45,7 +36,9 @@ public abstract class RestDocsTest {
     protected abstract Object initController();
 
     protected String token(Long userId) {
-        return jwtTokenHandler.generateToken(userId, jwtTokenProperties.getSecretKey(), jwtTokenProperties.getTokenExpiredTimeMs());
+        String secretKey = "adZw12pxc55CmnIKsNP42KIa+M+bTlezcJKs3sW2RctO";
+        long tokenExpiredTimeMs = 86400000L;
+        return jwtTokenHandler.generateToken(userId, secretKey, tokenExpiredTimeMs);
     }
 
     protected String body(Object body) throws JsonProcessingException {

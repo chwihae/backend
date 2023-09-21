@@ -2,7 +2,7 @@ package com.chwihae.controller.auth;
 
 import com.chwihae.dto.auth.request.KakaoLoginRequest;
 import com.chwihae.dto.auth.response.LoginResponse;
-import com.chwihae.infra.RestDocsTest;
+import com.chwihae.infra.AbstractRestDocsTest;
 import com.chwihae.service.auth.AuthService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class AuthControllerDocsTest extends RestDocsTest {
+class AuthControllerDocsTest extends AbstractRestDocsTest {
 
     private final AuthService authService = Mockito.mock(AuthService.class);
 

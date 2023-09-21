@@ -1,7 +1,7 @@
 package com.chwihae.domain.question;
 
 import com.chwihae.domain.user.UserEntity;
-import com.chwihae.fixture.UserEntityFixture;
+import com.chwihae.infra.fixture.UserEntityFixture;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

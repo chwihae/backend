@@ -16,7 +16,7 @@ import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @IntegrationTestSupport
-public abstract class IntegrationTest {
+public class AbstractIntegrationTest extends AbstractContainerBaseTest {
 
     @Autowired
     protected EntityManager entityManager;

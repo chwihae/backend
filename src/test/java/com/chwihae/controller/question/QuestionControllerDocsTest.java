@@ -7,8 +7,7 @@ import com.chwihae.dto.option.response.VoteOptionResponse;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
 import com.chwihae.dto.question.response.QuestionDetailResponse;
 import com.chwihae.dto.question.response.QuestionListResponse;
-import com.chwihae.infra.RestDocsTest;
-import com.chwihae.infra.WithTestUser;
+import com.chwihae.infra.AbstractRestDocsTest;
 import com.chwihae.service.question.QuestionService;
 import com.chwihae.service.vote.VoteService;
 import org.junit.jupiter.api.DisplayName;
@@ -17,7 +16,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -43,8 +41,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@Transactional
-class QuestionControllerDocsTest extends RestDocsTest {
+class QuestionControllerDocsTest extends AbstractRestDocsTest {
 
     private final QuestionService questionService = mock(QuestionService.class);
     private final QuestionValidator questionValidator = mock(QuestionValidator.class);
@@ -57,7 +54,6 @@ class QuestionControllerDocsTest extends RestDocsTest {
 
     @Test
     @DisplayName("질문 등록 API")
-    @WithTestUser
     void createQuestion_restDocs() throws Exception {
         //given
         List<OptionCreateRequest> options = new ArrayList<>();
@@ -115,7 +111,6 @@ class QuestionControllerDocsTest extends RestDocsTest {
 
     @Test
     @DisplayName("질문 리스트 조회 API")
-    @WithTestUser
     void getQuestions_restDocs() throws Exception {
         //given
         final int contentSize = 5;
@@ -184,7 +179,6 @@ class QuestionControllerDocsTest extends RestDocsTest {
 
     @Test
     @DisplayName("질문 단건 조회 API")
-    @WithTestUser
     void getQuestion_restDocs() throws Exception {
         //given
         QuestionDetailResponse questionDetailResponse = QuestionDetailResponse.builder()
@@ -239,7 +233,6 @@ class QuestionControllerDocsTest extends RestDocsTest {
 
     @Test
     @DisplayName("질문 옵션 조회 API")
-    @WithTestUser
     void getOptions_restDocs() throws Exception {
         //given
         final int optionSize = 5;
@@ -292,7 +285,6 @@ class QuestionControllerDocsTest extends RestDocsTest {
 
     @Test
     @DisplayName("투표 등록 API")
-    @WithTestUser
     void createVote_restDocs() throws Exception {
         //when //then
         mockMvc.perform(

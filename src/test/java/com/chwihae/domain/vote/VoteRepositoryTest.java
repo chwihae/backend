@@ -1,14 +1,19 @@
 package com.chwihae.domain.vote;
 
 import com.chwihae.domain.option.OptionEntity;
+import com.chwihae.domain.option.OptionRepository;
 import com.chwihae.domain.question.QuestionEntity;
+import com.chwihae.domain.question.QuestionRepository;
 import com.chwihae.domain.question.QuestionType;
 import com.chwihae.domain.user.UserEntity;
-import com.chwihae.fixture.UserEntityFixture;
-import com.chwihae.infra.IntegrationTest;
+import com.chwihae.domain.user.UserRepository;
+import com.chwihae.infra.fixture.UserEntityFixture;
+import com.chwihae.infra.AbstractIntegrationTest;
+import jakarta.persistence.EntityManager;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +21,22 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Transactional
-class VoteRepositoryTest extends IntegrationTest {
+class VoteRepositoryTest extends AbstractIntegrationTest {
+
+    @Autowired
+    protected UserRepository userRepository;
+
+    @Autowired
+    protected OptionRepository optionRepository;
+
+    @Autowired
+    protected QuestionRepository questionRepository;
+
+    @Autowired
+    protected VoteRepository voteRepository;
+
+    @Autowired
+    protected EntityManager entityManager;
 
     @Test
     @DisplayName("사용자가 질문에 투표를 하였으면 true를 리턴한다")

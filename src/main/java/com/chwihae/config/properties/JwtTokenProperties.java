@@ -9,10 +9,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
 @ConfigurationProperties(prefix = "jwt")
-@Validated
 @Setter
 @Getter
 @Component
+@Validated
 public class JwtTokenProperties {
 
     @NotBlank(message = "JWT Secret Key must not be blank")

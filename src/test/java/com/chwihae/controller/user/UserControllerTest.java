@@ -1,6 +1,6 @@
 package com.chwihae.controller.user;
 
-import com.chwihae.infra.MockMvcTest;
+import com.chwihae.infra.AbstractMockMvcTest;
 import com.chwihae.infra.WithTestUser;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,7 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Transactional
-class UserControllerTest extends MockMvcTest {
+class UserControllerTest extends AbstractMockMvcTest {
 
     @Test
     @DisplayName("GET /api/v1/users/statistics - 성공")

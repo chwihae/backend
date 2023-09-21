@@ -7,8 +7,8 @@ import com.chwihae.domain.user.UserEntity;
 import com.chwihae.domain.vote.VoteEntity;
 import com.chwihae.dto.option.response.VoteOptionResponse;
 import com.chwihae.exception.CustomException;
-import com.chwihae.fixture.UserEntityFixture;
-import com.chwihae.infra.IntegrationTest;
+import com.chwihae.infra.AbstractIntegrationTest;
+import com.chwihae.infra.fixture.UserEntityFixture;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ import static com.chwihae.exception.CustomExceptionError.*;
 import static org.assertj.core.groups.Tuple.tuple;
 
 @Transactional
-class VoteServiceTest extends IntegrationTest {
+class VoteServiceTest extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("질문자는 투표 결과를 조회할 수 있다")
