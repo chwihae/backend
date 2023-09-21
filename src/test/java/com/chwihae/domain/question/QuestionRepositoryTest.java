@@ -29,22 +29,23 @@ class QuestionRepositoryTest {
     QuestionRepository questionRepository;
 
     @Test
-    @DisplayName("질문 상태로 pagination 조회한다")
-    void findAllByStatus_returnsPagination() throws Exception {
+    @DisplayName("질문 상태, 질문 타입으로 pagination 조회한다")
+    void findByStatusAndType_returnsPagination() throws Exception {
         //given
         UserEntity userEntity = userRepository.save(UserEntityFixture.of("test@email.com"));
         QuestionEntity question1 = createQuestion(userEntity, QuestionType.SPEC);
         QuestionEntity question2 = createQuestion(userEntity, QuestionType.COMPANY);
         QuestionEntity question3 = createQuestion(userEntity, QuestionType.ETC);
-        QuestionEntity question4 = createQuestion(userEntity, QuestionType.STUDY);
-        questionRepository.saveAll(List.of(question1, question2, question3, question4));
+        QuestionEntity question4 = createQuestion(userEntity, QuestionType.SPEC);
+        QuestionEntity question5 = createQuestion(userEntity, QuestionType.STUDY);
+        questionRepository.saveAll(List.of(question1, question2, question3, question4, question5));
 
         final int pageSize = 2;
         final int pageNumber = 0;
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
 
         //when
-        Page<QuestionEntity> questionEntities = questionRepository.findAllByStatus(IN_PROGRESS, pageRequest);
+        Page<QuestionEntity> questionEntities = questionRepository.findByStatusAndType(IN_PROGRESS, QuestionType.SPEC, pageRequest);
 
         //then
         Assertions.assertThat(questionEntities.getContent()).hasSize(pageSize);
