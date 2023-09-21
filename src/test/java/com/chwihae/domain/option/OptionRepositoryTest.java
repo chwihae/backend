@@ -1,19 +1,15 @@
 package com.chwihae.domain.option;
 
 import com.chwihae.domain.question.QuestionEntity;
-import com.chwihae.domain.question.QuestionRepository;
 import com.chwihae.domain.question.QuestionType;
 import com.chwihae.domain.user.UserEntity;
-import com.chwihae.domain.user.UserRepository;
 import com.chwihae.domain.vote.VoteEntity;
-import com.chwihae.domain.vote.VoteRepository;
 import com.chwihae.dto.option.response.Option;
 import com.chwihae.fixture.UserEntityFixture;
-import com.chwihae.infra.IntegrationTestSupport;
+import com.chwihae.infra.IntegrationTest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -22,20 +18,7 @@ import java.util.List;
 import static org.assertj.core.groups.Tuple.tuple;
 
 @Transactional
-@IntegrationTestSupport
-class OptionRepositoryTest {
-
-    @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    QuestionRepository questionRepository;
-
-    @Autowired
-    OptionRepository optionRepository;
-
-    @Autowired
-    VoteRepository voteRepository;
+class OptionRepositoryTest extends IntegrationTest {
 
     @Test
     @DisplayName("질문 아이디로 투표 수 합계와 함께 옵션 리스트를 조회한다")
@@ -114,6 +97,7 @@ class OptionRepositoryTest {
 
     public VoteEntity createVote(OptionEntity optionEntity, UserEntity userEntity) {
         return VoteEntity.builder()
+                .questionEntity(optionEntity.getQuestionEntity())
                 .optionEntity(optionEntity)
                 .userEntity(userEntity)
                 .build();

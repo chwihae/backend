@@ -7,7 +7,7 @@ import com.chwihae.dto.option.response.VoteOptionResponse;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
 import com.chwihae.dto.question.response.QuestionDetailResponse;
 import com.chwihae.dto.question.response.QuestionListResponse;
-import com.chwihae.infra.RestDocsSupport;
+import com.chwihae.infra.RestDocsTest;
 import com.chwihae.infra.WithTestUser;
 import com.chwihae.service.question.QuestionService;
 import com.chwihae.service.vote.VoteService;
@@ -44,7 +44,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Transactional
-class QuestionControllerDocsTest extends RestDocsSupport {
+class QuestionControllerDocsTest extends RestDocsTest {
 
     private final QuestionService questionService = mock(QuestionService.class);
     private final QuestionValidator questionValidator = mock(QuestionValidator.class);

@@ -24,15 +24,19 @@ public class ApiResponse<T> {
         return new ApiResponse<>(code, message, data);
     }
 
-    public static <T> ApiResponse<T> created(T id) {
-        return of(CREATED.value(), CREATED.name(), id);
-    }
-
     public static <T> ApiResponse<T> ok(T data) {
         return of(OK.value(), OK.name(), data);
     }
 
     public static <T> ApiResponse<T> ok() {
         return ok(null);
+    }
+
+    public static <T> ApiResponse<T> created(T id) {
+        return of(CREATED.value(), CREATED.name(), id);
+    }
+
+    public static <T> ApiResponse<T> created() {
+        return of(CREATED.value(), CREATED.name(), null);
     }
 }

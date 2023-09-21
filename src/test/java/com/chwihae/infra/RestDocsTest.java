@@ -19,7 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 
 @ExtendWith(RestDocumentationExtension.class)
 @IntegrationTestSupport
-public abstract class RestDocsSupport {
+public abstract class RestDocsTest {
 
     protected MockMvc mockMvc;
 

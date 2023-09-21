@@ -7,6 +7,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+
 class QuestionEntityTest {
 
     @Test
@@ -42,6 +45,40 @@ class QuestionEntityTest {
 
         //when
         boolean result = questionEntity.isCreatedBy(userEntity2.getId());
+
+        //then
+        Assertions.assertThat(result).isFalse();
+    }
+
+    @Test
+    @DisplayName("질문이 마감되었으면 true를 반환한다")
+    void isClosed_returnTrue() throws Exception {
+        //given
+        UserEntity userEntity = UserEntityFixture.of();
+        QuestionEntity questionEntity = QuestionEntity.builder()
+                .userEntity(userEntity)
+                .closeAt(LocalDateTime.now(ZoneId.of("Asia/Seoul")).minusDays(1))
+                .build();
+
+        //when
+        boolean result = questionEntity.isClosed();
+
+        //then
+        Assertions.assertThat(result).isTrue();
+    }
+
+    @Test
+    @DisplayName("질문이 마감되지 않았으면 true를 반환한다")
+    void isClosed_returnFalse() throws Exception {
+        //given
+        UserEntity userEntity = UserEntityFixture.of();
+        QuestionEntity questionEntity = QuestionEntity.builder()
+                .userEntity(userEntity)
+                .closeAt(LocalDateTime.now(ZoneId.of("Asia/Seoul")).plusDays(1))
+                .build();
+
+        //when
+        boolean result = questionEntity.isClosed();
 
         //then
         Assertions.assertThat(result).isFalse();

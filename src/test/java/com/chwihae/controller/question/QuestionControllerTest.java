@@ -13,7 +13,7 @@ import com.chwihae.domain.vote.VoteRepository;
 import com.chwihae.dto.option.request.OptionCreateRequest;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
 import com.chwihae.fixture.UserEntityFixture;
-import com.chwihae.infra.MockMvcTestSupport;
+import com.chwihae.infra.MockMvcTest;
 import com.chwihae.infra.WithTestUser;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -39,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Transactional
-class QuestionControllerTest extends MockMvcTestSupport {
+class QuestionControllerTest extends MockMvcTest {
 
     @Autowired
     OptionRepository optionRepository;
@@ -526,8 +526,9 @@ class QuestionControllerTest extends MockMvcTestSupport {
 
     public VoteEntity createVote(UserEntity userEntity, OptionEntity optionEntity) {
         return VoteEntity.builder()
-                .userEntity(userEntity)
+                .questionEntity(optionEntity.getQuestionEntity())
                 .optionEntity(optionEntity)
+                .userEntity(userEntity)
                 .build();
     }
 }

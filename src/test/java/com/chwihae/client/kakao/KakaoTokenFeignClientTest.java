@@ -2,14 +2,12 @@ package com.chwihae.client.kakao;
 
 import com.chwihae.client.kakao.response.KakaoTokenResponse;
 import com.chwihae.exception.CustomException;
-import com.chwihae.infra.IntegrationTestSupport;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.chwihae.infra.IntegrationTest;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.http.HttpStatus;
 
@@ -17,14 +15,7 @@ import static com.chwihae.exception.CustomExceptionError.INVALID_KAKAO_AUTHORIZA
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
 @AutoConfigureWireMock(port = 8089)
-@IntegrationTestSupport
-class KakaoTokenFeignClientTest {
-
-    @Autowired
-    KakaoTokenFeignClient client;
-
-    @Autowired
-    ObjectMapper objectMapper;
+class KakaoTokenFeignClientTest extends IntegrationTest {
 
     @BeforeEach
     public void setup() {
@@ -57,7 +48,7 @@ class KakaoTokenFeignClientTest {
                         .withBody(objectMapper.writeValueAsBytes(kakaoTokenResponse))));
 
         //when
-        KakaoTokenResponse response = client.requestToken(grantType,
+        KakaoTokenResponse response = kakaoTokenFeignClient.requestToken(grantType,
                 clientId,
                 clientSecret,
                 authorizationCode,
@@ -91,7 +82,7 @@ class KakaoTokenFeignClientTest {
                         .withBody(responseBody)));
 
         //when //then
-        Assertions.assertThatThrownBy(() -> client.requestToken(grantType,
+        Assertions.assertThatThrownBy(() -> kakaoTokenFeignClient.requestToken(grantType,
                         clientId,
                         clientSecret,
                         authorizationCode,

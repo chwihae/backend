@@ -17,7 +17,10 @@ public class CustomException extends RuntimeException {
     @Override
     public String getMessage() {
         String errorMsg = this.error.message();
-        return this.message == null ? errorMsg : String.format("%s. %s", errorMsg, message);
+        if (this.message == null) {
+            return errorMsg;
+        }
+        return String.format("%s (%s)", errorMsg, this.message);
     }
 
     public String message() {

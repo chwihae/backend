@@ -1,12 +1,9 @@
 package com.chwihae.service.question;
 
-import com.chwihae.domain.option.OptionRepository;
 import com.chwihae.domain.question.QuestionEntity;
-import com.chwihae.domain.question.QuestionRepository;
 import com.chwihae.domain.question.QuestionStatus;
 import com.chwihae.domain.question.QuestionType;
 import com.chwihae.domain.user.UserEntity;
-import com.chwihae.domain.user.UserRepository;
 import com.chwihae.dto.option.request.OptionCreateRequest;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
 import com.chwihae.dto.question.response.QuestionDetailResponse;
@@ -14,11 +11,10 @@ import com.chwihae.dto.question.response.QuestionListResponse;
 import com.chwihae.exception.CustomException;
 import com.chwihae.exception.CustomExceptionError;
 import com.chwihae.fixture.UserEntityFixture;
-import com.chwihae.infra.IntegrationTestSupport;
+import com.chwihae.infra.IntegrationTest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,20 +28,7 @@ import static com.chwihae.domain.question.QuestionType.*;
 import static com.chwihae.exception.CustomExceptionError.USER_NOT_FOUND;
 
 @Transactional
-@IntegrationTestSupport
-class QuestionServiceTest {
-
-    @Autowired
-    QuestionService questionService;
-
-    @Autowired
-    QuestionRepository questionRepository;
-
-    @Autowired
-    OptionRepository optionRepository;
-
-    @Autowired
-    UserRepository userRepository;
+class QuestionServiceTest extends IntegrationTest {
 
     @Test
     @DisplayName("질문과 옵션을 저장한 후 질문 아이디를 반환한다")

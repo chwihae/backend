@@ -2,13 +2,11 @@ package com.chwihae.client.kakao;
 
 import com.chwihae.client.kakao.response.KakaoUserInfoResponse;
 import com.chwihae.exception.CustomException;
-import com.chwihae.infra.IntegrationTestSupport;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.chwihae.infra.IntegrationTest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.http.HttpStatus;
 
@@ -16,14 +14,7 @@ import static com.chwihae.exception.CustomExceptionError.INVALID_KAKAO_AUTHORIZA
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
 @AutoConfigureWireMock(port = 8089)
-@IntegrationTestSupport
-class KakaoUserInfoFeignClientTest {
-
-    @Autowired
-    KakaoUserInfoFeignClient client;
-
-    @Autowired
-    ObjectMapper objectMapper;
+class KakaoUserInfoFeignClientTest extends IntegrationTest {
 
     @BeforeEach
     public void setup() {
@@ -48,7 +39,7 @@ class KakaoUserInfoFeignClientTest {
                         .withBody(objectMapper.writeValueAsBytes(kakaoUserInfoResponse))));
 
         //when
-        KakaoUserInfoResponse response = client.requestUserEmail("access token");
+        KakaoUserInfoResponse response = kakaoUserInfoFeignClient.requestUserEmail("access token");
 
         //then
         Assertions.assertThat(response.getKakaoAccount().getEmail()).isEqualTo(userEmail);
@@ -68,7 +59,7 @@ class KakaoUserInfoFeignClientTest {
                         .withBody(responseBody)));
 
         //when //then
-        Assertions.assertThatThrownBy(() -> client.requestUserEmail("access token"))
+        Assertions.assertThatThrownBy(() -> kakaoUserInfoFeignClient.requestUserEmail("access token"))
                 .isInstanceOf(CustomException.class)
                 .extracting("error")
                 .isEqualTo(INVALID_KAKAO_AUTHORIZATION_CODE);
