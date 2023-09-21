@@ -289,4 +289,33 @@ class QuestionControllerDocsTest extends RestDocsTest {
                         )
                 ));
     }
+
+    @Test
+    @DisplayName("투표 등록 API")
+    @WithTestUser
+    void createVote_restDocs() throws Exception {
+        //when //then
+        mockMvc.perform(
+                        post("/api/v1/questions/{questionId}/options/{optionId}", 25L, 100L)
+                                .header(AUTHORIZATION, token(1L))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("question-vote-create",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestHeaders(
+                                headerWithName(AUTHORIZATION).description("[Required] 인증 토큰 (타입: 문자열)")
+                        ),
+                        pathParameters(
+                                parameterWithName("questionId").description("[Required] 질문 아이디 (타입: 숫자)"),
+                                parameterWithName("optionId").description("[Required] 옵션 아이디 (타입: 숫자)")
+                        ),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.NUMBER).description("코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("메시지"),
+                                fieldWithPath("data").type(JsonFieldType.NULL).description("응답 데이터")
+                        )
+                ));
+    }
 }

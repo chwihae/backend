@@ -2,6 +2,12 @@
 ===== HTTP Request
 
 include::{snippets}/question-create/http-request.adoc[]
+
+===== Notes
+
+* 이 API는 사용자가 새로운 질문을 생성할 때 사용됩니다.
+* 요청 헤더에 유효한 토큰이 포함되어 있어야 하며, 요청 필드에는 적절한 질문 내용 및 정보가 포함되어 있어야 합니다.
+
 ===== Request Header
 
 include::{snippets}/question-get/request-headers.adoc[]
@@ -10,4 +16,15 @@ include::{snippets}/question-create/request-fields.adoc[]
 ===== HTTP Response
 
 include::{snippets}/question-create/http-response.adoc[]
+
+===== Notes
+
+* 질문 마감 시간은 현재 시간 이후, 현재 시간 + 4일 이내여야 유효합니다.
+* 성공적인 요청 후, 응답에는 생성된 질문의 ID가 포함됩니다.
+
+===== Potential Errors
+
+* `INVALID_TOKEN`: 토큰없이 요청하거나, 만료된 토큰을 사용했을 때
+* `INVALID_ARGUMENT`: 유효하지 않은 요청 파라미터나 질문 마감 시간이 유효하지 않을 경우
+
 include::{snippets}/question-create/response-fields.adoc[]

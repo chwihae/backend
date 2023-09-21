@@ -452,7 +452,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#Api-Base-Path">1.1. API 서버 경로</a></li>
 <li><a href="#Base-Response">1.2. Base 응답 형식</a></li>
 <li><a href="#Normal-Response">1.3. 정상 응답 코드</a></li>
-<li><a href="#Custom-Exception-Error">1.4. 커스텀 예외 응답 코드</a></li>
+<li><a href="#Custom-Exception-Error">1.4. 예외 코드 범위</a></li>
+<li><a href="#_예외_응답_설명">1.5. 예외 응답 설명</a></li>
 </ul>
 </li>
 <li><a href="#Endpoint">2. API</a>
@@ -467,12 +468,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#User-statistics">2.2.1. 사용자 활동 통계</a></li>
 </ul>
 </li>
-<li><a href="#Question">2.3. 질문</a>
+<li><a href="#Question">2.3. 질문/투표</a>
 <ul class="sectlevel3">
 <li><a href="#question-create">2.3.1. 질문 등록</a></li>
 <li><a href="#question-list">2.3.2. 질문 리스트 조회</a></li>
 <li><a href="#question-get">2.3.3. 질문 단건 조회</a></li>
 <li><a href="#question-options">2.3.4. 질문 옵션 조회</a></li>
+<li><a href="#question-vote-create">2.3.5. 질문 투표</a></li>
 </ul>
 </li>
 </ul>
@@ -508,10 +510,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h3 id="Normal-Response"><a class="link" href="#Normal-Response">1.3. 정상 응답 코드</a></h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
 </colgroup>
 <thead>
 <tr>
@@ -519,6 +522,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <th class="tableblock halign-left valign-top">Code</th>
 <th class="tableblock halign-left valign-top">Message</th>
 <th class="tableblock halign-left valign-top">Data</th>
+<th class="tableblock halign-left valign-top">Description</th>
 </tr>
 </thead>
 <tbody>
@@ -527,22 +531,73 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <td class="tableblock halign-left valign-top"><p class="tableblock">200</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">OK</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">응답 데이터</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정상 응답</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>200 OK</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">201</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CREATED</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 데이터</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">리소스 정상 생성</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <div class="sect2">
-<h3 id="Custom-Exception-Error"><a class="link" href="#Custom-Exception-Error">1.4. 커스텀 예외 응답 코드</a></h3>
+<h3 id="Custom-Exception-Error"><a class="link" href="#Custom-Exception-Error">1.4. 예외 코드 범위</a></h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Code Range</th>
+<th class="tableblock halign-left valign-top">Category</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>400-500</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">기본 HTTP 에러</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>1000-1099</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">인증과 관련된 에러</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>1100-1199</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사용자와 관련된 에러</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>1200-1299</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">질문과 관련된 에러</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>1300-1399</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">옵션과 관련된 에러</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>1400-1499</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">투표와 관련된 에러</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_예외_응답_설명"><a class="link" href="#_예외_응답_설명">1.5. 예외 응답 설명</a></h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
 </colgroup>
 <thead>
 <tr>
 <th class="tableblock halign-left valign-top">HTTP Status</th>
+<th class="tableblock halign-left valign-top">Name</th>
 <th class="tableblock halign-left valign-top">Code</th>
 <th class="tableblock halign-left valign-top">Message</th>
 <th class="tableblock halign-left valign-top">Data</th>
@@ -551,50 +606,86 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>400 BAD_REQUEST</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">INVALID_ARGUMENT</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">400</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">파라미터가 올바르지 않습니다</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Null</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>403 FORBIDDEN</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">FORBIDDEN</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">403</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">권한이 없습니다</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Null</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>404 NOT_FOUND</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">NOT_FOUND</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">404</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">존재하지 않는 리소스에 대한 요청입니다</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Null</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>405 METHOD_NOT_ALLOWED</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">METHOD_NOT_ALLOWED</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">405</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">올바르지 않은 요청 메소드입니다</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Null</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>500 INTERNAL_SERVER_ERROR</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">INTERNAL_SERVER_ERROR</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">500</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">서버 내부 오류</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Null</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>401 UNAUTHORIZED</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">INVALID_KAKAO_AUTHORIZATION_CODE</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">1000</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">유효하지 않은 인가 코드입니다</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Null</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>401 UNAUTHORIZED</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">INVALID_TOKEN</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">1001</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">유효하지 않은 토큰입니다</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Null</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>404 NOT_FOUND</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">USER_NOT_FOUND</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">1100</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">존재하지 않는 사용자입니다</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Null</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>404 NOT_FOUND</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">QUESTION_NOT_FOUND</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1200</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">존재하지 않는 질문입니다</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Null</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>409 CONFLICT</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">QUESTION_CLOSED</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1201</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">질문이 마감되었습니다</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Null</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>404 NOT_FOUND</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OPTION_NOT_FOUND</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1300</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">존재하지 않는 옵션입니다</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Null</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>409 CONFLICT</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">DUPLICATE_VOTE</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1400</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">이미 투표하였습니다</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Null</p></td>
 </tr>
 </tbody>
@@ -626,37 +717,17 @@ Host: localhost:8080
 </div>
 </div>
 <div class="sect4">
-<h5 id="_request_fields"><a class="link" href="#_request_fields">Request Fields</a></h5>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Requried</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>authorizationCode</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">O</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카카오 인가 코드</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>redirectionUri</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">O</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리디렉션 URI</p></td>
-</tr>
-</tbody>
-</table>
+<h5 id="_notes"><a class="link" href="#_notes">Notes</a></h5>
+<div class="ulist">
+<ul>
+<li>
+<p>이 API는 사용자가 카카오 계정을 통해 로그인할 때 사용됩니다.</p>
+</li>
+<li>
+<p>요청 바디에는 카카오로부터 받은 인가 코드가 포함되어 있어야 합니다.</p>
+</li>
+</ul>
+</div>
 </div>
 <div class="sect4">
 <h5 id="_http_response"><a class="link" href="#_http_response">HTTP Response</a></h5>
@@ -677,6 +748,29 @@ Content-Length: 166
   }
 }</code></pre>
 </div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_notes_2"><a class="link" href="#_notes_2">Notes</a></h5>
+<div class="ulist">
+<ul>
+<li>
+<p>응답에는 사용자 ID, 이메일, 토큰 및 리프레시 토큰이 포함됩니다.</p>
+</li>
+<li>
+<p>유효하지 않은 인가 코드로 로그인을 시도하면 오류가 발생합니다.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_potential_errors"><a class="link" href="#_potential_errors">Potential Errors</a></h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>INVALID_TOKEN</code>: 미인증 사용자가 요청할 때</p>
+</li>
+</ul>
 </div>
 </div>
 <div class="sect4">
@@ -749,11 +843,11 @@ Content-Length: 166
 <div class="sect3">
 <h4 id="User-statistics"><a class="link" href="#User-statistics">2.2.1. 사용자 활동 통계</a></h4>
 <div class="sect4">
-<h5 id="kakao-login"><a class="link" href="#kakao-login">HTTP Request</a></h5>
+<h5 id="user-statistics"><a class="link" href="#user-statistics">HTTP Request</a></h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/v1/users/statistics HTTP/1.1
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTMwOTM5MCwiZXhwIjoxNjk1Mzk1NzkwfQ.Ndyrb1ZezqiWR5sqv_Z8acuA3viNt2g6OokFuQZUI1I
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTMzMjc1NCwiZXhwIjoxNjk1NDE5MTU0fQ.vI4XLsI6eu-8VPs0RVgc2pZaKBBiWnIEcvTibjEJefk
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -780,6 +874,19 @@ Host: localhost:8080</code></pre>
 </table>
 </div>
 <div class="sect4">
+<h5 id="_notes_3"><a class="link" href="#_notes_3">Notes</a></h5>
+<div class="ulist">
+<ul>
+<li>
+<p>이 API는 사용자의 통계 정보를 가져오기 위한 요청입니다.</p>
+</li>
+<li>
+<p>헤더에는 사용자 인증을 위한 토큰 정보가 포함되어야 합니다.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
 <h5 id="_http_response_2"><a class="link" href="#_http_response_2">HTTP Response</a></h5>
 <div class="listingblock">
 <div class="content">
@@ -797,6 +904,29 @@ Content-Length: 126
   }
 }</code></pre>
 </div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_notes_4"><a class="link" href="#_notes_4">Notes</a></h5>
+<div class="ulist">
+<ul>
+<li>
+<p>유효한 토큰 정보를 제공하지 않으면 <code>INVALID_TOKEN</code> 오류를 반환합니다.</p>
+</li>
+<li>
+<p>통계 정보에는 사용자의 활동 통계, 질문 및 투표 통계 등 다양한 데이터가 포함될 수 있습니다.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_potential_errors_2"><a class="link" href="#_potential_errors_2">Potential Errors</a></h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>INVALID_TOKEN</code>: 토큰없이 요청하거나, 만료된 토큰을 사용했을 때</p>
+</li>
+</ul>
 </div>
 </div>
 <div class="sect4">
@@ -859,7 +989,7 @@ Content-Length: 126
 </div>
 </div>
 <div class="sect2">
-<h3 id="Question"><a class="link" href="#Question">2.3. 질문</a></h3>
+<h3 id="Question"><a class="link" href="#Question">2.3. 질문/투표</a></h3>
 <div class="sect3">
 <h4 id="question-create"><a class="link" href="#question-create">2.3.1. 질문 등록</a></h4>
 <div class="sect4">
@@ -868,7 +998,7 @@ Content-Length: 126
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/v1/questions HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTMwOTM4OSwiZXhwIjoxNjk1Mzk1Nzg5fQ.q9SMBLal4AyPlCnouAPuLWRwonqQMKFc8kWqLgcbktI
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTMzMjc1MywiZXhwIjoxNjk1NDE5MTUzfQ.ov7GhjWzWgg3BrFJfOiEqumHc7Gr0udL_-Xh2HVktSw
 Content-Length: 194
 Host: localhost:8080
 
@@ -876,7 +1006,7 @@ Host: localhost:8080
   "title" : "title",
   "content" : "content",
   "type" : "SPEC",
-  "closeAt" : "2023-09-22T00:46:29",
+  "closeAt" : "2023-09-22T07:15:53",
   "options" : [ {
     "name" : "option name 1"
   }, {
@@ -884,6 +1014,19 @@ Host: localhost:8080
   } ]
 }</code></pre>
 </div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_notes_5"><a class="link" href="#_notes_5">Notes</a></h5>
+<div class="ulist">
+<ul>
+<li>
+<p>이 API는 사용자가 새로운 질문을 생성할 때 사용됩니다.</p>
+</li>
+<li>
+<p>요청 헤더에 유효한 토큰이 포함되어 있어야 하며, 요청 필드에는 적절한 질문 내용 및 정보가 포함되어 있어야 합니다.</p>
+</li>
+</ul>
 </div>
 </div>
 <div class="sect4">
@@ -908,7 +1051,7 @@ Host: localhost:8080
 </table>
 </div>
 <div class="sect4">
-<h5 id="_request_fields_2"><a class="link" href="#_request_fields_2">Request Fields</a></h5>
+<h5 id="_request_fields"><a class="link" href="#_request_fields">Request Fields</a></h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -983,6 +1126,32 @@ Content-Length: 75
 </div>
 </div>
 <div class="sect4">
+<h5 id="_notes_6"><a class="link" href="#_notes_6">Notes</a></h5>
+<div class="ulist">
+<ul>
+<li>
+<p>질문 마감 시간은 현재 시간 이후, 현재 시간 + 4일 이내여야 유효합니다.</p>
+</li>
+<li>
+<p>성공적인 요청 후, 응답에는 생성된 질문의 ID가 포함됩니다.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_potential_errors_3"><a class="link" href="#_potential_errors_3">Potential Errors</a></h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>INVALID_TOKEN</code>: 토큰없이 요청하거나, 만료된 토큰을 사용했을 때</p>
+</li>
+<li>
+<p><code>INVALID_ARGUMENT</code>: 유효하지 않은 요청 파라미터나 질문 마감 시간이 유효하지 않을 경우</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
 <h5 id="_response_fields_3"><a class="link" href="#_response_fields_3">Response Fields</a></h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -1035,9 +1204,25 @@ Content-Length: 75
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/v1/questions?type=COMPANY&amp;status=IN_PROGRESS&amp;page=0&amp;size=2 HTTP/1.1
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTMwOTM4OSwiZXhwIjoxNjk1Mzk1Nzg5fQ.q9SMBLal4AyPlCnouAPuLWRwonqQMKFc8kWqLgcbktI
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTMzMjc1MywiZXhwIjoxNjk1NDE5MTUzfQ.ov7GhjWzWgg3BrFJfOiEqumHc7Gr0udL_-Xh2HVktSw
 Host: localhost:8080</code></pre>
 </div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_notes_7"><a class="link" href="#_notes_7">Notes</a></h5>
+<div class="ulist">
+<ul>
+<li>
+<p>이 API는 사용자가 질문 목록을 검색할 때 사용됩니다.</p>
+</li>
+<li>
+<p>요청 헤더에는 유효한 토큰이 포함되어 있어야 합니다.</p>
+</li>
+<li>
+<p>쿼리 파라미터를 사용하여 특정 상태(status)나 유형(type)의 질문을 필터링할 수 있습니다.</p>
+</li>
+</ul>
 </div>
 </div>
 <div class="sect4">
@@ -1178,6 +1363,33 @@ Content-Length: 1547
 </div>
 </div>
 <div class="sect4">
+<h5 id="_notes_8"><a class="link" href="#_notes_8">Notes</a></h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>INVALID_ARGUMENT</code> 오류는 유효하지 않은 status 또는 type 값으로 요청할 때 발생합니다.
+사용 가능한 올바른 값들에 대한 문서를 참고하세요.</p>
+</li>
+<li>
+<p>응답에는 검색 조건에 해당하는 질문 목록과 함께 기타 메타 정보(예: 페이징)가 포함됩니다</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_potential_errors_4"><a class="link" href="#_potential_errors_4">Potential Errors</a></h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>INVALID_TOKEN</code>: 토큰없이 요청하거나, 만료된 토큰을 사용했을 때</p>
+</li>
+<li>
+<p><code>INVALID_ARGUMENT</code>: 올바르지 않은 status, type 으로 요청할 때</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
 <h5 id="_response_fields_4"><a class="link" href="#_response_fields_4">Response Fields</a></h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -1310,14 +1522,30 @@ Content-Length: 1547
 <div class="sect3">
 <h4 id="question-get"><a class="link" href="#question-get">2.3.3. 질문 단건 조회</a></h4>
 <div class="sect4">
-<h5 id="question-create"><a class="link" href="#question-create">HTTP Request</a></h5>
+<h5 id="question-get"><a class="link" href="#question-get">HTTP Request</a></h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/v1/questions/1 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTMwOTM4OSwiZXhwIjoxNjk1Mzk1Nzg5fQ.q9SMBLal4AyPlCnouAPuLWRwonqQMKFc8kWqLgcbktI
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTMzMjc1MywiZXhwIjoxNjk1NDE5MTUzfQ.ov7GhjWzWgg3BrFJfOiEqumHc7Gr0udL_-Xh2HVktSw
 Host: localhost:8080</code></pre>
 </div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_notes_9"><a class="link" href="#_notes_9">Notes</a></h5>
+<div class="ulist">
+<ul>
+<li>
+<p>이 API는 사용자가 특정 질문의 정보를 검색할 때 사용됩니다.</p>
+</li>
+<li>
+<p>경로 변수에는 조회하려는 질문의 고유 아이디를 포함해야 합니다.</p>
+</li>
+<li>
+<p>요청 헤더에는 유효한 토큰이 포함되어 있어야 합니다.</p>
+</li>
+</ul>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 1. /api/v1/questions/{questionId}</caption>
@@ -1376,7 +1604,7 @@ Content-Length: 353
     "title" : "title",
     "content" : "content",
     "type" : "COMPANY",
-    "closeAt" : "2023-09-22T00:46:29",
+    "closeAt" : "2023-09-22T07:15:53",
     "status" : "IN_PROGRESS",
     "viewCount" : 0,
     "commentCount" : 0,
@@ -1387,6 +1615,35 @@ Content-Length: 353
   }
 }</code></pre>
 </div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_notes_10"><a class="link" href="#_notes_10">Notes</a></h5>
+<div class="ulist">
+<ul>
+<li>
+<p>질문이 데이터베이스에 존재하지 않을 경우 <code>QUESTION_NOT_FOUND</code> 오류가 반환됩니다.</p>
+</li>
+<li>
+<p>해당 질문의 세부 정보와 함께 응답을 반환합니다.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_potential_errors_5"><a class="link" href="#_potential_errors_5">Potential Errors</a></h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>INVALID_TOKEN</code>: 토큰없이 요청하거나, 만료된 토큰을 사용했을 때</p>
+</li>
+<li>
+<p><code>QUESTION_NOT_FOUND</code>: 존재하지 않는 질문 아이디로 요청할 때</p>
+</li>
+<li>
+<p><code>INVALID_ARGUMENT</code>: 올바르지 않은 경로 변수로 요청할 때</p>
+</li>
+</ul>
 </div>
 </div>
 <div class="sect4">
@@ -1509,9 +1766,28 @@ Content-Length: 353
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/v1/questions/25/options HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTMwOTM4OSwiZXhwIjoxNjk1Mzk1Nzg5fQ.q9SMBLal4AyPlCnouAPuLWRwonqQMKFc8kWqLgcbktI
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTMzMjc1MywiZXhwIjoxNjk1NDE5MTUzfQ.ov7GhjWzWgg3BrFJfOiEqumHc7Gr0udL_-Xh2HVktSw
 Host: localhost:8080</code></pre>
 </div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_notes_11"><a class="link" href="#_notes_11">Notes</a></h5>
+<div class="ulist">
+<ul>
+<li>
+<p>이 API는 질문의 옵션과 투표 결과를 반환합니다.</p>
+</li>
+<li>
+<p>질문자와 투표자는 항상 결과를 볼 수 있습니다.</p>
+</li>
+<li>
+<p>마감되지 않은 질문에 대해 투표하지 않은 사용자는 결과를 볼 수 없습니다.</p>
+</li>
+<li>
+<p>마감된 질문에 투표하지 않은 사용자는 결과를 볼 수 있습니다.</p>
+</li>
+</ul>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 2. /api/v1/questions/{questionId}/options</caption>
@@ -1594,6 +1870,29 @@ Content-Length: 502
 </div>
 </div>
 <div class="sect4">
+<h5 id="_notes_12"><a class="link" href="#_notes_12">Notes</a></h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>canViewVoteResult</code> 필드는 투표 결과를 볼 수 있는 권한이 있는지 여부를 나타냅니다.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_potential_errors_6"><a class="link" href="#_potential_errors_6">Potential Errors</a></h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>INVALID_TOKEN</code>: 토큰없이 요청하거나, 만료된 토큰을 사용했을 때</p>
+</li>
+<li>
+<p><code>QUESTION_NOT_FOUND</code>: 존재하지 않는 질문을 요청할 때</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
 <h5 id="_response_fields_6"><a class="link" href="#_response_fields_6">Response Fields</a></h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -1663,6 +1962,169 @@ Content-Length: 502
 </table>
 </div>
 </div>
+<div class="sect3">
+<h4 id="question-vote-create"><a class="link" href="#question-vote-create">2.3.5. 질문 투표</a></h4>
+<div class="sect4">
+<h5 id="question-vote-create"><a class="link" href="#question-vote-create">HTTP Request</a></h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/v1/questions/25/options/100 HTTP/1.1
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTMzMjc1MywiZXhwIjoxNjk1NDE5MTUzfQ.ov7GhjWzWgg3BrFJfOiEqumHc7Gr0udL_-Xh2HVktSw
+Host: localhost:8080
+Content-Type: application/x-www-form-urlencoded</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_notes_13"><a class="link" href="#_notes_13">Notes</a></h5>
+<div class="ulist">
+<ul>
+<li>
+<p>이 API는 사용자가 특정 질문에 투표할 때 사용됩니다.</p>
+</li>
+<li>
+<p>요청 헤더에는 유효한 토큰이 포함되어 있어야 합니다.</p>
+</li>
+<li>
+<p>투표할 때는 올바른 옵션 ID를 제공해야 합니다.</p>
+</li>
+<li>
+<p>질문의 작성자는 자신의 질문에 투표할 수 없습니다.</p>
+</li>
+<li>
+<p>한 사용자는 하나의 질문에 한 번만 투표할 수 있습니다.</p>
+</li>
+<li>
+<p>마감된 질문에는 투표할 수 없습니다.</p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 3. /api/v1/questions/{questionId}/options/{optionId}</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>questionId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[Required] 질문 아이디 (타입: 숫자)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>optionId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[Required] 옵션 아이디 (타입: 숫자)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_request_header_6"><a class="link" href="#_request_header_6">Request Header</a></h5>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[Required] 인증 토큰 (타입: 문자열)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_http_response_7"><a class="link" href="#_http_response_7">HTTP Response</a></h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length: 60
+
+{
+  "code" : 201,
+  "message" : "CREATED",
+  "data" : null
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_potential_errors_7"><a class="link" href="#_potential_errors_7">Potential Errors</a></h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>INVALID_TOKEN</code>: 토큰없이 요청하거나, 만료된 토큰을 사용했을 때</p>
+</li>
+<li>
+<p><code>FORBIDDEN</code>: 질문 작성자가 자신의 질문에 투표를 시도할 때</p>
+</li>
+<li>
+<p><code>DUPLICATE_VOTE</code>: 이미 투표한 투표자가 다시 투표를 시도할 때</p>
+</li>
+<li>
+<p><code>QUESTION_CLOSED</code>: 마감된 질문에 투표를 시도할 때</p>
+</li>
+<li>
+<p><code>QUESTION_NOT_FOUND</code>: 존재하지 않는 질문에 투표를 시도할 때</p>
+</li>
+<li>
+<p><code>OPTION_NOT_FOUND</code>: 존재하지 않는 옵션에 투표를 시도할 때</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_response_fields_7"><a class="link" href="#_response_fields_7">Response Fields</a></h5>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Nullable</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">메시지</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 데이터</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -1670,7 +2132,7 @@ Content-Length: 502
 <div id="footer">
 <div id="footer-text">
 Version 1.0.0<br>
-Last updated 2023-09-20 18:21:02 +0900
+Last updated 2023-09-22 06:14:52 +0900
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
