@@ -1,5 +1,6 @@
 package com.chwihae.service.question;
 
+import com.chwihae.domain.comment.CommentRepository;
 import com.chwihae.domain.option.OptionEntity;
 import com.chwihae.domain.option.OptionRepository;
 import com.chwihae.domain.question.QuestionEntity;
@@ -8,6 +9,7 @@ import com.chwihae.domain.question.QuestionStatus;
 import com.chwihae.domain.question.QuestionType;
 import com.chwihae.domain.user.UserEntity;
 import com.chwihae.domain.user.UserRepository;
+import com.chwihae.domain.vote.VoteRepository;
 import com.chwihae.dto.option.request.OptionCreateRequest;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
 import com.chwihae.dto.question.response.QuestionDetailResponse;
@@ -34,6 +36,8 @@ public class QuestionService {
     private final QuestionRepository questionRepository;
     private final OptionRepository optionRepository;
     private final CommenterSequenceService commenterSequenceService;
+    private final CommentRepository commentRepository;
+    private final VoteRepository voteRepository;
 
     public Page<QuestionListResponse> getQuestionsByTypeAndStatus(QuestionType type, QuestionStatus status, Pageable pageable) {
         return questionRepository.findByTypeAndStatus(status, type, pageable).map(QuestionListResponse::of);
@@ -50,8 +54,10 @@ public class QuestionService {
 
     public QuestionDetailResponse getQuestion(Long questionId, Long userId) {
         QuestionEntity questionEntity = findQuestionOrException(questionId);
+        long voteCount = voteRepository.countByQuestionEntityId(questionId);
+        long commentCount = commentRepository.countByQuestionEntityId(questionId);
         boolean isEditable = questionEntity.isCreatedBy(userId);
-        return QuestionDetailResponse.of(questionEntity, isEditable);
+        return QuestionDetailResponse.of(questionEntity, commentCount, voteCount, isEditable);
     }
 
     private List<OptionEntity> buildOptionEntities(List<OptionCreateRequest> options, QuestionEntity questionEntity) {

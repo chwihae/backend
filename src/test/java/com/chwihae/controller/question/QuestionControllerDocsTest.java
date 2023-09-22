@@ -1,6 +1,8 @@
 package com.chwihae.controller.question;
 
+import com.chwihae.domain.commenter.CommenterAliasPrefix;
 import com.chwihae.domain.question.QuestionType;
+import com.chwihae.dto.comment.Comment;
 import com.chwihae.dto.comment.request.QuestionCommentCreateRequest;
 import com.chwihae.dto.option.request.OptionCreateRequest;
 import com.chwihae.dto.option.response.Option;
@@ -23,6 +25,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static com.chwihae.domain.question.QuestionStatus.IN_PROGRESS;
 import static com.chwihae.domain.question.QuestionType.COMPANY;
@@ -115,31 +118,32 @@ class QuestionControllerDocsTest extends AbstractRestDocsTest {
     @DisplayName("질문 리스트 조회 API")
     void getQuestions_restDocs() throws Exception {
         //given
-        final int contentSize = 5;
+        final int CONTENT_SIZE = 5;
+        final int PAGE_NUMBER = 0;
+        final int PAGE_SIZE = 2;
+
         List<QuestionListResponse> content = new ArrayList<>();
-        for (int number = 1; number <= contentSize; number++) {
+        IntStream.range(0, CONTENT_SIZE).forEach(responseIndex -> {
             content.add(
                     QuestionListResponse.builder()
-                            .id((long) number)
+                            .id((long) responseIndex)
                             .status(IN_PROGRESS)
-                            .title("question title " + number)
+                            .title("question title " + responseIndex)
                             .type(COMPANY)
                             .build()
             );
-        }
+        });
 
-        final int pageNumber = 0;
-        final int pageSize = 2;
         QuestionType type = COMPANY;
-        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
-        Page<QuestionListResponse> mockPage = new PageImpl<>(content, pageRequest, contentSize);
+        PageRequest pageRequest = PageRequest.of(PAGE_NUMBER, PAGE_SIZE);
+        Page<QuestionListResponse> mockPage = new PageImpl<>(content, pageRequest, CONTENT_SIZE);
 
         given(questionService.getQuestionsByTypeAndStatus(any(), any(), any()))
                 .willReturn(mockPage);
 
         //when //then
         mockMvc.perform(
-                        get("/api/v1/questions?type={type}&status={status}&page={page}&size={size}", COMPANY, IN_PROGRESS, pageNumber, pageSize)
+                        get("/api/v1/questions?type={type}&status={status}&page={page}&size={size}", COMPANY, IN_PROGRESS, PAGE_NUMBER, PAGE_SIZE)
                                 .header(AUTHORIZATION, token(1L))
                 )
                 .andDo(print())
@@ -237,15 +241,16 @@ class QuestionControllerDocsTest extends AbstractRestDocsTest {
     @DisplayName("질문 옵션 조회 API")
     void getOptions_restDocs() throws Exception {
         //given
-        final int optionSize = 5;
+        final int OPTION_SIZE = 5;
+
         List<Option> options = new ArrayList<>();
-        for (int i = 1; i <= optionSize; i++) {
+        IntStream.of(0, OPTION_SIZE).forEach(optionIndex -> {
             options.add(Option.builder()
-                    .id((long) i)
-                    .name("option name " + i)
-                    .voteCount((long) i)
+                    .id((long) optionIndex)
+                    .name("option name " + optionIndex)
+                    .voteCount((long) optionIndex)
                     .build());
-        }
+        });
 
         VoteOptionResponse response = VoteOptionResponse.builder()
                 .votedOptionId(3L)
@@ -297,7 +302,7 @@ class QuestionControllerDocsTest extends AbstractRestDocsTest {
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andDo(document("question-vote-create",
+                .andDo(document("vote-create",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestHeaders(
@@ -325,7 +330,7 @@ class QuestionControllerDocsTest extends AbstractRestDocsTest {
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andDo(document("question-vote-delete",
+                .andDo(document("vote-delete",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestHeaders(
@@ -344,6 +349,74 @@ class QuestionControllerDocsTest extends AbstractRestDocsTest {
     }
 
     @Test
+    @DisplayName("댓글 조회 API")
+    void getComments_restDocs() throws Exception {
+        //given
+        final int CONTENT_SIZE = 5;
+        final int PAGE_NUMBER = 0;
+        final int PAGE_SIZE = 2;
+
+        List<Comment> comments = new ArrayList<>();
+        IntStream.range(0, CONTENT_SIZE).forEach(commentIndex -> {
+            comments.add(Comment.builder()
+                    .id((long) commentIndex)
+                    .content("content")
+                    .createdAt(LocalDateTime.now())
+                    .editable(false)
+                    .commenterAlias(CommenterAliasPrefix.getAlias(commentIndex + 1))
+                    .build());
+        });
+
+        PageRequest pageRequest = PageRequest.of(PAGE_NUMBER, PAGE_SIZE);
+        Page<Comment> mockPage = new PageImpl<>(comments, pageRequest, CONTENT_SIZE);
+
+        given(commentService.getComments(any(), any(), any()))
+                .willReturn(mockPage);
+
+        //when //then
+        mockMvc.perform(
+                        get("/api/v1/questions/{questionId}/comments?page={page}&size={size}", 122L, PAGE_NUMBER, PAGE_SIZE)
+                                .header(AUTHORIZATION, token(1L))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("comment-list",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestHeaders(
+                                headerWithName(AUTHORIZATION).description("[Required] 인증 토큰 (타입: 문자열)")
+                        ),
+
+                        queryParameters(
+                                parameterWithName("page").description("[Optional] 페이지 번호 (default: 0)"),
+                                parameterWithName("size").description("[Optional] 페이지 사이즈 (default: 10)")
+                        ),
+                        pathParameters(
+                                parameterWithName("questionId").description("[Required] 질문 아이디 (타입: 숫자)")
+                        ),
+                        relaxedResponseFields(
+                                fieldWithPath("code").type(JsonFieldType.NUMBER).description("코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("메시지"),
+                                fieldWithPath("data.content[]").type(JsonFieldType.ARRAY).description("질문 목록"),
+                                fieldWithPath("data.content[].id").type(JsonFieldType.NUMBER).description("댓글 아이디"),
+                                fieldWithPath("data.content[].content").type(JsonFieldType.STRING).description("댓글 내용"),
+                                fieldWithPath("data.content[].createdAt").type(JsonFieldType.STRING).description("댓글 등록 시간 (형식: yyyy-MM-dd'T'HH:mm)"),
+                                fieldWithPath("data.content[].editable").type(JsonFieldType.BOOLEAN).description("댓글 수정 가능 여부(댓글 작성자면 true)"),
+                                fieldWithPath("data.content[].commenterAlias").type(JsonFieldType.STRING).description("댓글 작성자 별칭"),
+                                fieldWithPath("data.totalPages").type(JsonFieldType.NUMBER).description("총 페이지 수"),
+                                fieldWithPath("data.totalElements").type(JsonFieldType.NUMBER).description("총 원소 개수"),
+                                fieldWithPath("data.last").type(JsonFieldType.BOOLEAN).description("마지막 페이지 여부"),
+                                fieldWithPath("data.first").type(JsonFieldType.BOOLEAN).description("처음 페이지 여부"),
+                                fieldWithPath("data.size").type(JsonFieldType.NUMBER).description("현재 페이지 크기"),
+                                fieldWithPath("data.numberOfElements").type(JsonFieldType.NUMBER).description("현재 페이지 원소 개수"),
+                                fieldWithPath("data.empty").type(JsonFieldType.BOOLEAN).description("현재 페이지 원소 존재 여부"),
+                                fieldWithPath("data.number").type(JsonFieldType.NUMBER).description("현재 페이지 번호")
+                        )
+                ));
+
+    }
+
+    @Test
     @DisplayName("댓글 등록 API")
     void createComment_restDocs() throws Exception {
         //given
@@ -359,7 +432,7 @@ class QuestionControllerDocsTest extends AbstractRestDocsTest {
                                 .content(body(request))
                 )
                 .andExpect(status().isOk())
-                .andDo(document("question-comment-create",
+                .andDo(document("comment-create",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestHeaders(

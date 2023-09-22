@@ -12,14 +12,17 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import java.util.Objects;
+
 import static jakarta.persistence.FetchType.LAZY;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Table(name = "comment",
         indexes = {
-                @Index(name = "idx_comment_id_question", columnList = "id_question"),
-                @Index(name = "idx_comment_id_commenter", columnList = "id_commenter")
+                @Index(name = "idx_comment_question", columnList = "id_question"),
+                @Index(name = "idx_comment_commenter", columnList = "id_commenter"),
+                @Index(name = "idx_comment_commenter_question", columnList = "id_question, id_commenter"),
         }
 )
 @SQLDelete(sql = "UPDATE comment SET deleted_at = NOW() WHERE id_comment = ?")
@@ -53,5 +56,9 @@ public class CommentEntity extends BaseEntity {
         this.questionEntity = questionEntity;
         this.commenterAliasEntity = commenterAliasEntity;
         this.content = content;
+    }
+
+    public boolean isCreatedBy(Long userId) {
+        return Objects.equals(this.userEntity.getId(), userId);
     }
 }

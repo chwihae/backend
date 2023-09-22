@@ -1,8 +1,12 @@
 package com.chwihae.service.user;
 
+import com.chwihae.domain.comment.CommentRepository;
 import com.chwihae.domain.user.UserEntity;
+import com.chwihae.domain.user.UserLevel;
 import com.chwihae.domain.user.UserRepository;
+import com.chwihae.domain.vote.VoteRepository;
 import com.chwihae.dto.user.UserContext;
+import com.chwihae.dto.user.UserStatisticsResponse;
 import com.chwihae.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,6 +20,8 @@ import static com.chwihae.exception.CustomExceptionError.USER_NOT_FOUND;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
+    private final VoteRepository voteRepository;
 
     @Transactional
     public UserEntity createUser(String email) {
@@ -23,10 +29,17 @@ public class UserService {
                 .email(email)
                 .build());
     }
-    
+
     public UserContext getUserContextOrException(Long userId) {
         return userRepository.findById(userId)
                 .map(UserContext::fromEntity)
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+    }
+
+    public UserStatisticsResponse getUserStatistics(Long userId) {
+        long commentCount = commentRepository.countByUserEntityId(userId);
+        long voteCount = voteRepository.countByUserEntityId(userId);
+        UserLevel userLevel = UserLevel.getLevel(voteCount, commentCount);
+        return UserStatisticsResponse.of(userLevel, commentCount, voteCount);
     }
 }
