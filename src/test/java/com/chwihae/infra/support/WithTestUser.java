@@ -1,4 +1,4 @@
-package com.chwihae.infra;
+package com.chwihae.infra.support;
 
 import org.springframework.security.test.context.support.WithSecurityContext;
 

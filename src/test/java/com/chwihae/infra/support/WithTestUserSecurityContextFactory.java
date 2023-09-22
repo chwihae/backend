@@ -1,4 +1,4 @@
-package com.chwihae.infra;
+package com.chwihae.infra.support;
 
 import com.chwihae.domain.user.UserEntity;
 import com.chwihae.dto.user.UserContext;

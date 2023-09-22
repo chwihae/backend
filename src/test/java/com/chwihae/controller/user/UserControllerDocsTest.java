@@ -1,7 +1,7 @@
 package com.chwihae.controller.user;
 
 import com.chwihae.dto.user.UserStatisticsResponse;
-import com.chwihae.infra.AbstractRestDocsTest;
+import com.chwihae.infra.test.AbstractRestDocsTest;
 import com.chwihae.service.user.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,7 +40,7 @@ class UserControllerDocsTest extends AbstractRestDocsTest {
                         .voteCount(120)
                         .commentCount(50)
                         .build());
-        
+
         //when //then
         mockMvc.perform(
                         get("/api/v1/users/statistics")

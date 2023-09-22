@@ -1,4 +1,4 @@
-package com.chwihae.infra;
+package com.chwihae.infra.test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;

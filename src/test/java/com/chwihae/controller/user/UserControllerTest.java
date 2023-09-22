@@ -1,7 +1,7 @@
 package com.chwihae.controller.user;
 
-import com.chwihae.infra.AbstractMockMvcTest;
-import com.chwihae.infra.WithTestUser;
+import com.chwihae.infra.test.AbstractMockMvcTest;
+import com.chwihae.infra.support.WithTestUser;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.test.context.support.WithAnonymousUser;

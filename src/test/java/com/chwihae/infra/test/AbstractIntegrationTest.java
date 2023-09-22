@@ -1,4 +1,4 @@
-package com.chwihae.infra;
+package com.chwihae.infra.test;
 
 import com.chwihae.client.kakao.KakaoTokenFeignClient;
 import com.chwihae.client.kakao.KakaoUserInfoFeignClient;
@@ -12,6 +12,7 @@ import com.chwihae.domain.option.OptionRepository;
 import com.chwihae.domain.question.QuestionRepository;
 import com.chwihae.domain.user.UserRepository;
 import com.chwihae.domain.vote.VoteRepository;
+import com.chwihae.infra.support.IntegrationTestSupport;
 import com.chwihae.service.bookmark.BookmarkService;
 import com.chwihae.service.comment.CommentService;
 import com.chwihae.service.commenter.CommenterSequenceService;

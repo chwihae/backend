@@ -2,7 +2,7 @@ package com.chwihae.client.kakao;
 
 import com.chwihae.client.kakao.response.KakaoUserInfoResponse;
 import com.chwihae.exception.CustomException;
-import com.chwihae.infra.AbstractIntegrationTest;
+import com.chwihae.infra.test.AbstractIntegrationTest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

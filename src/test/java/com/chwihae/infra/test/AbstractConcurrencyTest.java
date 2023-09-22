@@ -1,4 +1,4 @@
-package com.chwihae.infra;
+package com.chwihae.infra.test;
 
 import org.junit.jupiter.api.BeforeEach;
 

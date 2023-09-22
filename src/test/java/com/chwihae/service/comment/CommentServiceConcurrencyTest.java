@@ -5,7 +5,7 @@ import com.chwihae.domain.commenter.CommenterSequenceEntity;
 import com.chwihae.domain.question.QuestionEntity;
 import com.chwihae.domain.question.QuestionType;
 import com.chwihae.domain.user.UserEntity;
-import com.chwihae.infra.AbstractConcurrencyTest;
+import com.chwihae.infra.test.AbstractConcurrencyTest;
 import com.chwihae.infra.fixture.UserEntityFixture;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;

@@ -5,7 +5,7 @@ import com.chwihae.domain.question.QuestionType;
 import com.chwihae.domain.user.UserEntity;
 import com.chwihae.domain.vote.VoteEntity;
 import com.chwihae.dto.option.response.Option;
-import com.chwihae.infra.AbstractIntegrationTest;
+import com.chwihae.infra.test.AbstractIntegrationTest;
 import com.chwihae.infra.fixture.UserEntityFixture;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;

@@ -6,7 +6,7 @@ import com.chwihae.domain.question.QuestionType;
 import com.chwihae.domain.user.UserEntity;
 import com.chwihae.domain.vote.VoteEntity;
 import com.chwihae.exception.CustomException;
-import com.chwihae.infra.AbstractConcurrencyTest;
+import com.chwihae.infra.test.AbstractConcurrencyTest;
 import com.chwihae.infra.fixture.UserEntityFixture;
 import com.chwihae.utils.ClassUtils;
 import org.assertj.core.api.Assertions;

@@ -10,7 +10,7 @@ import com.chwihae.dto.option.response.VoteOptionResponse;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
 import com.chwihae.dto.question.response.QuestionDetailResponse;
 import com.chwihae.dto.question.response.QuestionListResponse;
-import com.chwihae.infra.AbstractRestDocsTest;
+import com.chwihae.infra.test.AbstractRestDocsTest;
 import com.chwihae.service.comment.CommentService;
 import com.chwihae.service.question.QuestionService;
 import com.chwihae.service.vote.VoteService;
