@@ -23,7 +23,8 @@ import static jakarta.persistence.EnumType.STRING;
 @Table(name = "question",
         indexes = {
                 @Index(name = "idx_question_type", columnList = "type"),
-                @Index(name = "idx_question_status", columnList = "status")
+                @Index(name = "idx_question_status", columnList = "status"),
+                @Index(name = "idx_question_type_status", columnList = "type, status")
         }
 )
 @SQLDelete(sql = "UPDATE question SET deleted_at = NOW() WHERE id_question = ?")
