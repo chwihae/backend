@@ -8,6 +8,7 @@ import com.chwihae.domain.user.UserEntity;
 import com.chwihae.domain.user.UserRepository;
 import com.chwihae.domain.vote.VoteEntity;
 import com.chwihae.domain.vote.VoteRepository;
+import com.chwihae.dto.option.response.Option;
 import com.chwihae.dto.option.response.VoteOptionResponse;
 import com.chwihae.exception.CustomException;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 import static com.chwihae.exception.CustomExceptionError.*;
@@ -37,10 +39,10 @@ public class VoteService {
 
     public VoteOptionResponse getVoteOptions(Long questionId, Long userId) {
         QuestionEntity questionEntity = findQuestionOrException(questionId);
-        if (canUserViewVoteResults(questionEntity, userId)) {
-            return VoteOptionResponse.of(true, optionRepository.findWithVoteCountByQuestionEntityId(questionId));
-        }
-        return VoteOptionResponse.of(false, optionRepository.findWithoutVoteCountByQuestionEntityId(questionId));
+        Long votedOptionId = getVotedOptionId(questionId, userId);
+        boolean showVoteCount = canUserViewVoteResults(questionEntity, votedOptionId, userId);
+        List<Option> options = optionRepository.findOptionsWithResultsByQuestionId(questionId, showVoteCount);
+        return VoteOptionResponse.of(votedOptionId, showVoteCount, options);
     }
 
     @Transactional
@@ -67,10 +69,16 @@ public class VoteService {
         }
     }
 
-    private boolean canUserViewVoteResults(QuestionEntity questionEntity, Long userId) {
-        return LocalDateTime.now(KST).isAfter(questionEntity.getCloseAt()) ||
-                questionEntity.isCreatedBy(userId) ||
-                voteRepository.existsByQuestionEntityIdAndUserEntityId(questionEntity.getId(), userId);
+    private Long getVotedOptionId(Long questionId, Long userId) {
+        return voteRepository.findByQuestionEntityIdAndUserEntityId(questionId, userId)
+                .map(VoteEntity::getId)
+                .orElse(null);
+    }
+
+    private boolean canUserViewVoteResults(QuestionEntity questionEntity, Long votedOptionId, Long userId) {
+        return Objects.nonNull(votedOptionId) ||
+                LocalDateTime.now(KST).isAfter(questionEntity.getCloseAt()) ||
+                questionEntity.isCreatedBy(userId);
     }
 
     private void ensureQuestionerCannotVote(QuestionEntity questionEntity, Long userId) {

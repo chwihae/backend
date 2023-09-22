@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.chwihae.exception.CustomExceptionError.*;
-import static org.assertj.core.groups.Tuple.tuple;
 
 @Transactional
 class VoteServiceTest extends AbstractIntegrationTest {
@@ -50,7 +49,7 @@ class VoteServiceTest extends AbstractIntegrationTest {
         VoteOptionResponse response = voteService.getVoteOptions(questionEntity.getId(), questioner.getId());
 
         //then
-        Assertions.assertThat(response.isCanViewVoteResult()).isTrue();
+        Assertions.assertThat(response.isShowVoteCount()).isTrue();
         Assertions.assertThat(response.getOptions())
                 .hasSize(2)
                 .extracting("voteCount")
@@ -84,7 +83,7 @@ class VoteServiceTest extends AbstractIntegrationTest {
         VoteOptionResponse response = voteService.getVoteOptions(questionEntity.getId(), voter1.getId());
 
         //then
-        Assertions.assertThat(response.isCanViewVoteResult()).isTrue();
+        Assertions.assertThat(response.isShowVoteCount()).isTrue();
         Assertions.assertThat(response.getOptions())
                 .hasSize(2)
                 .extracting("voteCount")
@@ -119,14 +118,11 @@ class VoteServiceTest extends AbstractIntegrationTest {
         VoteOptionResponse response = voteService.getVoteOptions(questionEntity.getId(), other.getId());
 
         //then
-        Assertions.assertThat(response.isCanViewVoteResult()).isFalse();
+        Assertions.assertThat(response.isShowVoteCount()).isFalse();
         Assertions.assertThat(response.getOptions())
                 .hasSize(2)
-                .extracting("id", "name", "voteCount")
-                .containsExactly(
-                        tuple(option1.getId(), option1.getName(), null),
-                        tuple(option2.getId(), option2.getName(), null)
-                );
+                .extracting("voteCount")
+                .containsExactly(null, null);
     }
 
     @Test
@@ -157,7 +153,7 @@ class VoteServiceTest extends AbstractIntegrationTest {
         VoteOptionResponse response = voteService.getVoteOptions(questionEntity.getId(), other.getId());
 
         //then
-        Assertions.assertThat(response.isCanViewVoteResult()).isTrue();
+        Assertions.assertThat(response.isShowVoteCount()).isTrue();
         Assertions.assertThat(response.getOptions())
                 .hasSize(2)
                 .extracting("voteCount")

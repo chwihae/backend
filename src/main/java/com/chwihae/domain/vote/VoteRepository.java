@@ -15,6 +15,8 @@ import static jakarta.persistence.LockModeType.PESSIMISTIC_WRITE;
 public interface VoteRepository extends JpaRepository<VoteEntity, Long> {
     boolean existsByQuestionEntityIdAndUserEntityId(Long questionId, Long userId);
 
+    Optional<VoteEntity> findByQuestionEntityIdAndUserEntityId(Long questionId, Long userId);
+
     @Lock(PESSIMISTIC_WRITE)
     Optional<VoteEntity> findForUpdateByQuestionEntityIdAndOptionEntityIdAndUserEntityId(Long questionId, Long optionId, Long userId);
 

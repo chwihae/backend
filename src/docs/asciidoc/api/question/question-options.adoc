@@ -5,8 +5,9 @@ include::{snippets}/question-options/http-request.adoc[]
 
 ===== Notes
 
-* 이 API는 질문의 옵션과 투표 결과를 반환합니다.
+* 이 API는 질문의 옵션 리스트, 투표 선택, 투표 결과를 반환합니다.
 * 질문자와 투표자는 항상 결과를 볼 수 있습니다.
+* 투표자는 자신이 투표한 옵션 아이디를 반환받습니다
 * 마감되지 않은 질문에 대해 투표하지 않은 사용자는 결과를 볼 수 없습니다.
 * 마감된 질문에 투표하지 않은 사용자는 결과를 볼 수 있습니다.
 
@@ -22,7 +23,9 @@ include::{snippets}/question-options/http-response.adoc[]
 
 ===== Notes
 
-* `canViewVoteResult` 필드는 투표 결과를 볼 수 있는 권한이 있는지 여부를 나타냅니다.
+* `votedOptionId` 필드는 투표자가 투표한 옵션 아이디를 나타냅니다.
+투표하지 않았으면 Null 입니다
+* `showVoteCount` 필드는 투표 결과를 볼 수 있는 권한 여부를 나타냅니다.
 
 ===== Potential Errors
 

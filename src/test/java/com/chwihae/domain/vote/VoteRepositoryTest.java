@@ -77,6 +77,22 @@ class VoteRepositoryTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @DisplayName("질문 아이디와 사용자 아이디로 투표를 조회한다")
+    void findByQuestionEntityIdAndUserEntityId_returnPresent() throws Exception {
+        //given
+        UserEntity user = userRepository.save(UserEntityFixture.of());
+        QuestionEntity question = questionRepository.save(createQuestion(user));
+        OptionEntity option = optionRepository.save(createOption(question));
+        VoteEntity vote = voteRepository.save(createVote(option, user));
+
+        //when
+        Optional<VoteEntity> optionalVoteEntity = voteRepository.findByQuestionEntityIdAndUserEntityId(question.getId(), user.getId());
+
+        //then
+        Assertions.assertThat(optionalVoteEntity).isPresent();
+    }
+
+    @Test
     @DisplayName("같은 옵션에 중복 투표하면 예외가 발생한다")
     void save_whenExistingOption_throwsException() throws Exception {
         //given

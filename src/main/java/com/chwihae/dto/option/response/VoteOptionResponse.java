@@ -12,19 +12,22 @@ import java.util.List;
 @Getter
 public class VoteOptionResponse {
 
-    private boolean canViewVoteResult;
+    private Long votedOptionId;
+    private boolean showVoteCount;
     private List<Option> options;
 
-    public static VoteOptionResponse of(boolean canViewVoteResult, List<Option> options) {
+    public static VoteOptionResponse of(Long votedOptionId, boolean showVoteCount, List<Option> options) {
         return VoteOptionResponse.builder()
-                .canViewVoteResult(canViewVoteResult)
+                .votedOptionId(votedOptionId)
+                .showVoteCount(showVoteCount)
                 .options(options)
                 .build();
     }
 
     @Builder
-    private VoteOptionResponse(boolean canViewVoteResult, List<Option> options) {
-        this.canViewVoteResult = canViewVoteResult;
+    private VoteOptionResponse(Long votedOptionId, boolean showVoteCount, List<Option> options) {
+        this.votedOptionId = votedOptionId;
+        this.showVoteCount = showVoteCount;
         this.options = options;
     }
 }
