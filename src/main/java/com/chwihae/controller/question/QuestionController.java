@@ -4,6 +4,7 @@ import com.chwihae.config.security.CurrentUser;
 import com.chwihae.controller.ApiResponse;
 import com.chwihae.domain.question.QuestionStatus;
 import com.chwihae.domain.question.QuestionType;
+import com.chwihae.dto.comment.Comment;
 import com.chwihae.dto.comment.request.QuestionCommentCreateRequest;
 import com.chwihae.dto.common.response.IdResponse;
 import com.chwihae.dto.option.response.VoteOptionResponse;
@@ -58,6 +59,13 @@ public class QuestionController {
     public ApiResponse<VoteOptionResponse> getOptions(@PathVariable Long questionId,
                                                       @CurrentUser UserContext userContext) {
         return ApiResponse.ok(voteService.getVoteOptions(questionId, userContext.getId()));
+    }
+
+    @GetMapping("/{questionId}/comments")
+    public ApiResponse<Page<Comment>> getComments(@PathVariable Long questionId,
+                                                  @CurrentUser UserContext userContext,
+                                                  @PageableDefault(sort = "createdAt", direction = DESC) Pageable pageable) {
+        return ApiResponse.ok(commentService.getComments(questionId, userContext.getId(), pageable));
     }
 
     @PostMapping("/{questionId}/comments")

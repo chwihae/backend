@@ -1,7 +1,7 @@
 [[comment-create]]
 ===== HTTP Request
 
-include::{snippets}/question-comment-create/http-request.adoc[]
+include::{snippets}/comment-create/http-request.adoc[]
 
 ===== Notes
 
@@ -10,17 +10,17 @@ include::{snippets}/question-comment-create/http-request.adoc[]
 * 질문 ID를 통해 특정 질문에 대한 코멘트를 추가합니다.
 * 코멘트의 내용은 `content` 필드에 지정되어야 합니다.
 
-include::{snippets}/question-comment-create/path-parameters.adoc[]
+include::{snippets}/comment-create/path-parameters.adoc[]
 
 ===== Request Header
 
-include::{snippets}/question-comment-create/request-headers.adoc[]
+include::{snippets}/comment-create/request-headers.adoc[]
 
-include::{snippets}/question-comment-create/request-fields.adoc[]
+include::{snippets}/comment-create/request-fields.adoc[]
 
 ===== HTTP Response
 
-include::{snippets}/question-comment-create/http-response.adoc[]
+include::{snippets}/comment-create/http-response.adoc[]
 
 ===== Potential Errors
 
@@ -28,4 +28,4 @@ include::{snippets}/question-comment-create/http-response.adoc[]
 * `INVALID_ARGUMENT`: 올바르지 않은 파라미터로 요청할 때(ex: 빈 코멘트 내용)
 * `QUESTION_NOT_FOUND`: 지정된 질문 ID에 해당하는 질문이 존재하지 않을 때
 
-include::{snippets}/question-comment-create/response-fields.adoc[]
+include::{snippets}/comment-create/response-fields.adoc[]

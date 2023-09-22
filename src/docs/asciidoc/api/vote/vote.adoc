@@ -1,0 +1,12 @@
+[[Vote]]
+=== 투표
+
+[[vote-create]]
+==== 투표 등록
+
+include::vote-create.adoc[]
+
+[[vote-delete]]
+==== 투표 취소
+
+include::vote-delete.adoc[]

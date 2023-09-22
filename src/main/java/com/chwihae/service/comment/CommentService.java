@@ -7,8 +7,11 @@ import com.chwihae.domain.question.QuestionEntity;
 import com.chwihae.domain.question.QuestionRepository;
 import com.chwihae.domain.user.UserEntity;
 import com.chwihae.domain.user.UserRepository;
+import com.chwihae.dto.comment.Comment;
 import com.chwihae.exception.CustomException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +35,12 @@ public class CommentService {
         UserEntity userEntity = findUserOrException(userId);
         CommenterAliasEntity commenterAliasEntity = getOrCreateCommenterAlias(userEntity, questionEntity);
         commentRepository.save(buildCommentEntity(questionEntity, userEntity, commenterAliasEntity, content));
+    }
+
+    public Page<Comment> getComments(Long questionId, Long userId, Pageable pageable) {
+        QuestionEntity questionEntity = findQuestionOrException(questionId);
+        return commentRepository.findWithAliasByQuestionEntityId(questionEntity.getId(), pageable)
+                .map(it -> Comment.of(it, it.isCreatedBy(userId), it.getCommenterAliasEntity().getAlias()));
     }
 
     private CommenterAliasEntity getOrCreateCommenterAlias(UserEntity userEntity, QuestionEntity questionEntity) {
@@ -74,5 +83,4 @@ public class CommentService {
     private QuestionEntity findQuestionOrException(Long questionId) {
         return questionRepository.findById(questionId).orElseThrow(() -> new CustomException(QUESTION_NOT_FOUND));
     }
-
 }

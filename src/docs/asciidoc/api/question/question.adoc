@@ -1,5 +1,5 @@
 [[Question]]
-=== 질문/투표
+=== 질문
 
 [[question-create]]
 ==== 질문 등록
@@ -20,18 +20,3 @@ include::question-get.adoc[]
 ==== 질문 옵션 조회
 
 include::question-options.adoc[]
-
-[[question-vote-create]]
-==== 질문 투표 등록
-
-include::question-vote-create.adoc[]
-
-[[question-vote-delete]]
-==== 질문 투표 취소
-
-include::question-vote-delete.adoc[]
-
-[[question-comment-create]]
-==== 질문 댓글 등록
-
-include::question-comment-create.adoc[]

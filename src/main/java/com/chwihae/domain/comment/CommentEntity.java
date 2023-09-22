@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import java.util.Objects;
+
 import static jakarta.persistence.FetchType.LAZY;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -53,5 +55,9 @@ public class CommentEntity extends BaseEntity {
         this.questionEntity = questionEntity;
         this.commenterAliasEntity = commenterAliasEntity;
         this.content = content;
+    }
+
+    public boolean isCreatedBy(Long userId) {
+        return Objects.equals(this.userEntity.getId(), userId);
     }
 }

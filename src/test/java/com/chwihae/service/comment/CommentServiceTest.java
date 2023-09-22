@@ -7,6 +7,7 @@ import com.chwihae.domain.commenter.CommenterSequenceEntity;
 import com.chwihae.domain.question.QuestionEntity;
 import com.chwihae.domain.question.QuestionType;
 import com.chwihae.domain.user.UserEntity;
+import com.chwihae.dto.comment.Comment;
 import com.chwihae.exception.CustomException;
 import com.chwihae.exception.CustomExceptionError;
 import com.chwihae.infra.AbstractIntegrationTest;
@@ -14,9 +15,13 @@ import com.chwihae.infra.fixture.UserEntityFixture;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.IntStream;
 
 @Transactional
 class CommentServiceTest extends AbstractIntegrationTest {
@@ -109,6 +114,59 @@ class CommentServiceTest extends AbstractIntegrationTest {
                 .extracting("error")
                 .isEqualTo(CustomExceptionError.QUESTION_NOT_FOUND);
     }
+
+    @Test
+    @DisplayName("질문에 등록된 댓글을 페이지네이션으로 조회한다")
+    void getComments_returnsPagination() throws Exception {
+        // Constants
+        final int USER_COUNT = 10;
+        final int COMMENT_COUNT = 10;
+        final int PAGE_NUMBER = 0;
+        final int PAGE_SIZE = 2;
+
+        UserEntity questioner = userRepository.save(UserEntityFixture.of());
+        QuestionEntity question = questionRepository.save(createQuestion(questioner));
+        commenterSequenceRepository.save(createCommenterSequence(question));
+
+        List<UserEntity> users = IntStream.range(0, USER_COUNT)
+                .mapToObj(i -> UserEntityFixture.of())
+                .toList();
+        userRepository.saveAll(users);
+
+        IntStream.range(0, COMMENT_COUNT).forEach(commentIndex -> {
+            CommenterAliasEntity alias = createAlias("alias" + commentIndex, question, users.get(commentIndex));
+            CommentEntity comment = createComment(questioner, "content", alias, question);
+            commenterAliasRepository.save(alias);
+            commentRepository.save(comment);
+        });
+
+        PageRequest pageRequest = PageRequest.of(PAGE_NUMBER, PAGE_SIZE);
+
+        //when
+        Page<Comment> comments = commentService.getComments(question.getId(), questioner.getId(), pageRequest);
+
+        //then
+        Assertions.assertThat(comments.getTotalElements()).isEqualTo(COMMENT_COUNT);
+        Assertions.assertThat(comments.getSize()).isEqualTo(PAGE_SIZE);
+        Assertions.assertThat(comments.getNumber()).isEqualTo(PAGE_NUMBER);
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 질문의 댓글을 조회하면 예외가 발생한다")
+    void getComments_throwsNotFoundException() throws Exception {
+        //given
+        final int PAGE_NUMBER = 0;
+        final int PAGE_SIZE = 2;
+        long notExistingQuestionId = 0;
+        long notExistingUserId = 0;
+        PageRequest pageRequest = PageRequest.of(PAGE_NUMBER, PAGE_SIZE);
+        //when //then
+        Assertions.assertThatThrownBy(() -> commentService.getComments(notExistingQuestionId, notExistingUserId, pageRequest))
+                .isInstanceOf(CustomException.class)
+                .extracting("error")
+                .isEqualTo(CustomExceptionError.QUESTION_NOT_FOUND);
+    }
+
 
     public QuestionEntity createQuestion(UserEntity userEntity) {
         return QuestionEntity.builder()

@@ -1,7 +1,7 @@
 [[question-vote-create]]
 ===== HTTP Request
 
-include::{snippets}/question-vote-create/http-request.adoc[]
+include::{snippets}/vote-create/http-request.adoc[]
 
 ===== Notes
 
@@ -12,15 +12,15 @@ include::{snippets}/question-vote-create/http-request.adoc[]
 * 한 사용자는 하나의 질문에 한 번만 투표할 수 있습니다.
 * 마감된 질문에는 투표할 수 없습니다.
 
-include::{snippets}/question-vote-create/path-parameters.adoc[]
+include::{snippets}/vote-create/path-parameters.adoc[]
 
 ===== Request Header
 
-include::{snippets}/question-vote-create/request-headers.adoc[]
+include::{snippets}/vote-create/request-headers.adoc[]
 
 ===== HTTP Response
 
-include::{snippets}/question-vote-create/http-response.adoc[]
+include::{snippets}/vote-create/http-response.adoc[]
 
 ===== Potential Errors
 
@@ -31,4 +31,4 @@ include::{snippets}/question-vote-create/http-response.adoc[]
 * `QUESTION_NOT_FOUND`: 존재하지 않는 질문에 투표를 시도할 때
 * `OPTION_NOT_FOUND`: 존재하지 않는 옵션에 투표를 시도할 때
 
-include::{snippets}/question-vote-create/response-fields.adoc[]
+include::{snippets}/vote-create/response-fields.adoc[]

@@ -1,5 +1,8 @@
 package com.chwihae.controller.question;
 
+import com.chwihae.domain.comment.CommentEntity;
+import com.chwihae.domain.commenter.CommenterAliasEntity;
+import com.chwihae.domain.commenter.CommenterAliasPrefix;
 import com.chwihae.domain.commenter.CommenterSequenceEntity;
 import com.chwihae.domain.option.OptionEntity;
 import com.chwihae.domain.question.QuestionEntity;
@@ -23,6 +26,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static com.chwihae.domain.question.QuestionStatus.IN_PROGRESS;
 import static com.chwihae.exception.CustomExceptionError.*;
@@ -766,6 +770,85 @@ class QuestionControllerTest extends AbstractMockMvcTest {
                 .andExpect(jsonPath("$.code").value(INVALID_TOKEN.code()));
     }
 
+    @Test
+    @DisplayName("GET /api/v1/questions/{questionId}/comments - 성공")
+    @WithTestUser
+    void getComments_returnsSuccessCode() throws Exception {
+        //given
+        final int USER_COUNT = 10;
+        final int COMMENT_COUNT = 10;
+        final int PAGE_NUMBER = 0;
+        final int PAGE_SIZE = 2;
+
+        UserEntity questioner = userRepository.save(UserEntityFixture.of());
+        LocalDateTime closeAt = LocalDateTime.now(ZoneId.of("Asia/Seoul")).plusDays(1);
+        QuestionEntity question = questionRepository.save(createQuestion(questioner, closeAt));
+        commenterSequenceRepository.save(createSequence(question));
+
+        List<UserEntity> users = IntStream.range(0, USER_COUNT)
+                .mapToObj(i -> UserEntityFixture.of())
+                .toList();
+        userRepository.saveAll(users);
+
+        IntStream.range(0, COMMENT_COUNT).forEach(commentIndex -> {
+            CommenterAliasEntity alias = createAlias(CommenterAliasPrefix.getAlias(commentIndex), question, users.get(commentIndex));
+            CommentEntity comment = createComment(questioner, "content", alias, question);
+            commenterAliasRepository.save(alias);
+            commentRepository.save(comment);
+        });
+
+        //when //then
+        mockMvc.perform(
+                        get("/api/v1/questions/{questionId}/comments", question.getId())
+                                .param("page", String.valueOf(PAGE_NUMBER))
+                                .param("size", String.valueOf(PAGE_SIZE))
+
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+
+    @Test
+    @DisplayName("GET /api/v1/questions/{questionId}/comments - 실패 (존재하지 않는 질문 아이디)")
+    @WithTestUser
+    void getComments_withNotExistingQuestionId_returnsSuccessCode() throws Exception {
+        //given
+        final int PAGE_NUMBER = 0;
+        final int PAGE_SIZE = 2;
+        long notExistingUserId = 0L;
+
+        //when //then
+        mockMvc.perform(
+                        get("/api/v1/questions/{questionId}/comments", notExistingUserId)
+                                .param("page", String.valueOf(PAGE_NUMBER))
+                                .param("size", String.valueOf(PAGE_SIZE))
+
+                )
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value(QUESTION_NOT_FOUND.code()));
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/questions/{questionId}/comments - 실패 (미인증 사용자)")
+    @WithAnonymousUser
+    void getComments_byWhoNotAuthenticated_returnsSuccessCode() throws Exception {
+        //given
+        final int PAGE_NUMBER = 0;
+        final int PAGE_SIZE = 2;
+        long notExistingUserId = 0L;
+
+        //when //then
+        mockMvc.perform(
+                        get("/api/v1/questions/{questionId}/comments", notExistingUserId)
+                                .param("page", String.valueOf(PAGE_NUMBER))
+                                .param("size", String.valueOf(PAGE_SIZE))
+
+                )
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.code").value(INVALID_TOKEN.code()));
+    }
+
     public QuestionEntity createQuestion(UserEntity userEntity, LocalDateTime closeAt) {
         return QuestionEntity.builder()
                 .userEntity(userEntity)
@@ -793,6 +876,23 @@ class QuestionControllerTest extends AbstractMockMvcTest {
 
     public CommenterSequenceEntity createSequence(QuestionEntity questionEntity) {
         return CommenterSequenceEntity.builder()
+                .questionEntity(questionEntity)
+                .build();
+    }
+
+    public CommenterAliasEntity createAlias(String alias, QuestionEntity questionEntity, UserEntity userEntity) {
+        return CommenterAliasEntity.builder()
+                .alias(alias)
+                .questionEntity(questionEntity)
+                .userEntity(userEntity)
+                .build();
+    }
+
+    public CommentEntity createComment(UserEntity userEntity, String content, CommenterAliasEntity commenterAliasEntity, QuestionEntity questionEntity) {
+        return CommentEntity.builder()
+                .content(content)
+                .userEntity(userEntity)
+                .commenterAliasEntity(commenterAliasEntity)
                 .questionEntity(questionEntity)
                 .build();
     }

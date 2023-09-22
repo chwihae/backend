@@ -1,0 +1,12 @@
+[[Comment]]
+=== 댓글
+
+[[comment-list]]
+==== 댓글 리스트 조회
+
+include::comment-list.adoc[]
+
+[[question-comment-create]]
+==== 댓글 등록
+
+include::comment-create.adoc[]
