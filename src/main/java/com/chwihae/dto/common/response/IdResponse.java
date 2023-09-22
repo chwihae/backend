@@ -1,4 +1,4 @@
-package com.chwihae.dto;
+package com.chwihae.dto.common.response;
 
 import lombok.Builder;
 import lombok.Getter;

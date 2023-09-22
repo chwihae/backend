@@ -1,11 +1,13 @@
 package com.chwihae.controller.question;
 
+import com.chwihae.domain.commenter.CommenterSequenceEntity;
 import com.chwihae.domain.option.OptionEntity;
 import com.chwihae.domain.question.QuestionEntity;
 import com.chwihae.domain.question.QuestionStatus;
 import com.chwihae.domain.question.QuestionType;
 import com.chwihae.domain.user.UserEntity;
 import com.chwihae.domain.vote.VoteEntity;
+import com.chwihae.dto.comment.request.QuestionCommentCreateRequest;
 import com.chwihae.dto.option.request.OptionCreateRequest;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
 import com.chwihae.infra.AbstractMockMvcTest;
@@ -678,6 +680,92 @@ class QuestionControllerTest extends AbstractMockMvcTest {
                 .andExpect(jsonPath("$.code").value(INVALID_TOKEN.code()));
     }
 
+    @Test
+    @DisplayName("POST /api/v1/questions/{questionId}/comments - 성공")
+    @WithTestUser
+    void createComment_returnSuccessCode() throws Exception {
+        //given
+        UserEntity questioner = userRepository.save(UserEntityFixture.of("questioner@email.com"));
+        LocalDateTime closeAt = LocalDateTime.now(ZoneId.of("Asia/Seoul")).minusDays(1);
+        QuestionEntity questionEntity = questionRepository.save(createQuestion(questioner, closeAt));
+        commenterSequenceRepository.save(createSequence(questionEntity));
+
+        QuestionCommentCreateRequest request = QuestionCommentCreateRequest.builder()
+                .content("content")
+                .build();
+
+        //when //then
+        mockMvc.perform(
+                        post("/api/v1/questions/{questionId}/comments", questionEntity.getId())
+                                .contentType(APPLICATION_JSON)
+                                .content(body(request))
+                )
+                .andExpect(status().isOk());
+
+        Assertions.assertThat(commentRepository.findAll()).hasSize(1);
+        Assertions.assertThat(commenterAliasRepository.findAll()).hasSize(1);
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/questions/{questionId}/comments - 실패 (올바르지 않은 파라미터)")
+    @WithTestUser
+    void createComment_withInvalidParameter_returnInvalidArgumentCode() throws Exception {
+        //given
+        long notExistingQuestionId = 0L;
+        QuestionCommentCreateRequest request = QuestionCommentCreateRequest.builder()
+                .content("")
+                .build();
+
+        //when //then
+        mockMvc.perform(
+                        post("/api/v1/questions/{questionId}/comments", notExistingQuestionId)
+                                .contentType(APPLICATION_JSON)
+                                .content(body(request))
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value(INVALID_ARGUMENT.code()));
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/questions/{questionId}/comments - 실패 (존재하지 않는 질문)")
+    @WithTestUser
+    void createComment_withNotExistingQuestionId_returnNotFoundCode() throws Exception {
+        //given
+        long notExistingQuestionId = 0L;
+        QuestionCommentCreateRequest request = QuestionCommentCreateRequest.builder()
+                .content("content")
+                .build();
+
+        //when //then
+        mockMvc.perform(
+                        post("/api/v1/questions/{questionId}/comments", notExistingQuestionId)
+                                .contentType(APPLICATION_JSON)
+                                .content(body(request))
+                )
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value(QUESTION_NOT_FOUND.code()));
+    }
+
+    @Test
+    @DisplayName(" POST /api/v1/questions/{questionId}/comments - 실패 (미인증 사용자)")
+    @WithAnonymousUser
+    void createComment_byWhoNotAuthenticated_returnNotFoundCode() throws Exception {
+        //given
+        long notExistingQuestionId = 0L;
+        QuestionCommentCreateRequest request = QuestionCommentCreateRequest.builder()
+                .content("content")
+                .build();
+
+        //when //then
+        mockMvc.perform(
+                        post("/api/v1/questions/{questionId}/comments", notExistingQuestionId)
+                                .contentType(APPLICATION_JSON)
+                                .content(body(request))
+                )
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.code").value(INVALID_TOKEN.code()));
+    }
+
     public QuestionEntity createQuestion(UserEntity userEntity, LocalDateTime closeAt) {
         return QuestionEntity.builder()
                 .userEntity(userEntity)
@@ -700,6 +788,12 @@ class QuestionControllerTest extends AbstractMockMvcTest {
                 .questionEntity(optionEntity.getQuestionEntity())
                 .optionEntity(optionEntity)
                 .userEntity(userEntity)
+                .build();
+    }
+
+    public CommenterSequenceEntity createSequence(QuestionEntity questionEntity) {
+        return CommenterSequenceEntity.builder()
+                .questionEntity(questionEntity)
                 .build();
     }
 }

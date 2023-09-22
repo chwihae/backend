@@ -1,8 +1,8 @@
 package com.chwihae.domain.question;
 
 import com.chwihae.domain.user.UserEntity;
-import com.chwihae.infra.fixture.UserEntityFixture;
 import com.chwihae.infra.AbstractIntegrationTest;
+import com.chwihae.infra.fixture.UserEntityFixture;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,7 +28,7 @@ class QuestionRepositoryTest extends AbstractIntegrationTest {
         QuestionEntity question2 = createQuestion(userEntity, QuestionType.COMPANY);
         QuestionEntity question3 = createQuestion(userEntity, QuestionType.ETC);
         QuestionEntity question4 = createQuestion(userEntity, QuestionType.SPEC);
-        QuestionEntity question5 = createQuestion(userEntity, QuestionType.STUDY);
+        QuestionEntity question5 = createQuestion(userEntity, QuestionType.CAREER);
         questionRepository.saveAll(List.of(question1, question2, question3, question4, question5));
 
         final int pageSize = 2;

@@ -10,8 +10,8 @@ import com.chwihae.dto.question.response.QuestionDetailResponse;
 import com.chwihae.dto.question.response.QuestionListResponse;
 import com.chwihae.exception.CustomException;
 import com.chwihae.exception.CustomExceptionError;
-import com.chwihae.infra.fixture.UserEntityFixture;
 import com.chwihae.infra.AbstractIntegrationTest;
+import com.chwihae.infra.fixture.UserEntityFixture;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -61,6 +61,27 @@ class QuestionServiceTest extends AbstractIntegrationTest {
         Assertions.assertThat(id).isNotNull();
         Assertions.assertThat(questionRepository.findAll()).hasSize(1);
         Assertions.assertThat(optionRepository.findAll()).hasSize(2);
+    }
+
+    @Test
+    @DisplayName("질문 생성 시, 댓글 작성자의 순서 정보가 0으로 저장된다")
+    void createCommenterSequence() throws Exception {
+        //given
+        UserEntity user = userRepository.save(UserEntityFixture.of());
+
+        QuestionCreateRequest request = QuestionCreateRequest.builder()
+                .title("title")
+                .type(SPEC)
+                .closeAt(LocalDateTime.of(2023, 11, 11, 0, 0))
+                .content("content")
+                .options(List.of())
+                .build();
+
+        //when
+        questionService.createQuestion(request, user.getId());
+
+        //then
+        Assertions.assertThat(commenterSequenceRepository.findAll()).hasSize(1);
     }
 
     @Test

@@ -26,13 +26,7 @@ public class AuthService {
         UserEntity userEntity = findOrCreateUser(userEmail);
         String issuedToken = createToken(userEntity.getId());
         String issuedRefreshToken = createRefreshToken(userEntity.getId());
-
-        return LoginResponse.builder()
-                .userId(userEntity.getId())
-                .email(userEmail)
-                .token(issuedToken)
-                .refreshToken(issuedRefreshToken)
-                .build();
+        return LoginResponse.of(userEntity.getId(), userEmail, issuedToken, issuedRefreshToken);
     }
 
     private UserEntity findOrCreateUser(String email) {

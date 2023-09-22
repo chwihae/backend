@@ -1,5 +1,5 @@
 [[vote-delete]]
-===== DELETE Vote API
+===== HTTP Request
 
 include::{snippets}/question-vote-delete/http-request.adoc[]
 

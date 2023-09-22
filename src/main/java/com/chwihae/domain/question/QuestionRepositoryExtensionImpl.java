@@ -21,12 +21,10 @@ public class QuestionRepositoryExtensionImpl extends QuerydslRepositorySupport i
     @Override
     public Page<QuestionEntity> findByTypeAndStatus(QuestionStatus status, QuestionType type, Pageable pageable) {
         BooleanBuilder conditions = new BooleanBuilder();
-
         appendTypeCondition(conditions, Optional.ofNullable(type));
         appendStatusCondition(conditions, Optional.ofNullable(status));
 
         JPQLQuery<QuestionEntity> query = from(questionEntity).where(conditions);
-
         JPQLQuery<QuestionEntity> paginatedQuery = getQuerydsl().applyPagination(pageable, query);
         List<QuestionEntity> questionEntities = paginatedQuery.fetch();
 
