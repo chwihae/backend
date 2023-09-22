@@ -42,12 +42,7 @@ public class QuestionService {
     private final BookmarkService bookmarkService;
 
     public Page<QuestionListResponse> getQuestionsByTypeAndStatus(QuestionType type, QuestionStatus status, Pageable pageable) {
-        return questionRepository.findByTypeAndStatus(status, type, pageable)
-                .map(it -> {
-                    long bookmarkCount = bookmarkService.getBookmarkCount(it.getId());
-                    long commentCount = commentService.getCommentCount(it.getId());
-                    return QuestionListResponse.of(it, commentCount, bookmarkCount);
-                });
+        return questionRepository.findByTypeAndStatusWithCounts(status, type, pageable);
     }
 
     @Transactional
@@ -58,7 +53,7 @@ public class QuestionService {
         commenterSequenceService.createCommenterSequence(questionEntity);
         return questionEntity.getId();
     }
-    
+
     public QuestionDetailResponse getQuestion(Long questionId, Long userId) {
         QuestionEntity questionEntity = findQuestionOrException(questionId);
         boolean bookmarked = bookmarkService.isBookmarked(questionId, userId);

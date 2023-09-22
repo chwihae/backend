@@ -493,7 +493,7 @@ class QuestionControllerTest extends AbstractMockMvcTest {
     }
 
     @Test
-    @DisplayName("GET /api/v1/questions?type={type}&status={}&page={pageNumber}&size={size} - 성공 (without QuestionStatus 요청)")
+    @DisplayName("GET /api/v1/questions?type={type}&status={status}&page={pageNumber}&size={size} - 성공 (without QuestionStatus 요청)")
     @WithTestUser
     void getQuestions_withoutQuestionStatus_returnsSuccessCode() throws Exception {
         //given
@@ -519,7 +519,7 @@ class QuestionControllerTest extends AbstractMockMvcTest {
     }
 
     @Test
-    @DisplayName("GET /api/v1/questions?type={type}&status={}&page={pageNumber}&size={size} - 성공 (with QuestionStatus 요청)")
+    @DisplayName("GET /api/v1/questions?type={type}&status={status}&page={pageNumber}&size={size} - 성공 (with QuestionStatus 요청)")
     @WithTestUser
     void getQuestions_withQuestionStatus_returnsSuccessCode() throws Exception {
         //given
@@ -546,7 +546,7 @@ class QuestionControllerTest extends AbstractMockMvcTest {
     }
 
     @Test
-    @DisplayName("GET /api/v1/questions?type={type}&status={}&page={pageNumber}&size={size} - 실패 (with InvalidQuestionStatus 요청)")
+    @DisplayName("GET /api/v1/questions?type={type}&status={status}&page={pageNumber}&size={size} - 실패 (with InvalidQuestionStatus 요청)")
     @WithTestUser
     void getQuestions_withInvalidQuestionStatus_returnsSuccessCode() throws Exception {
         //given
@@ -572,7 +572,7 @@ class QuestionControllerTest extends AbstractMockMvcTest {
     }
 
     @Test
-    @DisplayName("GET /api/v1/questions?type={type}&status={}&page={pageNumber}&size={size} - 실패 (미인증 사용자)")
+    @DisplayName("GET /api/v1/questions?type={type}&status={status}&page={pageNumber}&size={size} - 실패 (미인증 사용자)")
     @WithAnonymousUser
     void getQuestions_byAnonymousUser_returnsSuccessCode() throws Exception {
         //given
