@@ -18,23 +18,34 @@ public class QuestionListResponse {
     private QuestionType type;
     private QuestionStatus status;
     private long viewCount = 0;
-    private long commentCount = 0;
-    private long bookmarkCount = 0;
+    private long commentCount;
+    private long bookmarkCount;
 
-    public static QuestionListResponse of(QuestionEntity questionEntity) {
+    public static QuestionListResponse of(QuestionEntity questionEntity,
+                                          long commentCount,
+                                          long bookmarkCount) {
         return QuestionListResponse.builder()
                 .id(questionEntity.getId())
                 .title(questionEntity.getTitle())
                 .status(questionEntity.getStatus())
                 .type(questionEntity.getType())
+                .commentCount(commentCount)
+                .bookmarkCount(bookmarkCount)
                 .build();
     }
-
+    
     @Builder
-    private QuestionListResponse(Long id, String title, QuestionType type, QuestionStatus status) {
+    private QuestionListResponse(Long id,
+                                 String title,
+                                 QuestionType type,
+                                 QuestionStatus status,
+                                 long commentCount,
+                                 long bookmarkCount) {
         this.id = id;
         this.title = title;
         this.type = type;
         this.status = status;
+        this.commentCount = commentCount;
+        this.bookmarkCount = bookmarkCount;
     }
 }

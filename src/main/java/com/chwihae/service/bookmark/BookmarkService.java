@@ -35,6 +35,14 @@ public class BookmarkService {
                 .orElseGet(() -> saveBookmark(userEntity, questionEntity));
     }
 
+    public long getBookmarkCount(Long questionId) {
+        return bookmarkRepository.countByQuestionEntityId(questionId);
+    }
+
+    public boolean isBookmarked(Long questionId, Long userId) {
+        return bookmarkRepository.existsByQuestionEntityIdAndUserEntityId(questionId, userId);
+    }
+
     private boolean saveBookmark(UserEntity userEntity, QuestionEntity questionEntity) {
         bookmarkRepository.save(buildBookmark(userEntity, questionEntity));
         return true;

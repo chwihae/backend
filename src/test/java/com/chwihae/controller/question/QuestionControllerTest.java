@@ -201,7 +201,25 @@ class QuestionControllerTest extends AbstractMockMvcTest {
                 .andExpect(jsonPath("$.data.editable").value(false));
     }
 
-    // TODO GET /api/v1/questions/{questionId} - 성공 (북마크한 조회자)
+    @Test
+    @DisplayName("GET /api/v1/questions/{questionId} - 성공 (북마크한 조회자)")
+    @WithTestUser("viewer@email.com")
+    void getQuestion_byBookmarkUser_returnsSuccessCode() throws Exception {
+        //given
+        UserEntity questioner = userRepository.save(UserEntityFixture.of("questioner@email.com"));
+        UserEntity viewer = userRepository.findByEmail("viewer@email.com").get();
+        LocalDateTime closeAt = LocalDateTime.now(ZoneId.of("Asia/Seoul")).plusMinutes(1);
+        QuestionEntity questionEntity = questionRepository.save(createQuestion(questioner, closeAt));
+        bookmarkRepository.save(createBookmark(viewer, questionEntity));
+
+        //when //then
+        mockMvc.perform(
+                        get("/api/v1/questions/{questionId}", questionEntity.getId())
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.bookmarked").value(true));
+    }
 
     @Test
     @DisplayName("POST /api/v1/questions/{questionId}/bookmark - 성공 (북마크 저장)")

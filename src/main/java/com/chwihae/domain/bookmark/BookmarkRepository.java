@@ -10,6 +10,11 @@ import java.util.Optional;
 
 @Repository
 public interface BookmarkRepository extends JpaRepository<BookmarkEntity, Long> {
+
+    long countByQuestionEntityId(Long questionId);
+
+    boolean existsByQuestionEntityIdAndUserEntityId(Long questionId, Long userId);
+
     Optional<BookmarkEntity> findByQuestionEntityIdAndUserEntityId(Long questionId, Long userId);
 
     @Transactional

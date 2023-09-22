@@ -1,6 +1,5 @@
 package com.chwihae.service.question;
 
-import com.chwihae.domain.comment.CommentRepository;
 import com.chwihae.domain.option.OptionEntity;
 import com.chwihae.domain.option.OptionRepository;
 import com.chwihae.domain.question.QuestionEntity;
@@ -9,13 +8,15 @@ import com.chwihae.domain.question.QuestionStatus;
 import com.chwihae.domain.question.QuestionType;
 import com.chwihae.domain.user.UserEntity;
 import com.chwihae.domain.user.UserRepository;
-import com.chwihae.domain.vote.VoteRepository;
 import com.chwihae.dto.option.request.OptionCreateRequest;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
 import com.chwihae.dto.question.response.QuestionDetailResponse;
 import com.chwihae.dto.question.response.QuestionListResponse;
 import com.chwihae.exception.CustomException;
+import com.chwihae.service.bookmark.BookmarkService;
+import com.chwihae.service.comment.CommentService;
 import com.chwihae.service.commenter.CommenterSequenceService;
+import com.chwihae.service.vote.VoteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,11 +37,17 @@ public class QuestionService {
     private final QuestionRepository questionRepository;
     private final OptionRepository optionRepository;
     private final CommenterSequenceService commenterSequenceService;
-    private final CommentRepository commentRepository;
-    private final VoteRepository voteRepository;
+    private final CommentService commentService;
+    private final VoteService voteService;
+    private final BookmarkService bookmarkService;
 
     public Page<QuestionListResponse> getQuestionsByTypeAndStatus(QuestionType type, QuestionStatus status, Pageable pageable) {
-        return questionRepository.findByTypeAndStatus(status, type, pageable).map(QuestionListResponse::of);
+        return questionRepository.findByTypeAndStatus(status, type, pageable)
+                .map(it -> {
+                    long bookmarkCount = bookmarkService.getBookmarkCount(it.getId());
+                    long commentCount = commentService.getCommentCount(it.getId());
+                    return QuestionListResponse.of(it, commentCount, bookmarkCount);
+                });
     }
 
     @Transactional
@@ -51,13 +58,15 @@ public class QuestionService {
         commenterSequenceService.createCommenterSequence(questionEntity);
         return questionEntity.getId();
     }
-
+    
     public QuestionDetailResponse getQuestion(Long questionId, Long userId) {
         QuestionEntity questionEntity = findQuestionOrException(questionId);
-        long voteCount = voteRepository.countByQuestionEntityId(questionId);
-        long commentCount = commentRepository.countByQuestionEntityId(questionId);
+        boolean bookmarked = bookmarkService.isBookmarked(questionId, userId);
+        long bookmarkCount = bookmarkService.getBookmarkCount(questionId);
+        long voteCount = voteService.getVoteCount(questionId);
+        long commentCount = commentService.getCommentCount(questionId);
         boolean isEditable = questionEntity.isCreatedBy(userId);
-        return QuestionDetailResponse.of(questionEntity, commentCount, voteCount, isEditable);
+        return QuestionDetailResponse.of(questionEntity, bookmarkCount, commentCount, voteCount, bookmarked, isEditable);
     }
 
     private List<OptionEntity> buildOptionEntities(List<OptionCreateRequest> options, QuestionEntity questionEntity) {

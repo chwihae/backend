@@ -43,6 +43,10 @@ public class CommentService {
                 .map(it -> Comment.of(it, it.isCreatedBy(userId), it.getCommenterAliasEntity().getAlias()));
     }
 
+    public long getCommentCount(Long questionId) {
+        return commentRepository.countByQuestionEntityId(questionId);
+    }
+
     private CommenterAliasEntity getOrCreateCommenterAlias(UserEntity userEntity, QuestionEntity questionEntity) {
         return commentRepository.findTopCommentByQuestionIdAndUserId(questionEntity.getId(), userEntity.getId())
                 .map(CommentEntity::getCommenterAliasEntity)
