@@ -476,6 +476,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#question-options">2.3.4. 질문 옵션 조회</a></li>
 <li><a href="#question-vote-create">2.3.5. 질문 투표 등록</a></li>
 <li><a href="#question-vote-delete">2.3.6. 질문 투표 취소</a></li>
+<li><a href="#question-comment-create">2.3.7. 질문 댓글 등록</a></li>
 </ul>
 </li>
 </ul>
@@ -683,7 +684,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <td class="tableblock halign-left valign-top"><p class="tableblock">Null</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>409 NOT_FOUND</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>404 NOT_FOUND</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">VOTE_NOT_FOUND</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">1400</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">투표 기록이 존재하지 않습니다</p></td>
@@ -855,7 +856,7 @@ Content-Length: 166
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/v1/users/statistics HTTP/1.1
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTM0Njc1MCwiZXhwIjoxNjk1NDMzMTUwfQ.3eVZ-FVBnwaT8YtZvq9SGP6jRFKhGeFeCO5gj2EiG08
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTM4MjkzMCwiZXhwIjoxNjk1NDY5MzMwfQ.W9-hb0CDGo6amAIV3e5zG1rFyroCj3YYpklJZghde7E
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -1006,7 +1007,7 @@ Content-Length: 126
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/v1/questions HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTM0Njc0OSwiZXhwIjoxNjk1NDMzMTQ5fQ.H93snz2Y9cCXctnRDXgwPEah3e8WFogBUBmn-Flpkf0
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTM4MjkyOSwiZXhwIjoxNjk1NDY5MzI5fQ.oI2OJKw5DqwgNmd-J5RR7XQOnD94yBAR6dIRGv8_kAA
 Content-Length: 194
 Host: localhost:8080
 
@@ -1014,7 +1015,7 @@ Host: localhost:8080
   "title" : "title",
   "content" : "content",
   "type" : "SPEC",
-  "closeAt" : "2023-09-22T11:09:09",
+  "closeAt" : "2023-09-22T21:12:09",
   "options" : [ {
     "name" : "option name 1"
   }, {
@@ -1086,7 +1087,7 @@ Host: localhost:8080
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>type</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">O</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">질문 타입 (가능한 값: [SPEC, STUDY, COMPANY, ETC])</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">질문 타입 (가능한 값: [CAREER ,SPEC, COMPANY, ETC])</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>content</code></p></td>
@@ -1212,7 +1213,7 @@ Content-Length: 75
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/v1/questions?type=COMPANY&amp;status=IN_PROGRESS&amp;page=0&amp;size=2 HTTP/1.1
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTM0Njc0OSwiZXhwIjoxNjk1NDMzMTQ5fQ.H93snz2Y9cCXctnRDXgwPEah3e8WFogBUBmn-Flpkf0
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTM4MjkyOSwiZXhwIjoxNjk1NDY5MzI5fQ.oI2OJKw5DqwgNmd-J5RR7XQOnD94yBAR6dIRGv8_kAA
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -1249,7 +1250,7 @@ Host: localhost:8080</code></pre>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>type</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">[Optional] 질문 타입 (가능한 값: [SPEC, STUDY, COMPANY, ETC])</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[Optional] 질문 타입 (가능한 값: [CAREER, SPEC, COMPANY, ETC])</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>status</code></p></td>
@@ -1353,8 +1354,8 @@ Content-Length: 1547
       "unpaged" : false
     },
     "last" : false,
-    "totalPages" : 3,
     "totalElements" : 5,
+    "totalPages" : 3,
     "first" : true,
     "size" : 2,
     "number" : 0,
@@ -1449,7 +1450,7 @@ Content-Length: 1547
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].type</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">질문 타입 [SPEC, STUDY, COMPANY, ETC]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">질문 타입 [CAREER, SPEC, COMPANY, ETC]</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].status</code></p></td>
@@ -1535,7 +1536,7 @@ Content-Length: 1547
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/v1/questions/1 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTM0Njc0OSwiZXhwIjoxNjk1NDMzMTQ5fQ.H93snz2Y9cCXctnRDXgwPEah3e8WFogBUBmn-Flpkf0
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTM4MjkyOSwiZXhwIjoxNjk1NDY5MzI5fQ.oI2OJKw5DqwgNmd-J5RR7XQOnD94yBAR6dIRGv8_kAA
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -1612,7 +1613,7 @@ Content-Length: 353
     "title" : "title",
     "content" : "content",
     "type" : "COMPANY",
-    "closeAt" : "2023-09-22T11:09:09",
+    "closeAt" : "2023-09-22T21:12:09",
     "status" : "IN_PROGRESS",
     "viewCount" : 0,
     "commentCount" : 0,
@@ -1712,7 +1713,7 @@ Content-Length: 353
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.type</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">질문 타입 [SPEC, STUDY, COMPANY, ETC]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">질문 타입 [CAREER, SPEC, COMPANY, ETC]</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.status</code></p></td>
@@ -1774,7 +1775,7 @@ Content-Length: 353
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/v1/questions/25/options HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTM0Njc0OSwiZXhwIjoxNjk1NDMzMTQ5fQ.H93snz2Y9cCXctnRDXgwPEah3e8WFogBUBmn-Flpkf0
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTM4MjkyOSwiZXhwIjoxNjk1NDY5MzI5fQ.oI2OJKw5DqwgNmd-J5RR7XQOnD94yBAR6dIRGv8_kAA
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -1991,7 +1992,7 @@ Content-Length: 523
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/v1/questions/25/options/100 HTTP/1.1
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTM0Njc0OSwiZXhwIjoxNjk1NDMzMTQ5fQ.H93snz2Y9cCXctnRDXgwPEah3e8WFogBUBmn-Flpkf0
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTM4MjkyOSwiZXhwIjoxNjk1NDY5MzI5fQ.oI2OJKw5DqwgNmd-J5RR7XQOnD94yBAR6dIRGv8_kAA
 Host: localhost:8080
 Content-Type: application/x-www-form-urlencoded</code></pre>
 </div>
@@ -2150,11 +2151,11 @@ Content-Length: 60
 <div class="sect3">
 <h4 id="question-vote-delete"><a class="link" href="#question-vote-delete">2.3.6. 질문 투표 취소</a></h4>
 <div class="sect4">
-<h5 id="vote-delete"><a class="link" href="#vote-delete">DELETE Vote API</a></h5>
+<h5 id="vote-delete"><a class="link" href="#vote-delete">HTTP Request</a></h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">DELETE /api/v1/questions/25/options/100 HTTP/1.1
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTM0Njc0OSwiZXhwIjoxNjk1NDMzMTQ5fQ.H93snz2Y9cCXctnRDXgwPEah3e8WFogBUBmn-Flpkf0
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTM4MjkyOSwiZXhwIjoxNjk1NDY5MzI5fQ.oI2OJKw5DqwgNmd-J5RR7XQOnD94yBAR6dIRGv8_kAA
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -2263,6 +2264,182 @@ Content-Length: 55
 </div>
 <div class="sect4">
 <h5 id="_response_fields_8"><a class="link" href="#_response_fields_8">Response Fields</a></h5>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Nullable</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">메시지</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 데이터</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="question-comment-create"><a class="link" href="#question-comment-create">2.3.7. 질문 댓글 등록</a></h4>
+<div class="sect4">
+<h5 id="comment-create"><a class="link" href="#comment-create">HTTP Request</a></h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/v1/questions/53/comments HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTM4MjkyOSwiZXhwIjoxNjk1NDY5MzI5fQ.oI2OJKw5DqwgNmd-J5RR7XQOnD94yBAR6dIRGv8_kAA
+Content-Length: 27
+Host: localhost:8080
+
+{
+  "content" : "content"
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_notes_16"><a class="link" href="#_notes_16">Notes</a></h5>
+<div class="ulist">
+<ul>
+<li>
+<p>이 API는 사용자가 특정 질문에 대한 코멘트를 생성할 때 사용됩니다.</p>
+</li>
+<li>
+<p>요청 헤더에는 유효한 토큰이 포함되어 있어야 합니다.</p>
+</li>
+<li>
+<p>질문 ID를 통해 특정 질문에 대한 코멘트를 추가합니다.</p>
+</li>
+<li>
+<p>코멘트의 내용은 <code>content</code> 필드에 지정되어야 합니다.</p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 5. /api/v1/questions/{questionId}/comments</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>questionId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[Required] 질문 아이디 (타입: 숫자)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_request_header_8"><a class="link" href="#_request_header_8">Request Header</a></h5>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[Required] 인증 토큰 (타입: 문자열)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_request_fields_2"><a class="link" href="#_request_fields_2">Request Fields</a></h5>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Requried</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>content</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">O</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">답변 내용(빈 문자열 불가능)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_http_response_9"><a class="link" href="#_http_response_9">HTTP Response</a></h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length: 60
+
+{
+  "code" : 201,
+  "message" : "CREATED",
+  "data" : null
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_potential_errors_9"><a class="link" href="#_potential_errors_9">Potential Errors</a></h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>INVALID_TOKEN</code>: 유효하지 않은 토큰으로 요청하거나, 미인증 사용자가 요청했을 때</p>
+</li>
+<li>
+<p><code>INVALID_ARGUMENT</code>: 올바르지 않은 파라미터로 요청할 때(ex: 빈 코멘트 내용)</p>
+</li>
+<li>
+<p><code>QUESTION_NOT_FOUND</code>: 지정된 질문 ID에 해당하는 질문이 존재하지 않을 때</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_response_fields_9"><a class="link" href="#_response_fields_9">Response Fields</a></h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">

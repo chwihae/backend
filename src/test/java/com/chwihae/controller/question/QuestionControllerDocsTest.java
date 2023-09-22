@@ -96,7 +96,7 @@ class QuestionControllerDocsTest extends AbstractRestDocsTest {
                         ),
                         requestFields(
                                 fieldWithPath("title").type(JsonFieldType.STRING).description("질문 제목"),
-                                fieldWithPath("type").type(JsonFieldType.STRING).description("질문 타입 (가능한 값: [SPEC, STUDY, COMPANY, ETC])"),
+                                fieldWithPath("type").type(JsonFieldType.STRING).description("질문 타입 (가능한 값: [CAREER ,SPEC, COMPANY, ETC])"),
                                 fieldWithPath("content").type(JsonFieldType.STRING).description("질문 내용"),
                                 fieldWithPath("closeAt").type(JsonFieldType.STRING).description("질문 마감 시간 (형식: yyyy-mm-ddThh:mm:ss)"),
                                 fieldWithPath("options[]").type(JsonFieldType.ARRAY).description("질문 옵션"),
@@ -151,7 +151,7 @@ class QuestionControllerDocsTest extends AbstractRestDocsTest {
                                 headerWithName(AUTHORIZATION).description("[Required] 인증 토큰 (타입: 문자열)")
                         ),
                         queryParameters(
-                                parameterWithName("type").description("[Optional] 질문 타입 (가능한 값: [SPEC, STUDY, COMPANY, ETC])"),
+                                parameterWithName("type").description("[Optional] 질문 타입 (가능한 값: [CAREER, SPEC, COMPANY, ETC])"),
                                 parameterWithName("status").description("[Optional] 질문 상태 (가능한 값: [IN_PROGRESS, COMPLETED])"),
                                 parameterWithName("page").description("[Optional] 페이지 번호 (default: 0)"),
                                 parameterWithName("size").description("[Optional] 페이지 사이즈 (default: 10)")
@@ -162,7 +162,7 @@ class QuestionControllerDocsTest extends AbstractRestDocsTest {
                                 fieldWithPath("data.content[]").type(JsonFieldType.ARRAY).description("질문 목록"),
                                 fieldWithPath("data.content[].id").type(JsonFieldType.NUMBER).description("질문 아이디"),
                                 fieldWithPath("data.content[].title").type(JsonFieldType.STRING).description("질문 제목"),
-                                fieldWithPath("data.content[].type").type(JsonFieldType.STRING).description("질문 타입 [SPEC, STUDY, COMPANY, ETC]"),
+                                fieldWithPath("data.content[].type").type(JsonFieldType.STRING).description("질문 타입 [CAREER, SPEC, COMPANY, ETC]"),
                                 fieldWithPath("data.content[].status").type(JsonFieldType.STRING).description("질문 상태 [IN_PROGRESS, COMPLETED]"),
                                 fieldWithPath("data.content[].viewCount").type(JsonFieldType.NUMBER).description("질문 조회수"),
                                 fieldWithPath("data.content[].commentCount").type(JsonFieldType.NUMBER).description("질문 댓글수"),
@@ -220,7 +220,7 @@ class QuestionControllerDocsTest extends AbstractRestDocsTest {
                                 fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("질문 아이디"),
                                 fieldWithPath("data.title").type(JsonFieldType.STRING).description("질문 제목"),
                                 fieldWithPath("data.content").type(JsonFieldType.STRING).description("질문 내용"),
-                                fieldWithPath("data.type").type(JsonFieldType.STRING).description("질문 타입 [SPEC, STUDY, COMPANY, ETC]"),
+                                fieldWithPath("data.type").type(JsonFieldType.STRING).description("질문 타입 [CAREER, SPEC, COMPANY, ETC]"),
                                 fieldWithPath("data.status").type(JsonFieldType.STRING).description("질문 상태 [IN_PROGRESS, COMPLETED]"),
                                 fieldWithPath("data.closeAt").type(JsonFieldType.STRING).description("질문 마감 시간 (형식: yyyy-mm-ddThh:mm:ss)"),
                                 fieldWithPath("data.editable").type(JsonFieldType.BOOLEAN).description("질문 수정 가능 여부(질문 작성자이면 true, 아니면 false)"),
@@ -359,7 +359,7 @@ class QuestionControllerDocsTest extends AbstractRestDocsTest {
                                 .content(body(request))
                 )
                 .andExpect(status().isOk())
-                .andDo(document("question-comments",
+                .andDo(document("question-comment-create",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestHeaders(

@@ -30,3 +30,8 @@ include::question-vote-create.adoc[]
 ==== 질문 투표 취소
 
 include::question-vote-delete.adoc[]
+
+[[question-comment-create]]
+==== 질문 댓글 등록
+
+include::question-comment-create.adoc[]
