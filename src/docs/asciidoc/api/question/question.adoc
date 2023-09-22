@@ -22,6 +22,11 @@ include::question-get.adoc[]
 include::question-options.adoc[]
 
 [[question-vote-create]]
-==== 질문 투표
+==== 질문 투표 등록
 
 include::question-vote-create.adoc[]
+
+[[question-vote-delete]]
+==== 질문 투표 취소
+
+include::question-vote-delete.adoc[]

@@ -1,4 +1,4 @@
-package com.chwihae.fixture;
+package com.chwihae.infra.fixture;
 
 import com.chwihae.domain.user.UserEntity;
 

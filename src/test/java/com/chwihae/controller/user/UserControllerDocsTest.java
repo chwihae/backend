@@ -1,6 +1,6 @@
 package com.chwihae.controller.user;
 
-import com.chwihae.infra.RestDocsTest;
+import com.chwihae.infra.AbstractRestDocsTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.restdocs.payload.JsonFieldType;
@@ -15,7 +15,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class UserControllerDocsTest extends RestDocsTest {
+class UserControllerDocsTest extends AbstractRestDocsTest {
 
     @Override
     protected Object initController() {

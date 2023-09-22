@@ -28,7 +28,8 @@ public enum CustomExceptionError {
     OPTION_NOT_FOUND(HttpStatus.NOT_FOUND, 1300, "존재하지 않는 옵션입니다"),
 
     // 1400~1499: 투표와 관련된 에러
-    DUPLICATE_VOTE(HttpStatus.CONFLICT, 1400, "이미 투표하였습니다");
+    VOTE_NOT_FOUND(HttpStatus.NOT_FOUND, 1400, "투표 기록이 존재하지 않습니다"),
+    DUPLICATE_VOTE(HttpStatus.CONFLICT, 1401, "이미 투표하였습니다");
 
     private final HttpStatus httpStatus;
     private final int errorCode;

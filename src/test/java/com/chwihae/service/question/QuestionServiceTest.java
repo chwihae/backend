@@ -10,8 +10,8 @@ import com.chwihae.dto.question.response.QuestionDetailResponse;
 import com.chwihae.dto.question.response.QuestionListResponse;
 import com.chwihae.exception.CustomException;
 import com.chwihae.exception.CustomExceptionError;
-import com.chwihae.fixture.UserEntityFixture;
-import com.chwihae.infra.IntegrationTest;
+import com.chwihae.infra.fixture.UserEntityFixture;
+import com.chwihae.infra.AbstractIntegrationTest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,7 +28,7 @@ import static com.chwihae.domain.question.QuestionType.*;
 import static com.chwihae.exception.CustomExceptionError.USER_NOT_FOUND;
 
 @Transactional
-class QuestionServiceTest extends IntegrationTest {
+class QuestionServiceTest extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("질문과 옵션을 저장한 후 질문 아이디를 반환한다")

@@ -40,7 +40,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
-    //spring cloud
+    //spring-cloud
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign' // For @FeignClient
 
     //data
@@ -64,6 +64,12 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
+
+
+    //testcontainers
+    testImplementation "org.testcontainers:testcontainers:1.19.0"
+    testImplementation "org.testcontainers:junit-jupiter:1.19.0"
+    testImplementation "org.testcontainers:mariadb:1.19.0"
 
     //test
     testImplementation 'org.springframework.cloud:spring-cloud-contract-wiremock' // For @AutoConfigureWireMock

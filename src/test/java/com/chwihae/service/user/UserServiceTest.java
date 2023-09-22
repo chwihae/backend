@@ -3,7 +3,7 @@ package com.chwihae.service.user;
 import com.chwihae.domain.user.UserEntity;
 import com.chwihae.dto.user.UserContext;
 import com.chwihae.exception.CustomException;
-import com.chwihae.infra.IntegrationTest;
+import com.chwihae.infra.AbstractIntegrationTest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static com.chwihae.exception.CustomExceptionError.USER_NOT_FOUND;
 
 @Transactional
-class UserServiceTest extends IntegrationTest {
+class UserServiceTest extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("이메일로 사용자를 저장하여 반환한다")

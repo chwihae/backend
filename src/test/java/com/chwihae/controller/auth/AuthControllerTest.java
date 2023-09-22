@@ -1,7 +1,7 @@
 package com.chwihae.controller.auth;
 
 import com.chwihae.dto.auth.request.KakaoLoginRequest;
-import com.chwihae.infra.MockMvcTest;
+import com.chwihae.infra.AbstractMockMvcTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -11,7 +11,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class AuthControllerTest extends MockMvcTest {
+class AuthControllerTest extends AbstractMockMvcTest {
 
     @Test
     @DisplayName("POST /api/v1/auth/kakao-login - 실패 (유효하지 않은 파라미터)")

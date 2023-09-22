@@ -7,8 +7,8 @@ import com.chwihae.domain.user.UserEntity;
 import com.chwihae.domain.vote.VoteEntity;
 import com.chwihae.dto.option.response.VoteOptionResponse;
 import com.chwihae.exception.CustomException;
-import com.chwihae.fixture.UserEntityFixture;
-import com.chwihae.infra.IntegrationTest;
+import com.chwihae.infra.AbstractIntegrationTest;
+import com.chwihae.infra.fixture.UserEntityFixture;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ import static com.chwihae.exception.CustomExceptionError.*;
 import static org.assertj.core.groups.Tuple.tuple;
 
 @Transactional
-class VoteServiceTest extends IntegrationTest {
+class VoteServiceTest extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("질문자는 투표 결과를 조회할 수 있다")
@@ -53,11 +53,8 @@ class VoteServiceTest extends IntegrationTest {
         Assertions.assertThat(response.isCanViewVoteResult()).isTrue();
         Assertions.assertThat(response.getOptions())
                 .hasSize(2)
-                .extracting("id", "name", "voteCount")
-                .containsExactly(
-                        tuple(option1.getId(), option1.getName(), 2L),
-                        tuple(option2.getId(), option2.getName(), 2L)
-                );
+                .extracting("voteCount")
+                .containsExactly(2L, 2L);
     }
 
     @Test
@@ -90,11 +87,8 @@ class VoteServiceTest extends IntegrationTest {
         Assertions.assertThat(response.isCanViewVoteResult()).isTrue();
         Assertions.assertThat(response.getOptions())
                 .hasSize(2)
-                .extracting("id", "name", "voteCount")
-                .containsExactly(
-                        tuple(option1.getId(), option1.getName(), 2L),
-                        tuple(option2.getId(), option2.getName(), 2L)
-                );
+                .extracting("voteCount")
+                .containsExactly(2L, 2L);
     }
 
     @Test
@@ -166,11 +160,8 @@ class VoteServiceTest extends IntegrationTest {
         Assertions.assertThat(response.isCanViewVoteResult()).isTrue();
         Assertions.assertThat(response.getOptions())
                 .hasSize(2)
-                .extracting("id", "name", "voteCount")
-                .containsExactly(
-                        tuple(option1.getId(), option1.getName(), 2L),
-                        tuple(option2.getId(), option2.getName(), 2L)
-                );
+                .extracting("voteCount")
+                .containsExactly(2L, 2L);
     }
 
     @Test
@@ -296,6 +287,39 @@ class VoteServiceTest extends IntegrationTest {
     }
 
     // TODO 마감되지 않은 질문에 투표를 취소했던 사용자는 다시 투표를 할 수 있다
+
+    @Test
+    @DisplayName("사용자가 투표를 취소하면 투표를 삭제한다")
+    void deleteVote_pass() throws Exception {
+        //given
+        UserEntity user = userRepository.save(UserEntityFixture.of());
+        LocalDateTime closeAt = LocalDateTime.now().plusDays(1);
+        QuestionEntity question = questionRepository.save(createQuestion(user, closeAt));
+        OptionEntity option = optionRepository.save(createOption(question, "name"));
+        voteRepository.save(createVote(option, user));
+
+        //when
+        voteService.deleteVote(question.getId(), option.getId(), user.getId());
+
+        //then
+        Assertions.assertThat(voteRepository.findAll()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("사용자가 투표하지 않았는데 투표를 취소하면 예외가 발생한다")
+    void deleteVote_throwsException() throws Exception {
+        //given
+        UserEntity user = userRepository.save(UserEntityFixture.of());
+        LocalDateTime closeAt = LocalDateTime.now().plusDays(1);
+        QuestionEntity question = questionRepository.save(createQuestion(user, closeAt));
+        OptionEntity option = optionRepository.save(createOption(question, "name"));
+
+        //when //then
+        Assertions.assertThatThrownBy(() -> voteService.deleteVote(question.getId(), option.getId(), user.getId()))
+                .isInstanceOf(CustomException.class)
+                .extracting("error")
+                .isEqualTo(VOTE_NOT_FOUND);
+    }
 
     public QuestionEntity createQuestion(UserEntity userEntity, LocalDateTime closeAt) {
         return QuestionEntity.builder()

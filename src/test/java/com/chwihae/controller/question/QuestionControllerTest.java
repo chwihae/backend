@@ -8,9 +8,9 @@ import com.chwihae.domain.user.UserEntity;
 import com.chwihae.domain.vote.VoteEntity;
 import com.chwihae.dto.option.request.OptionCreateRequest;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
-import com.chwihae.fixture.UserEntityFixture;
-import com.chwihae.infra.MockMvcTest;
+import com.chwihae.infra.AbstractMockMvcTest;
 import com.chwihae.infra.WithTestUser;
+import com.chwihae.infra.fixture.UserEntityFixture;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,13 +28,14 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Transactional
-class QuestionControllerTest extends MockMvcTest {
+class QuestionControllerTest extends AbstractMockMvcTest {
 
     @Test
     @DisplayName("POST /api/v1/questions - 성공")
@@ -621,6 +622,60 @@ class QuestionControllerTest extends MockMvcTest {
                 )
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.code").value(OPTION_NOT_FOUND.code()));
+    }
+
+    @Test
+    @DisplayName("DELETE /api/v1/questions/{questionId}/options/{optionId} - 성공")
+    @WithTestUser("voter@email.com")
+    void deleteVote_returnsSuccessCode() throws Exception {
+        //given
+        UserEntity questioner = userRepository.save(UserEntityFixture.of("questioner@email.com"));
+        UserEntity voter = userRepository.findByEmail("voter@email.com").get();
+        LocalDateTime closeAt = LocalDateTime.now(ZoneId.of("Asia/Seoul")).plusMinutes(1);
+        QuestionEntity question = questionRepository.save(createQuestion(questioner, closeAt));
+        OptionEntity option = optionRepository.save(createOption(question, "name"));
+        voteRepository.save(createVote(voter, option));
+
+        //when //then
+        mockMvc.perform(
+                        delete("/api/v1/questions/{questionId}/options/{optionId}", question.getId(), option.getId())
+                )
+                .andExpect(status().isOk());
+
+        Assertions.assertThat(voteRepository.findAll()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("DELETE /api/v1/questions/{questionId}/options/{optionId} - 실패 (투표하지 않았을 경우)")
+    @WithTestUser("voter@email.com")
+    void deleteVote_whenNotVote_returnsNotFoundCode() throws Exception {
+        //given
+        UserEntity questioner = userRepository.save(UserEntityFixture.of("questioner@email.com"));
+        LocalDateTime closeAt = LocalDateTime.now(ZoneId.of("Asia/Seoul")).plusMinutes(1);
+        QuestionEntity question = questionRepository.save(createQuestion(questioner, closeAt));
+        OptionEntity option = optionRepository.save(createOption(question, "name"));
+
+        //when //then
+        mockMvc.perform(
+                        delete("/api/v1/questions/{questionId}/options/{optionId}", question.getId(), option.getId())
+                )
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value(VOTE_NOT_FOUND.code()));
+    }
+
+    @Test
+    @DisplayName("DELETE /api/v1/questions/{questionId}/options/{optionId} - 실패 (미인증 사용자)")
+    @WithAnonymousUser
+    void deleteVote_byAnonymousUser_returnsUnauthorizedCode() throws Exception {
+        //given
+        long notExistingQuestionId = 0L;
+        long notExistingOptionId = 0L;
+        //when //then
+        mockMvc.perform(
+                        delete("/api/v1/questions/{questionId}/options/{optionId}", notExistingQuestionId, notExistingOptionId)
+                )
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.code").value(INVALID_TOKEN.code()));
     }
 
     public QuestionEntity createQuestion(UserEntity userEntity, LocalDateTime closeAt) {

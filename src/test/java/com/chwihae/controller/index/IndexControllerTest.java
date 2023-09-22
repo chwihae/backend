@@ -1,13 +1,13 @@
 package com.chwihae.controller.index;
 
-import com.chwihae.infra.MockMvcTest;
+import com.chwihae.infra.AbstractMockMvcTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class IndexControllerTest extends MockMvcTest {
+class IndexControllerTest extends AbstractMockMvcTest {
 
     @Test
     @DisplayName("GET / - 성공 (토큰 없이)")

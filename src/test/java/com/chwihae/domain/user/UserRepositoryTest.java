@@ -1,6 +1,6 @@
 package com.chwihae.domain.user;
 
-import com.chwihae.infra.IntegrationTest;
+import com.chwihae.infra.AbstractIntegrationTest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Transactional
-class UserRepositoryTest extends IntegrationTest {
+class UserRepositoryTest extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("존재하는 이메일로 사용자 조회 시 사용자를 반환한다")

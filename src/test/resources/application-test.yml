@@ -1,0 +1,14 @@
+spring.datasource:
+  driver-class-name: org.mariadb.jdbc.Driver
+
+spring.jpa:
+  hibernate:
+    ddl-auto: create
+  show-sql: true
+  properties:
+    hibernate:
+      format_sql: true
+
+kakao:
+  oauth2.endpoint: "http://localhost:8089"
+  userInfo.endpoint: "http://localhost:8089"

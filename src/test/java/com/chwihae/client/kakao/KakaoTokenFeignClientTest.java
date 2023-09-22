@@ -2,7 +2,7 @@ package com.chwihae.client.kakao;
 
 import com.chwihae.client.kakao.response.KakaoTokenResponse;
 import com.chwihae.exception.CustomException;
-import com.chwihae.infra.IntegrationTest;
+import com.chwihae.infra.AbstractIntegrationTest;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +15,7 @@ import static com.chwihae.exception.CustomExceptionError.INVALID_KAKAO_AUTHORIZA
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
 @AutoConfigureWireMock(port = 8089)
-class KakaoTokenFeignClientTest extends IntegrationTest {
+class KakaoTokenFeignClientTest extends AbstractIntegrationTest {
 
     @BeforeEach
     public void setup() {

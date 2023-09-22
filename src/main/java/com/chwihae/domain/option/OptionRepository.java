@@ -2,9 +2,11 @@ package com.chwihae.domain.option;
 
 import com.chwihae.dto.option.response.Option;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -24,4 +26,9 @@ public interface OptionRepository extends JpaRepository<OptionEntity, Long> {
             "WHERE oe.questionEntity.id = :questionId " +
             "ORDER BY oe.createdAt ASC")
     List<Option> findWithoutVoteCountByQuestionEntityId(@Param("questionId") Long questionId);
+
+    @Transactional
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query(value = "DELETE FROM option", nativeQuery = true)
+    void physicallyDeleteAll();
 }

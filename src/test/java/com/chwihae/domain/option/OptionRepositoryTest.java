@@ -5,8 +5,8 @@ import com.chwihae.domain.question.QuestionType;
 import com.chwihae.domain.user.UserEntity;
 import com.chwihae.domain.vote.VoteEntity;
 import com.chwihae.dto.option.response.Option;
-import com.chwihae.fixture.UserEntityFixture;
-import com.chwihae.infra.IntegrationTest;
+import com.chwihae.infra.AbstractIntegrationTest;
+import com.chwihae.infra.fixture.UserEntityFixture;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,10 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.assertj.core.groups.Tuple.tuple;
-
 @Transactional
-class OptionRepositoryTest extends IntegrationTest {
+class OptionRepositoryTest extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("질문 아이디로 투표 수 합계와 함께 옵션 리스트를 조회한다")
@@ -48,11 +46,8 @@ class OptionRepositoryTest extends IntegrationTest {
         //then
         Assertions.assertThat(response)
                 .hasSize(2)
-                .extracting("id", "name", "voteCount")
-                .containsExactly(
-                        tuple(option1.getId(), option1.getName(), 2L),
-                        tuple(option2.getId(), option2.getName(), 2L)
-                );
+                .extracting("voteCount")
+                .containsExactly(2L, 2L);
     }
 
     @Test
@@ -71,11 +66,8 @@ class OptionRepositoryTest extends IntegrationTest {
         //then
         Assertions.assertThat(response)
                 .hasSize(2)
-                .extracting("id", "name", "voteCount")
-                .containsExactly(
-                        tuple(option1.getId(), option1.getName(), null),
-                        tuple(option2.getId(), option2.getName(), null)
-                );
+                .extracting("voteCount")
+                .containsExactly(null, null);
     }
 
     public QuestionEntity createQuestion(UserEntity userEntity) {

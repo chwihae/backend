@@ -69,6 +69,7 @@ public class QuestionController {
     public ApiResponse<Void> deleteVote(@PathVariable Long questionId,
                                         @PathVariable Long optionId,
                                         @CurrentUser UserContext userContext) {
+        voteService.deleteVote(questionId, optionId, userContext.getId());
         return ApiResponse.ok();
     }
 }
