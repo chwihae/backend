@@ -1,5 +1,6 @@
 package com.chwihae.controller.question;
 
+import com.chwihae.domain.bookmark.BookmarkEntity;
 import com.chwihae.domain.comment.CommentEntity;
 import com.chwihae.domain.commenter.CommenterAliasEntity;
 import com.chwihae.domain.commenter.CommenterAliasPrefix;
@@ -13,9 +14,9 @@ import com.chwihae.domain.vote.VoteEntity;
 import com.chwihae.dto.comment.request.QuestionCommentCreateRequest;
 import com.chwihae.dto.option.request.OptionCreateRequest;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
-import com.chwihae.infra.test.AbstractMockMvcTest;
-import com.chwihae.infra.support.WithTestUser;
 import com.chwihae.infra.fixture.UserEntityFixture;
+import com.chwihae.infra.support.WithTestUser;
+import com.chwihae.infra.test.AbstractMockMvcTest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -203,9 +204,82 @@ class QuestionControllerTest extends AbstractMockMvcTest {
     // TODO GET /api/v1/questions/{questionId} - 성공 (북마크한 조회자)
 
     @Test
+    @DisplayName("POST /api/v1/questions/{questionId}/bookmark - 성공 (북마크 저장)")
+    @WithTestUser
+    void bookmark_whenBookmarked_returnSuccessCode() throws Exception {
+        //given
+        UserEntity questioner = userRepository.save(UserEntityFixture.of());
+        LocalDateTime closeAt = LocalDateTime.now(ZoneId.of("Asia/Seoul")).plusDays(1);
+        QuestionEntity question = questionRepository.save(createQuestion(questioner, closeAt));
+
+        //when //then
+        mockMvc.perform(
+                        post("/api/v1/questions/{questionId}/bookmark", question.getId())
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.result").value(true));
+
+        Assertions.assertThat(bookmarkRepository.findAll()).hasSize(1);
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/questions/{questionId}/bookmark - 성공 (북마크 해제)")
+    @WithTestUser("viewer@email.com")
+    void bookmark_whenUnBookmarked_returnSuccessCode() throws Exception {
+        //given
+        UserEntity questioner = userRepository.save(UserEntityFixture.of());
+        UserEntity userEntity = userRepository.findByEmail("viewer@email.com").get();
+        LocalDateTime closeAt = LocalDateTime.now(ZoneId.of("Asia/Seoul")).plusDays(1);
+        QuestionEntity question = questionRepository.save(createQuestion(questioner, closeAt));
+        bookmarkRepository.save(createBookmark(userEntity, question));
+
+        //when //then
+        mockMvc.perform(
+                        post("/api/v1/questions/{questionId}/bookmark", question.getId())
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.result").value(false));
+
+        Assertions.assertThat(bookmarkRepository.findAll()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/questions/{questionId}/bookmark - 실패 (질문 작성자)")
+    @WithTestUser("questioner@email.com")
+    void bookmark_byQuestioner_returnForbiddenCode() throws Exception {
+        //given
+        UserEntity questioner = userRepository.findByEmail("questioner@email.com").get();
+        LocalDateTime closeAt = LocalDateTime.now(ZoneId.of("Asia/Seoul")).plusDays(1);
+        QuestionEntity question = questionRepository.save(createQuestion(questioner, closeAt));
+
+        //when //then
+        mockMvc.perform(
+                        post("/api/v1/questions/{questionId}/bookmark", question.getId())
+                )
+                .andDo(print())
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.code").value(FORBIDDEN.code()));
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/questions/{questionId}/bookmark - 실패 (미인증 사용자)")
+    @WithAnonymousUser
+    void bookmark_byAnonymousUser_returnInvalidTokenCode() throws Exception {
+        //given
+        long notExistingQuestionId = 0L;
+
+        //when //then
+        mockMvc.perform(
+                        post("/api/v1/questions/{questionId}/bookmark", notExistingQuestionId)
+                )
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.code").value(INVALID_TOKEN.code()));
+    }
+
+    @Test
     @DisplayName("GET /api/v1/questions/{questionId} - 실패 (미인증 사용자)")
     @WithAnonymousUser
-    void getQuestion_byUnauthenticated_returnsInvalidTokenCode() throws Exception {
+    void getQuestion_byAnonymousUser__returnsInvalidTokenCode() throws Exception {
         //given
         long questionId = 1L;
 
@@ -894,6 +968,13 @@ class QuestionControllerTest extends AbstractMockMvcTest {
                 .userEntity(userEntity)
                 .commenterAliasEntity(commenterAliasEntity)
                 .questionEntity(questionEntity)
+                .build();
+    }
+
+    public BookmarkEntity createBookmark(UserEntity userEntity, QuestionEntity questionEntity) {
+        return BookmarkEntity.builder()
+                .questionEntity(questionEntity)
+                .userEntity(userEntity)
                 .build();
     }
 }

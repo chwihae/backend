@@ -6,12 +6,14 @@ import com.chwihae.domain.question.QuestionStatus;
 import com.chwihae.domain.question.QuestionType;
 import com.chwihae.dto.comment.Comment;
 import com.chwihae.dto.comment.request.QuestionCommentCreateRequest;
+import com.chwihae.dto.common.response.BooleanResponse;
 import com.chwihae.dto.common.response.IdResponse;
 import com.chwihae.dto.option.response.VoteOptionResponse;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
 import com.chwihae.dto.question.response.QuestionDetailResponse;
 import com.chwihae.dto.question.response.QuestionListResponse;
 import com.chwihae.dto.user.UserContext;
+import com.chwihae.service.bookmark.BookmarkService;
 import com.chwihae.service.comment.CommentService;
 import com.chwihae.service.question.QuestionService;
 import com.chwihae.service.vote.VoteService;
@@ -34,6 +36,7 @@ public class QuestionController {
     private final QuestionValidator questionValidator;
     private final VoteService voteService;
     private final CommentService commentService;
+    private final BookmarkService bookmarkService;
 
     @GetMapping
     public ApiResponse<Page<QuestionListResponse>> getQuestions(@RequestParam(value = "type", required = false) QuestionType type,
@@ -59,6 +62,12 @@ public class QuestionController {
     public ApiResponse<VoteOptionResponse> getOptions(@PathVariable Long questionId,
                                                       @CurrentUser UserContext userContext) {
         return ApiResponse.ok(voteService.getVoteOptions(questionId, userContext.getId()));
+    }
+
+    @PostMapping("/{questionId}/bookmark")
+    public ApiResponse<BooleanResponse> bookmark(@PathVariable Long questionId,
+                                                 @CurrentUser UserContext userContext) {
+        return ApiResponse.ok(BooleanResponse.of(bookmarkService.bookmark(questionId, userContext.getId())));
     }
 
     @GetMapping("/{questionId}/comments")
