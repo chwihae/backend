@@ -13,6 +13,7 @@ import com.chwihae.dto.question.request.QuestionCreateRequest;
 import com.chwihae.dto.question.response.QuestionDetailResponse;
 import com.chwihae.dto.question.response.QuestionListResponse;
 import com.chwihae.exception.CustomException;
+import com.chwihae.service.commenter.CommenterSequenceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +33,7 @@ public class QuestionService {
     private final UserRepository userRepository;
     private final QuestionRepository questionRepository;
     private final OptionRepository optionRepository;
+    private final CommenterSequenceService commenterSequenceService;
 
     public Page<QuestionListResponse> getQuestionsByTypeAndStatus(QuestionType type, QuestionStatus status, Pageable pageable) {
         return questionRepository.findByTypeAndStatus(status, type, pageable).map(QuestionListResponse::of);
@@ -42,6 +44,7 @@ public class QuestionService {
         UserEntity userEntity = findUserOrException(userId);
         QuestionEntity questionEntity = questionRepository.save(request.toEntity(userEntity));
         optionRepository.saveAll(buildOptionEntities(request.getOptions(), questionEntity));
+        commenterSequenceService.createCommenterSequence(questionEntity);
         return questionEntity.getId();
     }
 

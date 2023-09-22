@@ -10,8 +10,8 @@ import com.chwihae.dto.question.response.QuestionDetailResponse;
 import com.chwihae.dto.question.response.QuestionListResponse;
 import com.chwihae.exception.CustomException;
 import com.chwihae.exception.CustomExceptionError;
-import com.chwihae.infra.fixture.UserEntityFixture;
 import com.chwihae.infra.AbstractIntegrationTest;
+import com.chwihae.infra.fixture.UserEntityFixture;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -61,6 +61,7 @@ class QuestionServiceTest extends AbstractIntegrationTest {
         Assertions.assertThat(id).isNotNull();
         Assertions.assertThat(questionRepository.findAll()).hasSize(1);
         Assertions.assertThat(optionRepository.findAll()).hasSize(2);
+        Assertions.assertThat(commenterSequenceRepository.findAll()).hasSize(1);
     }
 
     @Test
