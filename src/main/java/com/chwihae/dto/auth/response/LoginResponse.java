@@ -11,8 +11,17 @@ public class LoginResponse {
     private String token;
     private String refreshToken;
 
+    public static LoginResponse of(Long userId, String email, String token, String refreshToken) {
+        return LoginResponse.builder()
+                .userId(userId)
+                .email(email)
+                .token(token)
+                .refreshToken(refreshToken)
+                .build();
+    }
+    
     @Builder
-    public LoginResponse(Long userId, String email, String token, String refreshToken) {
+    private LoginResponse(Long userId, String email, String token, String refreshToken) {
         this.email = email;
         this.userId = userId;
         this.token = token;
