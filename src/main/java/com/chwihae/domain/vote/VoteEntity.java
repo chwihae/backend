@@ -16,13 +16,9 @@ import static jakarta.persistence.FetchType.LAZY;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Table(
-        name = "vote",
+@Table(name = "vote",
         uniqueConstraints = {
-                @UniqueConstraint(
-                        name = "uk_vote_user_question_valid",
-                        columnNames = {"id_voter", "id_question", "valid"}
-                )
+                @UniqueConstraint(name = "uk_vote_user_question_valid", columnNames = {"id_voter", "id_question", "valid"})
         }
 )
 @SQLDelete(sql = "UPDATE vote SET deleted_at = NOW(), valid = NULL WHERE id_vote = ?")

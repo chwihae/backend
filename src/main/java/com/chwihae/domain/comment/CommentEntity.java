@@ -5,6 +5,7 @@ import com.chwihae.domain.question.QuestionEntity;
 import com.chwihae.domain.user.UserEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
@@ -12,7 +13,12 @@ import org.hibernate.annotations.Where;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Table(name = "comment")
+@Table(name = "comment",
+        indexes = {
+                @Index(name = "idx_comment_id_question", columnList = "id_question"),
+                @Index(name = "idx_comment_id_commenter", columnList = "id_commenter")
+        }
+)
 @SQLDelete(sql = "UPDATE comment SET deleted_at = NOW() WHERE id_comment = ?")
 @Where(clause = "deleted_at is NULL")
 @Entity
@@ -23,7 +29,7 @@ public class CommentEntity extends BaseEntity {
     @Column(name = "id_comment", nullable = false, updatable = false)
     private Long id;
 
-    @Column(name = "content", nullable = false, columnDefinition = "text COMMENT '댓글 내용'")
+    @Column(name = "content", nullable = false, columnDefinition = "varchar(1000) COMMENT '댓글 내용'")
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -34,7 +40,8 @@ public class CommentEntity extends BaseEntity {
     @JoinColumn(name = "id_question", nullable = false, foreignKey = @ForeignKey(name = "fk_comment_question"), columnDefinition = "bigint COMMENT '질문 PK'")
     private QuestionEntity questionEntity;
 
-    public CommentEntity(UserEntity userEntity, QuestionEntity questionEntity, String content) {
+    @Builder
+    private CommentEntity(UserEntity userEntity, QuestionEntity questionEntity, String content) {
         this.userEntity = userEntity;
         this.questionEntity = questionEntity;
         this.content = content;
