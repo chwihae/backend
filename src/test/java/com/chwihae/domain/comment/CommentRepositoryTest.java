@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Transactional
@@ -40,6 +41,52 @@ class CommentRepositoryTest extends AbstractIntegrationTest {
                             Assertions.assertThat(it.getCommenterAliasEntity().getAlias()).isEqualTo(alias);
                         }
                 );
+    }
+
+    @Test
+    @DisplayName("질문 아이디로 댓글 수를 집계한다")
+    void countByQuestionEntityId() throws Exception {
+        //given
+        UserEntity questioner = UserEntityFixture.of();
+        UserEntity commenter = UserEntityFixture.of();
+        userRepository.saveAll(List.of(questioner, commenter));
+        QuestionEntity question = questionRepository.save(createQuestion(questioner));
+
+        CommenterAliasEntity commenterAliasEntity = commenterAliasRepository.save(createAlias("alias", question, commenter));
+        CommentEntity comment1 = createComment(question, commenter, commenterAliasEntity, "content");
+        CommentEntity comment2 = createComment(question, commenter, commenterAliasEntity, "content");
+        CommentEntity comment3 = createComment(question, commenter, commenterAliasEntity, "content");
+        CommentEntity comment4 = createComment(question, commenter, commenterAliasEntity, "content");
+        commentRepository.saveAll(List.of(comment1, comment2, comment3, comment4));
+
+        //when
+        long commentCount = commentRepository.countByQuestionEntityId(question.getId());
+
+        //then
+        Assertions.assertThat(commentCount).isEqualTo(4L);
+    }
+
+    @Test
+    @DisplayName("사용자 아이디로 댓글 수를 집계한다")
+    void countByUserEntityId() throws Exception {
+        //given
+        UserEntity questioner = UserEntityFixture.of();
+        UserEntity commenter = UserEntityFixture.of();
+        userRepository.saveAll(List.of(questioner, commenter));
+        QuestionEntity question = questionRepository.save(createQuestion(questioner));
+
+        CommenterAliasEntity commenterAliasEntity = commenterAliasRepository.save(createAlias("alias", question, commenter));
+        CommentEntity comment1 = createComment(question, commenter, commenterAliasEntity, "content");
+        CommentEntity comment2 = createComment(question, commenter, commenterAliasEntity, "content");
+        CommentEntity comment3 = createComment(question, commenter, commenterAliasEntity, "content");
+        CommentEntity comment4 = createComment(question, commenter, commenterAliasEntity, "content");
+        commentRepository.saveAll(List.of(comment1, comment2, comment3, comment4));
+
+        //when
+        long commentCount = commentRepository.countByUserEntityId(commenter.getId());
+
+        //then
+        Assertions.assertThat(commentCount).isEqualTo(4L);
     }
 
     public QuestionEntity createQuestion(UserEntity userEntity) {

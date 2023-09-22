@@ -179,6 +179,63 @@ class VoteRepositoryTest extends AbstractIntegrationTest {
         voteRepository.delete(vote);
     }
 
+    @Test
+    @DisplayName("질문 아이디로 투표 수를 집계한다")
+    void countByQuestionEntityId_returnCount() throws Exception {
+        //given
+        UserEntity questioner = UserEntityFixture.of();
+        UserEntity voter1 = UserEntityFixture.of();
+        UserEntity voter2 = UserEntityFixture.of();
+        UserEntity voter3 = UserEntityFixture.of();
+        userRepository.saveAll(List.of(questioner, voter1, voter2, voter3));
+
+        QuestionEntity question = questionRepository.save(createQuestion(questioner));
+        OptionEntity option = optionRepository.save(createOption(question));
+
+        VoteEntity vote1 = createVote(option, voter1);
+        VoteEntity vote2 = createVote(option, voter2);
+        VoteEntity vote3 = createVote(option, voter3);
+        voteRepository.saveAll(List.of(vote1, vote2, vote3));
+
+        //when
+        long voteCount = voteRepository.countByQuestionEntityId(question.getId());
+
+        //then
+        Assertions.assertThat(voteCount).isEqualTo(3L);
+    }
+
+    @Test
+    @DisplayName("사용자 아이디로 투표 수를 집계한다")
+    void countByUserEntityId_returnCount() throws Exception {
+        //given
+        UserEntity questioner1 = UserEntityFixture.of();
+        UserEntity questioner2 = UserEntityFixture.of();
+        UserEntity questioner3 = UserEntityFixture.of();
+        UserEntity voter = UserEntityFixture.of();
+        userRepository.saveAll(List.of(questioner1, questioner2, questioner3, voter));
+
+        QuestionEntity question1 = createQuestion(questioner1);
+        QuestionEntity question2 = createQuestion(questioner2);
+        QuestionEntity question3 = createQuestion(questioner3);
+        questionRepository.saveAll(List.of(question1, question2, question3));
+
+        OptionEntity option1 = createOption(question1);
+        OptionEntity option2 = createOption(question2);
+        OptionEntity option3 = createOption(question3);
+        optionRepository.saveAll(List.of(option1, option2, option3));
+
+        VoteEntity vote1 = createVote(option1, voter);
+        VoteEntity vote2 = createVote(option2, voter);
+        VoteEntity vote3 = createVote(option3, voter);
+        voteRepository.saveAll(List.of(vote1, vote2, vote3));
+
+        //when
+        long voteCount = voteRepository.countByUserEntityId(voter.getId());
+
+        //then
+        Assertions.assertThat(voteCount).isEqualTo(3L);
+    }
+
     public QuestionEntity createQuestion(UserEntity userEntity) {
         return QuestionEntity.builder()
                 .userEntity(userEntity)

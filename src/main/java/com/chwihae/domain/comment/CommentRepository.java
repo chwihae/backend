@@ -14,6 +14,8 @@ import java.util.Optional;
 @Repository
 public interface CommentRepository extends JpaRepository<CommentEntity, Long> {
 
+    long countByQuestionEntityId(Long questionId);
+
     long countByUserEntityId(Long userId);
 
     @EntityGraph(attributePaths = "commenterAliasEntity")

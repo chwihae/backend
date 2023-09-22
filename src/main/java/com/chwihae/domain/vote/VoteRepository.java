@@ -17,6 +17,8 @@ public interface VoteRepository extends JpaRepository<VoteEntity, Long> {
 
     long countByUserEntityId(Long userId);
 
+    long countByQuestionEntityId(Long questionId);
+
     Optional<VoteEntity> findByQuestionEntityIdAndUserEntityId(Long questionId, Long userId);
 
     @Lock(PESSIMISTIC_WRITE)

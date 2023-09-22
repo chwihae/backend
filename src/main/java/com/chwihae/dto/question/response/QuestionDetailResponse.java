@@ -30,7 +30,7 @@ public class QuestionDetailResponse {
     private boolean bookmarked = false;
     private boolean editable;
 
-    public static QuestionDetailResponse of(QuestionEntity questionEntity, boolean isEditable) {
+    public static QuestionDetailResponse of(QuestionEntity questionEntity, long commentCount, long voteCount, boolean isEditable) {
         return QuestionDetailResponse.builder()
                 .id(questionEntity.getId())
                 .title(questionEntity.getTitle())
@@ -38,6 +38,8 @@ public class QuestionDetailResponse {
                 .type(questionEntity.getType())
                 .closeAt(questionEntity.getCloseAt())
                 .status(questionEntity.getStatus())
+                .commentCount(commentCount)
+                .voteCount(voteCount)
                 .editable(isEditable)
                 .build();
     }
@@ -49,6 +51,8 @@ public class QuestionDetailResponse {
                                    QuestionType type,
                                    LocalDateTime closeAt,
                                    QuestionStatus status,
+                                   long commentCount,
+                                   long voteCount,
                                    boolean editable) {
         this.id = id;
         this.title = title;
@@ -57,5 +61,7 @@ public class QuestionDetailResponse {
         this.closeAt = closeAt;
         this.status = status;
         this.editable = editable;
+        this.voteCount = voteCount;
+        this.commentCount = commentCount;
     }
 }
