@@ -4,11 +4,14 @@ import com.chwihae.client.kakao.KakaoTokenFeignClient;
 import com.chwihae.client.kakao.KakaoUserInfoFeignClient;
 import com.chwihae.config.properties.JwtTokenProperties;
 import com.chwihae.config.security.JwtTokenHandler;
+import com.chwihae.domain.comment.CommentRepository;
+import com.chwihae.domain.commenter.CommenterAliasRepository;
 import com.chwihae.domain.commenter.CommenterSequenceRepository;
 import com.chwihae.domain.option.OptionRepository;
 import com.chwihae.domain.question.QuestionRepository;
 import com.chwihae.domain.user.UserRepository;
 import com.chwihae.domain.vote.VoteRepository;
+import com.chwihae.service.comment.CommentService;
 import com.chwihae.service.commenter.CommenterSequenceService;
 import com.chwihae.service.question.QuestionService;
 import com.chwihae.service.user.UserService;
@@ -64,4 +67,13 @@ public class AbstractIntegrationTest extends AbstractContainerBaseTest {
 
     @Autowired
     protected CommenterSequenceRepository commenterSequenceRepository;
+
+    @Autowired
+    protected CommentRepository commentRepository;
+
+    @Autowired
+    protected CommentService commentService;
+
+    @Autowired
+    protected CommenterAliasRepository commenterAliasRepository;
 }

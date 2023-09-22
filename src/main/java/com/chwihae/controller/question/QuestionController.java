@@ -4,7 +4,7 @@ import com.chwihae.config.security.CurrentUser;
 import com.chwihae.controller.ApiResponse;
 import com.chwihae.domain.question.QuestionStatus;
 import com.chwihae.domain.question.QuestionType;
-import com.chwihae.dto.IdResponse;
+import com.chwihae.dto.common.response.IdResponse;
 import com.chwihae.dto.option.response.VoteOptionResponse;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
 import com.chwihae.dto.question.response.QuestionDetailResponse;

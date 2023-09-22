@@ -5,6 +5,7 @@ import com.chwihae.domain.question.QuestionEntity;
 import com.chwihae.domain.user.UserEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
@@ -16,7 +17,7 @@ import static jakarta.persistence.FetchType.LAZY;
 @Getter
 @Table(name = "commenter_alias",
         uniqueConstraints = {
-                @UniqueConstraint(name = "uk_commenter_alias_question_alias", columnNames = {"id_question", "alias"})
+                @UniqueConstraint(name = "uk_commenter_alias_question_commeter", columnNames = {"id_question", "id_commenter"})
         }
 )
 @SQLDelete(sql = "UPDATE commenter_alias SET deleted_at = NOW() WHERE id_commenter_alias = ?")
@@ -39,4 +40,11 @@ public class CommenterAliasEntity extends BaseEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "id_question", nullable = false, foreignKey = @ForeignKey(name = "fk_commenter_alias_question"), columnDefinition = "bigint COMMENT '질문 PK'")
     private QuestionEntity questionEntity;
+
+    @Builder
+    private CommenterAliasEntity(String alias, UserEntity userEntity, QuestionEntity questionEntity) {
+        this.alias = alias;
+        this.userEntity = userEntity;
+        this.questionEntity = questionEntity;
+    }
 }
