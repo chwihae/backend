@@ -12,7 +12,9 @@ import org.hibernate.annotations.Where;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Table(name = "option")
+@Table(name = "option", indexes = {
+        @Index(name = "idx_option_question", columnList = "id_question")
+})
 @SQLDelete(sql = "UPDATE option SET deleted_at = NOW() WHERE id_option = ?")
 @Where(clause = "deleted_at is NULL")
 @Entity

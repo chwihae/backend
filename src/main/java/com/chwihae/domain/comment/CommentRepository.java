@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +23,7 @@ public interface CommentRepository extends JpaRepository<CommentEntity, Long> {
     @Query("SELECT ce " +
             "FROM CommentEntity ce " +
             "WHERE ce.questionEntity.id = :questionId AND ce.userEntity.id = :userId")
-    Optional<CommentEntity> findTopCommentByQuestionIdAndUserId(Long questionId, Long userId);
+    Optional<CommentEntity> findTopCommentByQuestionIdAndUserId(@Param("questionId") Long questionId, @Param("userId") Long userId);
 
     @EntityGraph(attributePaths = "commenterAliasEntity")
     Page<CommentEntity> findWithAliasByQuestionEntityId(Long questionId, Pageable pageable);

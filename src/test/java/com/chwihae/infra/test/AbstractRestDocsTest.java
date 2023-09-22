@@ -1,4 +1,4 @@
-package com.chwihae.infra;
+package com.chwihae.infra.test;
 
 import com.chwihae.config.security.JwtTokenHandler;
 import com.fasterxml.jackson.core.JsonProcessingException;

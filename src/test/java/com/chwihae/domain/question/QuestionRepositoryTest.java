@@ -1,8 +1,9 @@
 package com.chwihae.domain.question;
 
 import com.chwihae.domain.user.UserEntity;
-import com.chwihae.infra.AbstractIntegrationTest;
+import com.chwihae.dto.question.response.QuestionListResponse;
 import com.chwihae.infra.fixture.UserEntityFixture;
+import com.chwihae.infra.test.AbstractIntegrationTest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,10 +37,10 @@ class QuestionRepositoryTest extends AbstractIntegrationTest {
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
 
         //when
-        Page<QuestionEntity> questionEntities = questionRepository.findByTypeAndStatus(IN_PROGRESS, QuestionType.SPEC, pageRequest);
+        Page<QuestionListResponse> response = questionRepository.findByTypeAndStatusWithCounts(IN_PROGRESS, QuestionType.SPEC, pageRequest);
 
         //then
-        Assertions.assertThat(questionEntities.getContent()).hasSize(pageSize);
+        Assertions.assertThat(response.getContent()).hasSize(pageSize);
     }
 
     private QuestionEntity createQuestion(UserEntity userEntity, QuestionType type) {

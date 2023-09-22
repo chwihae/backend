@@ -69,6 +69,10 @@ public class VoteService {
         }
     }
 
+    public long getVoteCount(Long questionId) {
+        return voteRepository.countByQuestionEntityId(questionId);
+    }
+
     private Long getVotedOptionId(Long questionId, Long userId) {
         return voteRepository.findByQuestionEntityIdAndUserEntityId(questionId, userId)
                 .map(VoteEntity::getId)

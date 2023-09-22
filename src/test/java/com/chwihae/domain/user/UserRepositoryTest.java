@@ -1,6 +1,6 @@
 package com.chwihae.domain.user;
 
-import com.chwihae.infra.AbstractIntegrationTest;
+import com.chwihae.infra.test.AbstractIntegrationTest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -6,7 +6,7 @@ import com.chwihae.domain.question.QuestionType;
 import com.chwihae.domain.user.UserEntity;
 import com.chwihae.domain.vote.VoteEntity;
 import com.chwihae.exception.CustomException;
-import com.chwihae.infra.AbstractIntegrationTest;
+import com.chwihae.infra.test.AbstractConcurrencyTest;
 import com.chwihae.infra.fixture.UserEntityFixture;
 import com.chwihae.utils.ClassUtils;
 import org.assertj.core.api.Assertions;
@@ -18,12 +18,15 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.stream.IntStream;
 
 import static com.chwihae.exception.CustomExceptionError.DUPLICATE_VOTE;
 import static com.chwihae.exception.CustomExceptionError.VOTE_NOT_FOUND;
 
-class VoteServiceConcurrencyTest extends AbstractIntegrationTest {
+class VoteServiceConcurrencyTest extends AbstractConcurrencyTest {
 
     @AfterEach
     void tearDown() {
@@ -31,44 +34,44 @@ class VoteServiceConcurrencyTest extends AbstractIntegrationTest {
         optionRepository.physicallyDeleteAll();
         questionRepository.physicallyDeleteAll();
         userRepository.physicallyDeleteAll();
+        executorService.shutdown();
     }
 
     @Test
     @DisplayName("투표를 동시에 요청해도 투표는 하나만 된다")
     void createVote_concurrency() throws Exception {
         //given
+        final int REQUEST_COUNT = 10;
+        final int OPTION_SIZE = 5;
+        List<Callable<Void>> createVoteTasks = new ArrayList<>();
+
         UserEntity questioner = UserEntityFixture.of();
         UserEntity voter = UserEntityFixture.of();
         userRepository.saveAll(List.of(questioner, voter));
         QuestionEntity questionEntity = questionRepository.save(createQuestion(questioner));
 
         List<OptionEntity> optionEntities = new ArrayList<>();
-        final int optionSize = 5;
-        for (int optionNumber = 1; optionNumber <= optionSize; optionNumber++) {
+        IntStream.of(0, OPTION_SIZE).forEach(optionNumber -> {
             optionEntities.add(createOption(questionEntity));
-        }
+        });
         optionRepository.saveAll(optionEntities);
 
-        final int requestCount = 10;
-        final int numberOfCores = Runtime.getRuntime().availableProcessors();
-        ExecutorService executorService = Executors.newFixedThreadPool(numberOfCores);
-        List<Callable<Void>> tasks = new ArrayList<>();
-
-        for (int request = 1; request <= requestCount; request++) {
-            final int optionId = new Random().nextInt(optionEntities.size());
+        IntStream.rangeClosed(1, REQUEST_COUNT).forEach(req -> {
+            int optionId = new Random().nextInt(optionEntities.size());
             OptionEntity optionEntity = optionEntities.get(optionId);
-            tasks.add(() -> {
+            createVoteTasks.add(() -> {
                 voteService.createVote(questionEntity.getId(), optionEntity.getId(), voter.getId());
                 return null;
             });
-        }
+        });
+
 
         //when
-        List<Future<Void>> futures = executorService.invokeAll(tasks);
+        List<Future<Void>> createVoteFutures = executorService.invokeAll(createVoteTasks);
 
         //then
         int exceptionCount = 0;
-        for (Future<Void> future : futures) {
+        for (Future<Void> future : createVoteFutures) {
             try {
                 future.get();
             } catch (ExecutionException e) {
@@ -81,16 +84,16 @@ class VoteServiceConcurrencyTest extends AbstractIntegrationTest {
         }
 
         Assertions.assertThat(voteRepository.findAll()).hasSize(1);
-        Assertions.assertThat(exceptionCount).isEqualTo(requestCount - 1);
-
-        //finally
-        executorService.shutdown();
+        Assertions.assertThat(exceptionCount).isEqualTo(REQUEST_COUNT - 1);
     }
 
     @Test
     @DisplayName("투표를 동시에 취소 요청해도 한 번 삭제 처리된다")
     void deleteVote_concurrency() throws Exception {
         //given
+        final int REQUEST_COUNT = 10;
+        List<Callable<Void>> deleteVoteTasks = new ArrayList<>();
+
         UserEntity questioner = UserEntityFixture.of();
         UserEntity voter = UserEntityFixture.of();
         userRepository.saveAll(List.of(questioner, voter));
@@ -98,24 +101,19 @@ class VoteServiceConcurrencyTest extends AbstractIntegrationTest {
         OptionEntity option = optionRepository.save(createOption(question));
         voteRepository.save(createVote(option, voter));
 
-        final int requestCount = 10;
-        final int numberOfCores = Runtime.getRuntime().availableProcessors();
-        ExecutorService executorService = Executors.newFixedThreadPool(numberOfCores);
-        List<Callable<Void>> tasks = new ArrayList<>();
-
-        for (int request = 1; request <= requestCount; request++) {
-            tasks.add(() -> {
+        IntStream.rangeClosed(1, REQUEST_COUNT).forEach(req -> {
+            deleteVoteTasks.add(() -> {
                 voteService.deleteVote(question.getId(), option.getId(), voter.getId());
                 return null;
             });
-        }
+        });
 
         //when
-        List<Future<Void>> futures = executorService.invokeAll(tasks);
+        List<Future<Void>> deleteVoteFutures = executorService.invokeAll(deleteVoteTasks);
 
         //then
         int exceptionCount = 0;
-        for (Future<Void> future : futures) {
+        for (Future<Void> future : deleteVoteFutures) {
             try {
                 future.get();
             } catch (ExecutionException e) {
@@ -127,11 +125,8 @@ class VoteServiceConcurrencyTest extends AbstractIntegrationTest {
             }
         }
 
-        Assertions.assertThat(exceptionCount).isEqualTo(requestCount - 1);
+        Assertions.assertThat(exceptionCount).isEqualTo(REQUEST_COUNT - 1);
         Assertions.assertThat(voteRepository.findAll()).isEmpty();
-
-        //finally
-        executorService.shutdown();
     }
 
     public QuestionEntity createQuestion(UserEntity userEntity) {

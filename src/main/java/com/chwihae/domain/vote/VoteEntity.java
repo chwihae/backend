@@ -18,8 +18,9 @@ import static jakarta.persistence.FetchType.LAZY;
 @Getter
 @Table(name = "vote",
         indexes = {
-                @Index(name = "idx_vote_id_voter", columnList = "id_voter"),
-                @Index(name = "idx_vote_id_question", columnList = "id_question"),
+                @Index(name = "idx_vote_users", columnList = "id_voter"),
+                @Index(name = "idx_vote_question", columnList = "id_question"),
+                @Index(name = "idx_vote_question_users", columnList = "id_question, id_voter"),
         },
         uniqueConstraints = {
                 @UniqueConstraint(name = "uk_vote_user_question_valid", columnNames = {"id_voter", "id_question", "valid"})

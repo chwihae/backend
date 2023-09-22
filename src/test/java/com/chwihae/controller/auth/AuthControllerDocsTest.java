@@ -2,7 +2,7 @@ package com.chwihae.controller.auth;
 
 import com.chwihae.dto.auth.request.KakaoLoginRequest;
 import com.chwihae.dto.auth.response.LoginResponse;
-import com.chwihae.infra.AbstractRestDocsTest;
+import com.chwihae.infra.test.AbstractRestDocsTest;
 import com.chwihae.service.auth.AuthService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

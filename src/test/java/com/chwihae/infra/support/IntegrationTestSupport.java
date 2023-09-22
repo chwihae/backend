@@ -1,4 +1,4 @@
-package com.chwihae.infra;
+package com.chwihae.infra.support;
 
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;

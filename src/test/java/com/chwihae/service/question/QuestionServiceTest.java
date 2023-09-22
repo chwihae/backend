@@ -10,8 +10,8 @@ import com.chwihae.dto.question.response.QuestionDetailResponse;
 import com.chwihae.dto.question.response.QuestionListResponse;
 import com.chwihae.exception.CustomException;
 import com.chwihae.exception.CustomExceptionError;
-import com.chwihae.infra.AbstractIntegrationTest;
 import com.chwihae.infra.fixture.UserEntityFixture;
+import com.chwihae.infra.test.AbstractIntegrationTest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -133,6 +133,9 @@ class QuestionServiceTest extends AbstractIntegrationTest {
     @DisplayName("질문 전체를 질문 타입,질문 상태 조건으로 페이지네이션으로 조회한다")
     void getQuestions_byTypeAndStatus_returnsPageResponse() throws Exception {
         //given
+        final int PAGE_SIZE = 2;
+        final int PAGE_NUMBER = 0;
+
         UserEntity userEntity = userRepository.save(UserEntityFixture.of("test@email.com"));
         QuestionEntity questionEntity1 = createQuestion(userEntity, SPEC);
         QuestionEntity questionEntity2 = createQuestion(userEntity, COMPANY);
@@ -141,18 +144,15 @@ class QuestionServiceTest extends AbstractIntegrationTest {
         QuestionEntity questionEntity5 = createQuestion(userEntity, SPEC);
         questionRepository.saveAll(List.of(questionEntity1, questionEntity2, questionEntity3, questionEntity4, questionEntity5));
 
-        final int pageSize = 2;
-        final int pageNumber = 1;
 
-        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
+        PageRequest pageRequest = PageRequest.of(PAGE_NUMBER, PAGE_SIZE);
         QuestionStatus status = QuestionStatus.IN_PROGRESS;
-        QuestionType type = SPEC;
 
         //when
-        Page<QuestionListResponse> response = questionService.getQuestionsByTypeAndStatus(type, status, pageRequest);
+        Page<QuestionListResponse> response = questionService.getQuestionsByTypeAndStatus(SPEC, status, pageRequest);
 
         //then
-        Assertions.assertThat(response.getContent()).hasSize(1);
+        Assertions.assertThat(response.getContent()).hasSize(PAGE_SIZE);
         Assertions.assertThat(response.getTotalPages()).isEqualTo(2);
     }
 

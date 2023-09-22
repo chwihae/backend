@@ -7,7 +7,7 @@ import com.chwihae.domain.question.QuestionRepository;
 import com.chwihae.domain.question.QuestionType;
 import com.chwihae.domain.user.UserEntity;
 import com.chwihae.domain.user.UserRepository;
-import com.chwihae.infra.AbstractIntegrationTest;
+import com.chwihae.infra.test.AbstractIntegrationTest;
 import com.chwihae.infra.fixture.UserEntityFixture;
 import jakarta.persistence.EntityManager;
 import org.assertj.core.api.Assertions;

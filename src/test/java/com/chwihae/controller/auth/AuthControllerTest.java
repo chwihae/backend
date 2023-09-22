@@ -1,7 +1,7 @@
 package com.chwihae.controller.auth;
 
 import com.chwihae.dto.auth.request.KakaoLoginRequest;
-import com.chwihae.infra.AbstractMockMvcTest;
+import com.chwihae.infra.test.AbstractMockMvcTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

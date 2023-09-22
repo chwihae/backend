@@ -10,7 +10,8 @@ import com.chwihae.dto.option.response.VoteOptionResponse;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
 import com.chwihae.dto.question.response.QuestionDetailResponse;
 import com.chwihae.dto.question.response.QuestionListResponse;
-import com.chwihae.infra.AbstractRestDocsTest;
+import com.chwihae.infra.test.AbstractRestDocsTest;
+import com.chwihae.service.bookmark.BookmarkService;
 import com.chwihae.service.comment.CommentService;
 import com.chwihae.service.question.QuestionService;
 import com.chwihae.service.vote.VoteService;
@@ -51,10 +52,11 @@ class QuestionControllerDocsTest extends AbstractRestDocsTest {
     private final QuestionValidator questionValidator = mock(QuestionValidator.class);
     private final VoteService voteService = mock(VoteService.class);
     private final CommentService commentService = mock(CommentService.class);
+    private final BookmarkService bookmarkService = mock(BookmarkService.class);
 
     @Override
     protected Object initController() {
-        return new QuestionController(questionService, questionValidator, voteService, commentService);
+        return new QuestionController(questionService, questionValidator, voteService, commentService, bookmarkService);
     }
 
     @Test
@@ -448,6 +450,37 @@ class QuestionControllerDocsTest extends AbstractRestDocsTest {
                                 fieldWithPath("code").type(JsonFieldType.NUMBER).description("코드"),
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("메시지"),
                                 fieldWithPath("data").type(JsonFieldType.NULL).description("응답 데이터")
+                        )
+                ));
+    }
+
+    @Test
+    @DisplayName("북마크 등록/해제 API")
+    void bookmark_restDocs() throws Exception {
+        //given
+        given(bookmarkService.bookmark(any(), any()))
+                .willReturn(true);
+
+        //when //then
+        mockMvc.perform(
+                        post("/api/v1/questions/{questionId}/bookmark", 651L)
+                                .header(AUTHORIZATION, token(1L))
+                )
+                .andExpect(status().isOk())
+                .andDo(document("bookmark-question",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestHeaders(
+                                headerWithName(AUTHORIZATION).description("[Required] 인증 토큰 (타입: 문자열)")
+                        ),
+                        pathParameters(
+                                parameterWithName("questionId").description("[Required] 질문 아이디 (타입: 숫자)")
+                        ),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.NUMBER).description("코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("메시지"),
+                                fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터"),
+                                fieldWithPath("data.result").type(JsonFieldType.BOOLEAN).description("북마크 등록 시 true, 북마크 해제 시 false")
                         )
                 ));
     }
