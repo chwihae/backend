@@ -855,7 +855,7 @@ Content-Length: 166
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/v1/users/statistics HTTP/1.1
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTM0MjQxNSwiZXhwIjoxNjk1NDI4ODE1fQ.SNp9g71TpPzAEf6so2uXYoj0kbFPtDkHwe8jYuwbo8Q
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTM0Njc1MCwiZXhwIjoxNjk1NDMzMTUwfQ.3eVZ-FVBnwaT8YtZvq9SGP6jRFKhGeFeCO5gj2EiG08
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -1006,7 +1006,7 @@ Content-Length: 126
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/v1/questions HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTM0MjQxNCwiZXhwIjoxNjk1NDI4ODE0fQ.ZOIMCADmVNVJbhZLc5IgRaLL-sgmtrjuWtJd7mKsq6o
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTM0Njc0OSwiZXhwIjoxNjk1NDMzMTQ5fQ.H93snz2Y9cCXctnRDXgwPEah3e8WFogBUBmn-Flpkf0
 Content-Length: 194
 Host: localhost:8080
 
@@ -1014,7 +1014,7 @@ Host: localhost:8080
   "title" : "title",
   "content" : "content",
   "type" : "SPEC",
-  "closeAt" : "2023-09-22T09:56:54",
+  "closeAt" : "2023-09-22T11:09:09",
   "options" : [ {
     "name" : "option name 1"
   }, {
@@ -1212,7 +1212,7 @@ Content-Length: 75
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/v1/questions?type=COMPANY&amp;status=IN_PROGRESS&amp;page=0&amp;size=2 HTTP/1.1
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTM0MjQxNCwiZXhwIjoxNjk1NDI4ODE0fQ.ZOIMCADmVNVJbhZLc5IgRaLL-sgmtrjuWtJd7mKsq6o
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTM0Njc0OSwiZXhwIjoxNjk1NDMzMTQ5fQ.H93snz2Y9cCXctnRDXgwPEah3e8WFogBUBmn-Flpkf0
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -1353,8 +1353,8 @@ Content-Length: 1547
       "unpaged" : false
     },
     "last" : false,
-    "totalElements" : 5,
     "totalPages" : 3,
+    "totalElements" : 5,
     "first" : true,
     "size" : 2,
     "number" : 0,
@@ -1535,7 +1535,7 @@ Content-Length: 1547
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/v1/questions/1 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTM0MjQxNCwiZXhwIjoxNjk1NDI4ODE0fQ.ZOIMCADmVNVJbhZLc5IgRaLL-sgmtrjuWtJd7mKsq6o
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTM0Njc0OSwiZXhwIjoxNjk1NDMzMTQ5fQ.H93snz2Y9cCXctnRDXgwPEah3e8WFogBUBmn-Flpkf0
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -1612,7 +1612,7 @@ Content-Length: 353
     "title" : "title",
     "content" : "content",
     "type" : "COMPANY",
-    "closeAt" : "2023-09-22T09:56:54",
+    "closeAt" : "2023-09-22T11:09:09",
     "status" : "IN_PROGRESS",
     "viewCount" : 0,
     "commentCount" : 0,
@@ -1774,7 +1774,7 @@ Content-Length: 353
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/v1/questions/25/options HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTM0MjQxNCwiZXhwIjoxNjk1NDI4ODE0fQ.ZOIMCADmVNVJbhZLc5IgRaLL-sgmtrjuWtJd7mKsq6o
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTM0Njc0OSwiZXhwIjoxNjk1NDMzMTQ5fQ.H93snz2Y9cCXctnRDXgwPEah3e8WFogBUBmn-Flpkf0
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -1784,10 +1784,13 @@ Host: localhost:8080</code></pre>
 <div class="ulist">
 <ul>
 <li>
-<p>이 API는 질문의 옵션과 투표 결과를 반환합니다.</p>
+<p>이 API는 질문의 옵션 리스트, 투표 선택, 투표 결과를 반환합니다.</p>
 </li>
 <li>
 <p>질문자와 투표자는 항상 결과를 볼 수 있습니다.</p>
+</li>
+<li>
+<p>투표자는 자신이 투표한 옵션 아이디를 반환받습니다</p>
 </li>
 <li>
 <p>마감되지 않은 질문에 대해 투표하지 않은 사용자는 결과를 볼 수 없습니다.</p>
@@ -1844,13 +1847,14 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 502
+Content-Length: 523
 
 {
   "code" : 200,
   "message" : "OK",
   "data" : {
-    "canViewVoteResult" : true,
+    "votedOptionId" : 3,
+    "showVoteCount" : true,
     "options" : [ {
       "id" : 1,
       "name" : "option name 1",
@@ -1882,7 +1886,11 @@ Content-Length: 502
 <div class="ulist">
 <ul>
 <li>
-<p><code>canViewVoteResult</code> 필드는 투표 결과를 볼 수 있는 권한이 있는지 여부를 나타냅니다.</p>
+<p><code>votedOptionId</code> 필드는 투표자가 투표한 옵션 아이디를 나타냅니다.
+투표하지 않았으면 Null 입니다</p>
+</li>
+<li>
+<p><code>showVoteCount</code> 필드는 투표 결과를 볼 수 있는 권한 여부를 나타냅니다.</p>
 </li>
 </ul>
 </div>
@@ -1937,10 +1945,16 @@ Content-Length: 502
 <td class="tableblock halign-left valign-top"><p class="tableblock">응답 데이터</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.canViewVoteResult</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.votedOptionId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">O</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사용자가 투표한 옵션 아이디 (투표하지 않았으면 NULL)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.showVoteCount</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
 <td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">옵션에 대한 투표 결과를 볼 수 있는 권한 여부</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">옵션에 대한 투표 결과 확인 가능 여부</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.options[]</code></p></td>
@@ -1977,7 +1991,7 @@ Content-Length: 502
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/v1/questions/25/options/100 HTTP/1.1
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTM0MjQxNCwiZXhwIjoxNjk1NDI4ODE0fQ.ZOIMCADmVNVJbhZLc5IgRaLL-sgmtrjuWtJd7mKsq6o
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTM0Njc0OSwiZXhwIjoxNjk1NDMzMTQ5fQ.H93snz2Y9cCXctnRDXgwPEah3e8WFogBUBmn-Flpkf0
 Host: localhost:8080
 Content-Type: application/x-www-form-urlencoded</code></pre>
 </div>
@@ -2140,7 +2154,7 @@ Content-Length: 60
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">DELETE /api/v1/questions/25/options/100 HTTP/1.1
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTM0MjQxNCwiZXhwIjoxNjk1NDI4ODE0fQ.ZOIMCADmVNVJbhZLc5IgRaLL-sgmtrjuWtJd7mKsq6o
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTM0Njc0OSwiZXhwIjoxNjk1NDMzMTQ5fQ.H93snz2Y9cCXctnRDXgwPEah3e8WFogBUBmn-Flpkf0
 Host: localhost:8080</code></pre>
 </div>
 </div>

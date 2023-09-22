@@ -245,7 +245,8 @@ class QuestionControllerDocsTest extends AbstractRestDocsTest {
         }
 
         VoteOptionResponse response = VoteOptionResponse.builder()
-                .canViewVoteResult(true)
+                .votedOptionId(3L)
+                .showVoteCount(true)
                 .options(options)
                 .build();
 
@@ -273,7 +274,8 @@ class QuestionControllerDocsTest extends AbstractRestDocsTest {
                                 fieldWithPath("code").type(JsonFieldType.NUMBER).description("코드"),
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("메시지"),
                                 fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터"),
-                                fieldWithPath("data.canViewVoteResult").type(JsonFieldType.BOOLEAN).description("옵션에 대한 투표 결과를 볼 수 있는 권한 여부"),
+                                fieldWithPath("data.votedOptionId").type(JsonFieldType.NUMBER).description("사용자가 투표한 옵션 아이디 (투표하지 않았으면 NULL)").optional(),
+                                fieldWithPath("data.showVoteCount").type(JsonFieldType.BOOLEAN).description("옵션에 대한 투표 결과 확인 가능 여부"),
                                 fieldWithPath("data.options[]").type(JsonFieldType.ARRAY).description("질문 옵션 리스트"),
                                 fieldWithPath("data.options[].id").type(JsonFieldType.NUMBER).description("질문 옵션 아이디"),
                                 fieldWithPath("data.options[].name").type(JsonFieldType.STRING).description("질문 옵션 이름"),

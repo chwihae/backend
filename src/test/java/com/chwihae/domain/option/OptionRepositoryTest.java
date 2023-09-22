@@ -41,7 +41,7 @@ class OptionRepositoryTest extends AbstractIntegrationTest {
         voteRepository.saveAll(List.of(vote1, vote2, vote3, vote4));
 
         //when
-        List<Option> response = optionRepository.findWithVoteCountByQuestionEntityId(questionEntity.getId());
+        List<Option> response = optionRepository.findOptionsWithResultsByQuestionId(questionEntity.getId(), true);
 
         //then
         Assertions.assertThat(response)
@@ -61,7 +61,7 @@ class OptionRepositoryTest extends AbstractIntegrationTest {
         optionRepository.saveAll(List.of(option1, option2));
 
         //when
-        List<Option> response = optionRepository.findWithoutVoteCountByQuestionEntityId(questionEntity.getId());
+        List<Option> response = optionRepository.findOptionsWithResultsByQuestionId(questionEntity.getId(), false);
 
         //then
         Assertions.assertThat(response)

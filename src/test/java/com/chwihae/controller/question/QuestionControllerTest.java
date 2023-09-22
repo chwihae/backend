@@ -269,7 +269,7 @@ class QuestionControllerTest extends AbstractMockMvcTest {
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.canViewVoteResult").value(true));
+                .andExpect(jsonPath("$.data.showVoteCount").value(true));
     }
 
     @Test
@@ -300,7 +300,7 @@ class QuestionControllerTest extends AbstractMockMvcTest {
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.canViewVoteResult").value(true));
+                .andExpect(jsonPath("$.data.showVoteCount").value(true));
     }
 
     @Test
@@ -331,7 +331,7 @@ class QuestionControllerTest extends AbstractMockMvcTest {
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.canViewVoteResult").value(false));
+                .andExpect(jsonPath("$.data.showVoteCount").value(false));
     }
 
     @Test
@@ -362,7 +362,7 @@ class QuestionControllerTest extends AbstractMockMvcTest {
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.canViewVoteResult").value(true));
+                .andExpect(jsonPath("$.data.showVoteCount").value(true));
     }
 
     @Test
