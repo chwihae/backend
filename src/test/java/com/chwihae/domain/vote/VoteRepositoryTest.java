@@ -7,8 +7,8 @@ import com.chwihae.domain.question.QuestionRepository;
 import com.chwihae.domain.question.QuestionType;
 import com.chwihae.domain.user.UserEntity;
 import com.chwihae.domain.user.UserRepository;
-import com.chwihae.infra.fixture.UserEntityFixture;
 import com.chwihae.infra.AbstractIntegrationTest;
+import com.chwihae.infra.fixture.UserEntityFixture;
 import jakarta.persistence.EntityManager;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Transactional
 class VoteRepositoryTest extends AbstractIntegrationTest {
@@ -112,6 +113,54 @@ class VoteRepositoryTest extends AbstractIntegrationTest {
 
         //then
         Assertions.assertThat(voteRepository.findAll()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("사용자가 투표를 하였으면 투표 엔티티를 반환한다")
+    void findByQuestionEntityIdAndOptionEntityIdAndUserEntityId_returnPresent() throws Exception {
+        //given
+        UserEntity user = userRepository.save(UserEntityFixture.of());
+        QuestionEntity question = questionRepository.save(createQuestion(user));
+        OptionEntity option = optionRepository.save(createOption(question));
+        voteRepository.save(createVote(option, user));
+
+        //when
+        Optional<VoteEntity> optionalVote = voteRepository.findForUpdateByQuestionEntityIdAndOptionEntityIdAndUserEntityId(question.getId(), option.getId(), user.getId());
+
+        //then
+        Assertions.assertThat(optionalVote).isPresent();
+    }
+
+    @Test
+    @DisplayName("사용자가 투표를 하지 않았으면 null을 반환한다")
+    void findByQuestionEntityIdAndOptionEntityIdAndUserEntityId_returnEmpty() throws Exception {
+        //given
+        UserEntity user = userRepository.save(UserEntityFixture.of());
+        QuestionEntity question = questionRepository.save(createQuestion(user));
+        OptionEntity option = optionRepository.save(createOption(question));
+
+        //when
+        Optional<VoteEntity> optionalVote = voteRepository.findForUpdateByQuestionEntityIdAndOptionEntityIdAndUserEntityId(question.getId(), option.getId(), user.getId());
+
+        //then
+        Assertions.assertThat(optionalVote).isEmpty();
+    }
+
+    @Test
+    @DisplayName("이미 삭제된 투표를 다시 삭제해도 아무런 문제가 없다")
+    void delete_repetable() throws Exception {
+        //given
+        UserEntity user = userRepository.save(UserEntityFixture.of());
+        QuestionEntity question = questionRepository.save(createQuestion(user));
+        OptionEntity option = optionRepository.save(createOption(question));
+        VoteEntity vote = voteRepository.save(createVote(option, user));
+
+        voteRepository.delete(vote);
+        entityManager.flush();
+        entityManager.clear();
+
+        //when //then
+        voteRepository.delete(vote);
     }
 
     public QuestionEntity createQuestion(UserEntity userEntity) {

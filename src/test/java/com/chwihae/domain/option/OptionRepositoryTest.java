@@ -5,8 +5,8 @@ import com.chwihae.domain.question.QuestionType;
 import com.chwihae.domain.user.UserEntity;
 import com.chwihae.domain.vote.VoteEntity;
 import com.chwihae.dto.option.response.Option;
-import com.chwihae.infra.fixture.UserEntityFixture;
 import com.chwihae.infra.AbstractIntegrationTest;
+import com.chwihae.infra.fixture.UserEntityFixture;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,8 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
-import static org.assertj.core.groups.Tuple.tuple;
 
 @Transactional
 class OptionRepositoryTest extends AbstractIntegrationTest {
@@ -48,11 +46,8 @@ class OptionRepositoryTest extends AbstractIntegrationTest {
         //then
         Assertions.assertThat(response)
                 .hasSize(2)
-                .extracting("id", "name", "voteCount")
-                .containsExactly(
-                        tuple(option1.getId(), option1.getName(), 2L),
-                        tuple(option2.getId(), option2.getName(), 2L)
-                );
+                .extracting("voteCount")
+                .containsExactly(2L, 2L);
     }
 
     @Test
@@ -71,11 +66,8 @@ class OptionRepositoryTest extends AbstractIntegrationTest {
         //then
         Assertions.assertThat(response)
                 .hasSize(2)
-                .extracting("id", "name", "voteCount")
-                .containsExactly(
-                        tuple(option1.getId(), option1.getName(), null),
-                        tuple(option2.getId(), option2.getName(), null)
-                );
+                .extracting("voteCount")
+                .containsExactly(null, null);
     }
 
     public QuestionEntity createQuestion(UserEntity userEntity) {

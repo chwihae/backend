@@ -46,6 +46,7 @@ public class VoteService {
     @Transactional
     public void createVote(Long questionId, Long optionId, Long userId) {
         QuestionEntity questionEntity = findQuestionOrException(questionId);
+
         ensureQuestionIsNotClosed(questionEntity);
         ensureQuestionerCannotVote(questionEntity, userId);
         ensureUserHasNotVoted(questionId, userId);
@@ -53,6 +54,17 @@ public class VoteService {
         OptionEntity optionEntity = findOptionOrException(optionId);
         UserEntity userEntity = findUserOrException(userId);
         saveVoteOrException(questionEntity, optionEntity, userEntity);
+    }
+
+    @Transactional
+    public void deleteVote(Long questionId, Long optionId, Long userId) {
+        try {
+            VoteEntity voteEntity = voteRepository.findForUpdateByQuestionEntityIdAndOptionEntityIdAndUserEntityId(questionId, optionId, userId)
+                    .orElseThrow(() -> new CustomException(VOTE_NOT_FOUND));
+            voteRepository.delete(voteEntity);
+        } catch (RuntimeException e) {
+            throw new CustomException(VOTE_NOT_FOUND);
+        }
     }
 
     private boolean canUserViewVoteResults(QuestionEntity questionEntity, Long userId) {
