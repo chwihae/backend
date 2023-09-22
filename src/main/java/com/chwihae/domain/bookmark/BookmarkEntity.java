@@ -1,5 +1,6 @@
 package com.chwihae.domain.bookmark;
 
+import com.chwihae.domain.BaseEntity;
 import com.chwihae.domain.question.QuestionEntity;
 import com.chwihae.domain.user.UserEntity;
 import jakarta.persistence.*;
@@ -12,11 +13,17 @@ import org.hibernate.annotations.Where;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Table(name = "bookmark")
+@Table(name = "bookmark",
+        indexes = {
+                @Index(name = "idx_bookmark_user", columnList = "id_users"),
+                @Index(name = "idx_bookmark_question", columnList = "id_question"),
+                @Index(name = "idx_bookmark_question_user", columnList = "id_question, id_users")
+        }
+)
 @SQLDelete(sql = "UPDATE bookmark SET deleted_at = NOW() WHERE id_bookmark = ?")
 @Where(clause = "deleted_at is NULL")
 @Entity
-public class BookmarkEntity {
+public class BookmarkEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
