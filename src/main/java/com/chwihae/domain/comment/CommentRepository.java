@@ -11,8 +11,12 @@ import java.util.Optional;
 
 @Repository
 public interface CommentRepository extends JpaRepository<CommentEntity, Long> {
+
     @EntityGraph(attributePaths = "commenterAliasEntity")
-    Optional<CommentEntity> findTopWithCommenterAliasByQuestionEntityIdAndUserEntityId(Long questionId, Long userId);
+    @Query("SELECT ce " +
+            "FROM CommentEntity ce " +
+            "WHERE ce.questionEntity.id = :questionId AND ce.userEntity.id = :userId")
+    Optional<CommentEntity> findTopCommentByQuestionIdAndUserId(Long questionId, Long userId);
 
     @Transactional
     @Modifying(flushAutomatically = true, clearAutomatically = true)

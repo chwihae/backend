@@ -7,7 +7,6 @@ import com.chwihae.domain.question.QuestionType;
 import com.chwihae.domain.user.UserEntity;
 import com.chwihae.infra.AbstractIntegrationTest;
 import com.chwihae.infra.fixture.UserEntityFixture;
-import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -18,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 
-@Slf4j
 class CommentServiceConcurrencyTest extends AbstractIntegrationTest {
 
     @AfterEach

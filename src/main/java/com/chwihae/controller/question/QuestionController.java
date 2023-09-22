@@ -4,12 +4,14 @@ import com.chwihae.config.security.CurrentUser;
 import com.chwihae.controller.ApiResponse;
 import com.chwihae.domain.question.QuestionStatus;
 import com.chwihae.domain.question.QuestionType;
+import com.chwihae.dto.comment.request.QuestionCommentCreateRequest;
 import com.chwihae.dto.common.response.IdResponse;
 import com.chwihae.dto.option.response.VoteOptionResponse;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
 import com.chwihae.dto.question.response.QuestionDetailResponse;
 import com.chwihae.dto.question.response.QuestionListResponse;
 import com.chwihae.dto.user.UserContext;
+import com.chwihae.service.comment.CommentService;
 import com.chwihae.service.question.QuestionService;
 import com.chwihae.service.vote.VoteService;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,7 @@ public class QuestionController {
     private final QuestionService questionService;
     private final QuestionValidator questionValidator;
     private final VoteService voteService;
+    private final CommentService commentService;
 
     @GetMapping
     public ApiResponse<Page<QuestionListResponse>> getQuestions(@RequestParam(value = "type", required = false) QuestionType type,
@@ -55,6 +58,14 @@ public class QuestionController {
     public ApiResponse<VoteOptionResponse> getOptions(@PathVariable Long questionId,
                                                       @CurrentUser UserContext userContext) {
         return ApiResponse.ok(voteService.getVoteOptions(questionId, userContext.getId()));
+    }
+
+    @PostMapping("/{questionId}/comments")
+    public ApiResponse<VoteOptionResponse> createComment(@PathVariable Long questionId,
+                                                         @RequestBody @Validated QuestionCommentCreateRequest request,
+                                                         @CurrentUser UserContext userContext) {
+        commentService.createComment(questionId, userContext.getId(), request.getContent());
+        return ApiResponse.created();
     }
 
     @PostMapping("/{questionId}/options/{optionId}")

@@ -35,7 +35,7 @@ public class CommentService {
     }
 
     private CommenterAliasEntity getOrCreateCommenterAlias(UserEntity userEntity, QuestionEntity questionEntity) {
-        return commentRepository.findTopWithCommenterAliasByQuestionEntityIdAndUserEntityId(questionEntity.getId(), userEntity.getId())
+        return commentRepository.findTopCommentByQuestionIdAndUserId(questionEntity.getId(), userEntity.getId())
                 .map(CommentEntity::getCommenterAliasEntity)
                 .orElseGet(() -> createCommenterAlias(questionEntity, userEntity));
     }
@@ -74,4 +74,5 @@ public class CommentService {
     private QuestionEntity findQuestionOrException(Long questionId) {
         return questionRepository.findById(questionId).orElseThrow(() -> new CustomException(QUESTION_NOT_FOUND));
     }
+
 }

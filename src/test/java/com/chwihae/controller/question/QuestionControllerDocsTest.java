@@ -1,6 +1,7 @@
 package com.chwihae.controller.question;
 
 import com.chwihae.domain.question.QuestionType;
+import com.chwihae.dto.comment.request.QuestionCommentCreateRequest;
 import com.chwihae.dto.option.request.OptionCreateRequest;
 import com.chwihae.dto.option.response.Option;
 import com.chwihae.dto.option.response.VoteOptionResponse;
@@ -8,6 +9,7 @@ import com.chwihae.dto.question.request.QuestionCreateRequest;
 import com.chwihae.dto.question.response.QuestionDetailResponse;
 import com.chwihae.dto.question.response.QuestionListResponse;
 import com.chwihae.infra.AbstractRestDocsTest;
+import com.chwihae.service.comment.CommentService;
 import com.chwihae.service.question.QuestionService;
 import com.chwihae.service.vote.VoteService;
 import org.junit.jupiter.api.DisplayName;
@@ -45,10 +47,11 @@ class QuestionControllerDocsTest extends AbstractRestDocsTest {
     private final QuestionService questionService = mock(QuestionService.class);
     private final QuestionValidator questionValidator = mock(QuestionValidator.class);
     private final VoteService voteService = mock(VoteService.class);
+    private final CommentService commentService = mock(CommentService.class);
 
     @Override
     protected Object initController() {
-        return new QuestionController(questionService, questionValidator, voteService);
+        return new QuestionController(questionService, questionValidator, voteService, commentService);
     }
 
     @Test
@@ -331,6 +334,42 @@ class QuestionControllerDocsTest extends AbstractRestDocsTest {
                         pathParameters(
                                 parameterWithName("questionId").description("[Required] 질문 아이디 (타입: 숫자)"),
                                 parameterWithName("optionId").description("[Required] 옵션 아이디 (타입: 숫자)")
+                        ),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.NUMBER).description("코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("메시지"),
+                                fieldWithPath("data").type(JsonFieldType.NULL).description("응답 데이터")
+                        )
+                ));
+    }
+
+    @Test
+    @DisplayName("댓글 등록 API")
+    void createComment_restDocs() throws Exception {
+        //given
+        QuestionCommentCreateRequest request = QuestionCommentCreateRequest.builder()
+                .content("content")
+                .build();
+
+        //when //then
+        mockMvc.perform(
+                        post("/api/v1/questions/{questionId}/comments", 53L)
+                                .header(AUTHORIZATION, token(1L))
+                                .contentType(APPLICATION_JSON)
+                                .content(body(request))
+                )
+                .andExpect(status().isOk())
+                .andDo(document("question-comments",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestHeaders(
+                                headerWithName(AUTHORIZATION).description("[Required] 인증 토큰 (타입: 문자열)")
+                        ),
+                        pathParameters(
+                                parameterWithName("questionId").description("[Required] 질문 아이디 (타입: 숫자)")
+                        ),
+                        requestFields(
+                                fieldWithPath("content").type(JsonFieldType.STRING).description("답변 내용(빈 문자열 불가능)")
                         ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER).description("코드"),

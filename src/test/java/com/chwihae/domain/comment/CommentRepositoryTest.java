@@ -29,7 +29,7 @@ class CommentRepositoryTest extends AbstractIntegrationTest {
         commentRepository.save(createComment(question, user, commenterAlias, content));
 
         //when
-        Optional<CommentEntity> optionalComment = commentRepository.findTopWithCommenterAliasByQuestionEntityIdAndUserEntityId(question.getId(), user.getId());
+        Optional<CommentEntity> optionalComment = commentRepository.findTopCommentByQuestionIdAndUserId(question.getId(), user.getId());
 
         //then
         Assertions.assertThat(optionalComment)
