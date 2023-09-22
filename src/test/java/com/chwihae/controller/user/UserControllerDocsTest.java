@@ -1,10 +1,16 @@
 package com.chwihae.controller.user;
 
+import com.chwihae.dto.user.UserStatisticsResponse;
 import com.chwihae.infra.AbstractRestDocsTest;
+import com.chwihae.service.user.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.restdocs.payload.JsonFieldType;
 
+import static com.chwihae.domain.user.UserLevel.DOCTOR;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
@@ -17,16 +23,24 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class UserControllerDocsTest extends AbstractRestDocsTest {
 
+    private final UserService userService = mock(UserService.class);
+
     @Override
     protected Object initController() {
-        return new UserController();
+        return new UserController(userService);
     }
 
     @Test
     @DisplayName("사용자 활동 API")
     void getUserStatistics_restDocs() throws Exception {
         //given
-
+        given(userService.getUserStatistics(any()))
+                .willReturn(UserStatisticsResponse.builder()
+                        .level(DOCTOR)
+                        .voteCount(120)
+                        .commentCount(50)
+                        .build());
+        
         //when //then
         mockMvc.perform(
                         get("/api/v1/users/statistics")

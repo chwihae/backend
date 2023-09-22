@@ -282,8 +282,6 @@ class VoteServiceTest extends AbstractIntegrationTest {
                 .isEqualTo(USER_NOT_FOUND);
     }
 
-    // TODO 마감되지 않은 질문에 투표를 취소했던 사용자는 다시 투표를 할 수 있다
-
     @Test
     @DisplayName("사용자가 투표를 취소하면 투표를 삭제한다")
     void deleteVote_pass() throws Exception {
@@ -299,6 +297,27 @@ class VoteServiceTest extends AbstractIntegrationTest {
 
         //then
         Assertions.assertThat(voteRepository.findAll()).isEmpty();
+    }
+
+
+    @Test
+    @DisplayName("마감되지 않은 질문에 투표를 취소했던 사용자는 다시 투표를 할 수 있다")
+    void createVote_repeatable() throws Exception {
+        //given
+        UserEntity questioner = userRepository.save(UserEntityFixture.of());
+        UserEntity voter = userRepository.save(UserEntityFixture.of());
+        LocalDateTime closeAt = LocalDateTime.now().plusDays(1);
+        QuestionEntity question = questionRepository.save(createQuestion(questioner, closeAt));
+        OptionEntity option = optionRepository.save(createOption(question, "name"));
+        voteRepository.save(createVote(option, voter));
+
+        voteService.deleteVote(question.getId(), option.getId(), voter.getId());
+
+        //when
+        voteService.createVote(question.getId(), option.getId(), voter.getId());
+
+        //then
+        Assertions.assertThat(voteRepository.findAll()).hasSize(1);
     }
 
     @Test

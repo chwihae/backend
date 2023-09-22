@@ -865,7 +865,7 @@ Content-Length: 166
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/v1/users/statistics HTTP/1.1
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTM4OTI1OSwiZXhwIjoxNjk1NDc1NjU5fQ.9w5MW_Ih49Ywrt7EV9SXvFJ6Nrv84QJ1lEADmtuuivc
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTQwMjEzNywiZXhwIjoxNjk1NDg4NTM3fQ.ILgUUsTEcafYb60ctEY98Gk50FRKifTMbHT9iHABS1U
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -910,15 +910,15 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 126
+Content-Length: 127
 
 {
   "code" : 200,
   "message" : "OK",
   "data" : {
-    "level" : "BACHELOR",
-    "commentCount" : 0,
-    "voteCount" : 0
+    "level" : "DOCTOR",
+    "commentCount" : 50,
+    "voteCount" : 120
   }
 }</code></pre>
 </div>
@@ -1016,7 +1016,7 @@ Content-Length: 126
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/v1/questions HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTM4OTI1OCwiZXhwIjoxNjk1NDc1NjU4fQ.wUQVOYAzw5-YEBsbNGWjDL9xy2V50LBhMST8a9fJKdc
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTQwMjEzNiwiZXhwIjoxNjk1NDg4NTM2fQ.6NEKiZhHMwyzWapF9buVA13aYShNq3Twx-LFXhK0EB0
 Content-Length: 194
 Host: localhost:8080
 
@@ -1024,7 +1024,7 @@ Host: localhost:8080
   "title" : "title",
   "content" : "content",
   "type" : "SPEC",
-  "closeAt" : "2023-09-22T22:57:38",
+  "closeAt" : "2023-09-23T02:32:16",
   "options" : [ {
     "name" : "option name 1"
   }, {
@@ -1222,7 +1222,7 @@ Content-Length: 75
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/v1/questions?type=COMPANY&amp;status=IN_PROGRESS&amp;page=0&amp;size=2 HTTP/1.1
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTM4OTI1OCwiZXhwIjoxNjk1NDc1NjU4fQ.wUQVOYAzw5-YEBsbNGWjDL9xy2V50LBhMST8a9fJKdc
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTQwMjEzNiwiZXhwIjoxNjk1NDg4NTM2fQ.6NEKiZhHMwyzWapF9buVA13aYShNq3Twx-LFXhK0EB0
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -1545,7 +1545,7 @@ Content-Length: 1547
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/v1/questions/1 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTM4OTI1OCwiZXhwIjoxNjk1NDc1NjU4fQ.wUQVOYAzw5-YEBsbNGWjDL9xy2V50LBhMST8a9fJKdc
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTQwMjEzNiwiZXhwIjoxNjk1NDg4NTM2fQ.6NEKiZhHMwyzWapF9buVA13aYShNq3Twx-LFXhK0EB0
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -1622,7 +1622,7 @@ Content-Length: 353
     "title" : "title",
     "content" : "content",
     "type" : "COMPANY",
-    "closeAt" : "2023-09-22T22:57:38",
+    "closeAt" : "2023-09-23T02:32:16",
     "status" : "IN_PROGRESS",
     "viewCount" : 0,
     "commentCount" : 0,
@@ -1784,7 +1784,7 @@ Content-Length: 353
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/v1/questions/25/options HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTM4OTI1OCwiZXhwIjoxNjk1NDc1NjU4fQ.wUQVOYAzw5-YEBsbNGWjDL9xy2V50LBhMST8a9fJKdc
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTQwMjEzNiwiZXhwIjoxNjk1NDg4NTM2fQ.6NEKiZhHMwyzWapF9buVA13aYShNq3Twx-LFXhK0EB0
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -1992,7 +1992,7 @@ Content-Length: 286
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/v1/questions/25/options/100 HTTP/1.1
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTM4OTI1OCwiZXhwIjoxNjk1NDc1NjU4fQ.wUQVOYAzw5-YEBsbNGWjDL9xy2V50LBhMST8a9fJKdc
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTQwMjEzNiwiZXhwIjoxNjk1NDg4NTM2fQ.6NEKiZhHMwyzWapF9buVA13aYShNq3Twx-LFXhK0EB0
 Host: localhost:8080
 Content-Type: application/x-www-form-urlencoded</code></pre>
 </div>
@@ -2155,7 +2155,7 @@ Content-Length: 60
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">DELETE /api/v1/questions/25/options/100 HTTP/1.1
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTM4OTI1OCwiZXhwIjoxNjk1NDc1NjU4fQ.wUQVOYAzw5-YEBsbNGWjDL9xy2V50LBhMST8a9fJKdc
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTQwMjEzNiwiZXhwIjoxNjk1NDg4NTM2fQ.6NEKiZhHMwyzWapF9buVA13aYShNq3Twx-LFXhK0EB0
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -2312,7 +2312,7 @@ Content-Length: 55
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/v1/questions/122/comments?page=0&amp;size=2 HTTP/1.1
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTM4OTI1OCwiZXhwIjoxNjk1NDc1NjU4fQ.wUQVOYAzw5-YEBsbNGWjDL9xy2V50LBhMST8a9fJKdc
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTQwMjEzNiwiZXhwIjoxNjk1NDg4NTM2fQ.6NEKiZhHMwyzWapF9buVA13aYShNq3Twx-LFXhK0EB0
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -2599,7 +2599,7 @@ Content-Length: 1167
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/v1/questions/53/comments HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTM4OTI1OCwiZXhwIjoxNjk1NDc1NjU4fQ.wUQVOYAzw5-YEBsbNGWjDL9xy2V50LBhMST8a9fJKdc
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTQwMjEzNiwiZXhwIjoxNjk1NDg4NTM2fQ.6NEKiZhHMwyzWapF9buVA13aYShNq3Twx-LFXhK0EB0
 Content-Length: 27
 Host: localhost:8080
 

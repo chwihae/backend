@@ -4,21 +4,21 @@ import com.chwihae.config.security.CurrentUser;
 import com.chwihae.controller.ApiResponse;
 import com.chwihae.dto.user.UserContext;
 import com.chwihae.dto.user.UserStatisticsResponse;
+import com.chwihae.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import static com.chwihae.domain.user.UserLevel.BACHELOR;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/users")
 public class UserController {
 
-    // TODO
+    private final UserService userService;
+
     @GetMapping("/statistics")
     public ApiResponse<UserStatisticsResponse> getUserStatistics(@CurrentUser UserContext userContext) {
-        return ApiResponse.ok(UserStatisticsResponse.of(BACHELOR, 0, 0));
+        return ApiResponse.ok(userService.getUserStatistics(userContext.getId()));
     }
 }

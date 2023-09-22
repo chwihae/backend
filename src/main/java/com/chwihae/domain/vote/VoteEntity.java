@@ -17,6 +17,9 @@ import static jakarta.persistence.FetchType.LAZY;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Table(name = "vote",
+        indexes = {
+                @Index(name = "idx_vote_id_voter", columnList = "id_voter"),
+        },
         uniqueConstraints = {
                 @UniqueConstraint(name = "uk_vote_user_question_valid", columnNames = {"id_voter", "id_question", "valid"})
         }
