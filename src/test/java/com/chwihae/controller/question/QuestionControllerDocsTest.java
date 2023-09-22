@@ -361,6 +361,7 @@ class QuestionControllerDocsTest extends AbstractRestDocsTest {
             comments.add(Comment.builder()
                     .id((long) commentIndex)
                     .content("content")
+                    .createdAt(LocalDateTime.now())
                     .editable(false)
                     .commenterAlias(CommenterAliasPrefix.getAlias(commentIndex + 1))
                     .build());
@@ -399,6 +400,7 @@ class QuestionControllerDocsTest extends AbstractRestDocsTest {
                                 fieldWithPath("data.content[]").type(JsonFieldType.ARRAY).description("질문 목록"),
                                 fieldWithPath("data.content[].id").type(JsonFieldType.NUMBER).description("댓글 아이디"),
                                 fieldWithPath("data.content[].content").type(JsonFieldType.STRING).description("댓글 내용"),
+                                fieldWithPath("data.content[].createdAt").type(JsonFieldType.STRING).description("댓글 등록 시간 (형식: yyyy-MM-dd'T'HH:mm)"),
                                 fieldWithPath("data.content[].editable").type(JsonFieldType.BOOLEAN).description("댓글 수정 가능 여부(댓글 작성자면 true)"),
                                 fieldWithPath("data.content[].commenterAlias").type(JsonFieldType.STRING).description("댓글 작성자 별칭"),
                                 fieldWithPath("data.totalPages").type(JsonFieldType.NUMBER).description("총 페이지 수"),

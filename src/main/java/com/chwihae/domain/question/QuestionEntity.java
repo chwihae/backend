@@ -20,7 +20,12 @@ import static jakarta.persistence.EnumType.STRING;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Table(name = "question")
+@Table(name = "question",
+        indexes = {
+                @Index(name = "idx_question_type", columnList = "type"),
+                @Index(name = "idx_question_status", columnList = "status")
+        }
+)
 @SQLDelete(sql = "UPDATE question SET deleted_at = NOW() WHERE id_question = ?")
 @Where(clause = "deleted_at is NULL")
 @Entity

@@ -20,8 +20,9 @@ import static jakarta.persistence.FetchType.LAZY;
 @Getter
 @Table(name = "comment",
         indexes = {
-                @Index(name = "idx_comment_id_question", columnList = "id_question"),
-                @Index(name = "idx_comment_id_commenter", columnList = "id_commenter")
+                @Index(name = "idx_comment_question", columnList = "id_question"),
+                @Index(name = "idx_comment_commenter", columnList = "id_commenter"),
+                @Index(name = "idx_comment_commenter_question", columnList = "id_question, id_commenter"),
         }
 )
 @SQLDelete(sql = "UPDATE comment SET deleted_at = NOW() WHERE id_comment = ?")
