@@ -33,8 +33,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
@@ -294,6 +293,34 @@ class QuestionControllerDocsTest extends AbstractRestDocsTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("question-vote-create",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestHeaders(
+                                headerWithName(AUTHORIZATION).description("[Required] 인증 토큰 (타입: 문자열)")
+                        ),
+                        pathParameters(
+                                parameterWithName("questionId").description("[Required] 질문 아이디 (타입: 숫자)"),
+                                parameterWithName("optionId").description("[Required] 옵션 아이디 (타입: 숫자)")
+                        ),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.NUMBER).description("코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("메시지"),
+                                fieldWithPath("data").type(JsonFieldType.NULL).description("응답 데이터")
+                        )
+                ));
+    }
+
+    @Test
+    @DisplayName("투표 삭제 API")
+    void deleteVote_restDocs() throws Exception {
+        //when //then
+        mockMvc.perform(
+                        delete("/api/v1/questions/{questionId}/options/{optionId}", 25L, 100L)
+                                .header(AUTHORIZATION, token(1L))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("question-vote-delete",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestHeaders(

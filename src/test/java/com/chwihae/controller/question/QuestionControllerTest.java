@@ -663,6 +663,21 @@ class QuestionControllerTest extends AbstractMockMvcTest {
                 .andExpect(jsonPath("$.code").value(VOTE_NOT_FOUND.code()));
     }
 
+    @Test
+    @DisplayName("DELETE /api/v1/questions/{questionId}/options/{optionId} - 실패 (미인증 사용자)")
+    @WithAnonymousUser
+    void deleteVote_byAnonymousUser_returnsUnauthorizedCode() throws Exception {
+        //given
+        long notExistingQuestionId = 0L;
+        long notExistingOptionId = 0L;
+        //when //then
+        mockMvc.perform(
+                        delete("/api/v1/questions/{questionId}/options/{optionId}", notExistingQuestionId, notExistingOptionId)
+                )
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.code").value(INVALID_TOKEN.code()));
+    }
+
     public QuestionEntity createQuestion(UserEntity userEntity, LocalDateTime closeAt) {
         return QuestionEntity.builder()
                 .userEntity(userEntity)
