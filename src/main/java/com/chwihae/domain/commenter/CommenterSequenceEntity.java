@@ -14,8 +14,14 @@ import static jakarta.persistence.FetchType.LAZY;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Table(name = "commenter_sequence", indexes = {
-        @Index(name = "idx_commenter_seq_question", columnList = "id_question")}
+@Table(name = "commenter_sequence",
+        indexes = {
+                @Index(name = "idx_commenter_seq_question", columnList = "id_question")
+        },
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_commenter_seq_question", columnNames = "id_question")
+        }
+
 )
 @SQLDelete(sql = "UPDATE commenter_sequence SET deleted_at = NOW() WHERE id_commenter_seq = ?")
 @Where(clause = "deleted_at is NULL")

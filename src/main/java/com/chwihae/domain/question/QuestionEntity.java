@@ -40,7 +40,7 @@ public class QuestionEntity extends BaseEntity {
     @Column(name = "title", nullable = false, columnDefinition = "varchar(50) COMMENT '질문 제목'")
     private String title;
 
-    @Column(name = "content", nullable = false, columnDefinition = "text COMMENT '질문 내용'")
+    @Column(name = "content", columnDefinition = "text COMMENT '질문 내용'")
     private String content;
 
     @Enumerated(STRING)
