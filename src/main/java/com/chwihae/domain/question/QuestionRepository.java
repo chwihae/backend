@@ -14,10 +14,9 @@ public interface QuestionRepository extends JpaRepository<QuestionEntity, Long>,
     @Query("SELECT EXISTS(" +
             "SELECT 1 " +
             "FROM QuestionEntity qe " +
-            "WHERE qe.closeAt < :now)"
-    )
+            "WHERE qe.closeAt < :now AND qe.status = com.chwihae.domain.question.QuestionStatus.IN_PROGRESS)")
     boolean existsByCloseAtBefore(LocalDateTime now);
-    
+
     @Transactional
     @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query(value = "DELETE FROM question", nativeQuery = true)

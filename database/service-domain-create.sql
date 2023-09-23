@@ -31,6 +31,7 @@ create index idx_question_type_status on question (type, status);
 create index idx_question_close_at on question (close_at);
 create index idx_question_deleted_at on question (deleted_at);
 create index idx_question_close_at_deleted_at on question (close_at, deleted_at);
+create index idx_question_status_close_at on question (status, close_at);
 
 create table bookmark
 (

@@ -7,8 +7,8 @@ import com.chwihae.domain.user.UserEntity;
 import com.chwihae.domain.vote.VoteEntity;
 import com.chwihae.dto.option.response.VoteOptionResponse;
 import com.chwihae.exception.CustomException;
-import com.chwihae.infra.test.AbstractIntegrationTest;
 import com.chwihae.infra.fixture.UserEntityFixture;
+import com.chwihae.infra.test.AbstractIntegrationTest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -158,6 +158,71 @@ class VoteServiceTest extends AbstractIntegrationTest {
                 .hasSize(2)
                 .extracting("voteCount")
                 .containsExactly(2L, 2L);
+    }
+
+    @Test
+    @DisplayName("투표자는 옵션을 조회할 때 본인이 투표한 옵션 아이디를 반환받는다")
+    void getVoteOptions_withVotedOptions() throws Exception {
+        //given
+        UserEntity questioner = UserEntityFixture.of();
+        UserEntity voter = UserEntityFixture.of("voter1@email.com");
+        userRepository.saveAll(List.of(questioner, voter));
+
+        LocalDateTime closeAt = LocalDateTime.now().minusDays(10);
+        QuestionEntity questionEntity = questionRepository.save(createQuestion(questioner, closeAt));
+        OptionEntity option1 = createOption(questionEntity, "name1");
+        OptionEntity option2 = createOption(questionEntity, "name2");
+        optionRepository.saveAll(List.of(option1, option2));
+
+        VoteEntity vote = voteRepository.save(createVote(option1, voter));
+
+        //when
+        VoteOptionResponse response = voteService.getVoteOptions(questionEntity.getId(), voter.getId());
+
+        //then
+        Assertions.assertThat(response.getVotedOptionId()).isEqualTo(option1.getId());
+    }
+
+    @Test
+    @DisplayName("투표를 하지 않은 사용자가 투표한 옵션 아이디는 null이다")
+    void getVoteOptions_whenUserNotVote_returnVotedOptionIdNull() throws Exception {
+        //given
+        UserEntity questioner = UserEntityFixture.of();
+        UserEntity voter = UserEntityFixture.of("voter1@email.com");
+        userRepository.saveAll(List.of(questioner, voter));
+
+        LocalDateTime closeAt = LocalDateTime.now().minusDays(10);
+        QuestionEntity questionEntity = questionRepository.save(createQuestion(questioner, closeAt));
+
+        //when
+        VoteOptionResponse response = voteService.getVoteOptions(questionEntity.getId(), voter.getId());
+
+        //then
+        Assertions.assertThat(response.getVotedOptionId()).isNull();
+    }
+
+    @Test
+    @DisplayName("투표를 취소한 사용자는 본인이 투표한 옵션 아이디는 null이다")
+    void getVoteOptions_whenUserDeleteVote_returnVotedOptionIdNull() throws Exception {
+        //given
+        UserEntity questioner = UserEntityFixture.of();
+        UserEntity voter = UserEntityFixture.of("voter1@email.com");
+        userRepository.saveAll(List.of(questioner, voter));
+
+        LocalDateTime closeAt = LocalDateTime.now().minusDays(10);
+        QuestionEntity questionEntity = questionRepository.save(createQuestion(questioner, closeAt));
+        OptionEntity option1 = createOption(questionEntity, "name1");
+        OptionEntity option2 = createOption(questionEntity, "name2");
+        optionRepository.saveAll(List.of(option1, option2));
+
+        VoteEntity vote = voteRepository.save(createVote(option1, voter));
+        voteRepository.delete(vote);
+
+        //when
+        VoteOptionResponse response = voteService.getVoteOptions(questionEntity.getId(), voter.getId());
+
+        //then
+        Assertions.assertThat(response.getVotedOptionId()).isNull();
     }
 
     @Test
