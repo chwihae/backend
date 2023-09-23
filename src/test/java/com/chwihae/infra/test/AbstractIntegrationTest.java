@@ -12,6 +12,7 @@ import com.chwihae.domain.option.OptionRepository;
 import com.chwihae.domain.question.QuestionRepository;
 import com.chwihae.domain.user.UserRepository;
 import com.chwihae.domain.vote.VoteRepository;
+import com.chwihae.event.question.QuestionViewEventListener;
 import com.chwihae.infra.support.IntegrationTestSupport;
 import com.chwihae.service.bookmark.BookmarkService;
 import com.chwihae.service.comment.CommentService;
@@ -22,6 +23,7 @@ import com.chwihae.service.vote.VoteService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 @IntegrationTestSupport
 public class AbstractIntegrationTest extends AbstractContainerBaseTest {
@@ -85,4 +87,7 @@ public class AbstractIntegrationTest extends AbstractContainerBaseTest {
 
     @Autowired
     protected BookmarkService bookmarkService;
+
+    @MockBean
+    protected QuestionViewEventListener questionViewEventListener;
 }
