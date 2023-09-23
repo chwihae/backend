@@ -1,4 +1,4 @@
-[[Auth]]
+[[auth]]
 === 인증
 
 [[Kakao-login]]

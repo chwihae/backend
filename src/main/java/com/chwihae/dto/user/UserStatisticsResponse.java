@@ -12,10 +12,10 @@ import lombok.Setter;
 public class UserStatisticsResponse {
 
     private UserLevel level = UserLevel.BACHELOR;
-    private long commentCount = 0;
-    private long voteCount = 0;
+    private int commentCount = 0;
+    private int voteCount = 0;
 
-    public static UserStatisticsResponse of(UserLevel level, long commentCount, long voteCount) {
+    public static UserStatisticsResponse of(UserLevel level, int commentCount, int voteCount) {
         return UserStatisticsResponse.builder()
                 .level(level)
                 .commentCount(commentCount)
@@ -24,7 +24,7 @@ public class UserStatisticsResponse {
     }
 
     @Builder
-    private UserStatisticsResponse(UserLevel level, long commentCount, long voteCount) {
+    private UserStatisticsResponse(UserLevel level, int commentCount, int voteCount) {
         this.level = level;
         this.commentCount = commentCount;
         this.voteCount = voteCount;

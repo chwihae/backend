@@ -1,4 +1,4 @@
-[[Api-Base-Path]]
+[[api-base-path]]
 === API 서버 경로
 
 [source]
@@ -6,7 +6,7 @@
 https://api.chwihae.dragonappear.online
 ----
 
-[[Base-Response]]
+[[base-response]]
 === Base 응답 형식
 
 [source,json]
@@ -18,7 +18,7 @@ https://api.chwihae.dragonappear.online
 }
 ----
 
-[[Normal-Response]]
+[[success-response]]
 === 정상 응답 코드
 
 [cols="1,1,1,1,1",options="header"]
@@ -28,7 +28,7 @@ https://api.chwihae.dragonappear.online
 | `200 OK` | 201 | CREATED  | 응답 데이터 | 리소스 정상 생성
 |===
 
-[[Custom-Exception-Error]]
+[[custom-exception-error]]
 === 예외 코드 범위
 
 [cols="1,1",options="header"]

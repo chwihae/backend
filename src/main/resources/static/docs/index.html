@@ -449,26 +449,27 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel1">
 <li><a href="#Outline">1. 개요</a>
 <ul class="sectlevel2">
-<li><a href="#Api-Base-Path">1.1. API 서버 경로</a></li>
-<li><a href="#Base-Response">1.2. Base 응답 형식</a></li>
-<li><a href="#Normal-Response">1.3. 정상 응답 코드</a></li>
-<li><a href="#Custom-Exception-Error">1.4. 예외 코드 범위</a></li>
+<li><a href="#api-base-path">1.1. API 서버 경로</a></li>
+<li><a href="#base-response">1.2. Base 응답 형식</a></li>
+<li><a href="#success-response">1.3. 정상 응답 코드</a></li>
+<li><a href="#custom-exception-error">1.4. 예외 코드 범위</a></li>
 <li><a href="#_예외_응답_설명">1.5. 예외 응답 설명</a></li>
 </ul>
 </li>
 <li><a href="#Endpoint">2. API</a>
 <ul class="sectlevel2">
-<li><a href="#Auth">2.1. 인증</a>
+<li><a href="#auth">2.1. 인증</a>
 <ul class="sectlevel3">
 <li><a href="#Kakao-login">2.1.1. 카카오 로그인</a></li>
 </ul>
 </li>
-<li><a href="#User">2.2. 사용자</a>
+<li><a href="#user">2.2. 사용자</a>
 <ul class="sectlevel3">
-<li><a href="#User-statistics">2.2.1. 사용자 활동 통계</a></li>
+<li><a href="#user-statistics">2.2.1. 사용자 활동 통계</a></li>
+<li><a href="#user-questions">2.2.2. 사용자 질문 리스트 조회</a></li>
 </ul>
 </li>
-<li><a href="#Question">2.3. 질문</a>
+<li><a href="#question">2.3. 질문</a>
 <ul class="sectlevel3">
 <li><a href="#question-create">2.3.1. 질문 등록</a></li>
 <li><a href="#question-list">2.3.2. 질문 리스트 조회</a></li>
@@ -482,13 +483,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#vote-delete">2.4.2. 투표 취소</a></li>
 </ul>
 </li>
-<li><a href="#Comment">2.5. 댓글</a>
+<li><a href="#comment">2.5. 댓글</a>
 <ul class="sectlevel3">
 <li><a href="#comment-list">2.5.1. 댓글 리스트 조회</a></li>
 <li><a href="#question-comment-create">2.5.2. 댓글 등록</a></li>
 </ul>
 </li>
-<li><a href="#Bookmark">2.6. 북마크</a>
+<li><a href="#bookmark">2.6. 북마크</a>
 <ul class="sectlevel3">
 <li><a href="#bookmark-question">2.6.1. 북마크 등록/해제</a></li>
 </ul>
@@ -503,7 +504,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="Outline"><a class="link" href="#Outline">1. 개요</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="Api-Base-Path"><a class="link" href="#Api-Base-Path">1.1. API 서버 경로</a></h3>
+<h3 id="api-base-path"><a class="link" href="#api-base-path">1.1. API 서버 경로</a></h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">https://api.chwihae.dragonappear.online</code></pre>
@@ -511,7 +512,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect2">
-<h3 id="Base-Response"><a class="link" href="#Base-Response">1.2. Base 응답 형식</a></h3>
+<h3 id="base-response"><a class="link" href="#base-response">1.2. Base 응답 형식</a></h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
@@ -523,7 +524,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect2">
-<h3 id="Normal-Response"><a class="link" href="#Normal-Response">1.3. 정상 응답 코드</a></h3>
+<h3 id="success-response"><a class="link" href="#success-response">1.3. 정상 응답 코드</a></h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 20%;">
@@ -560,7 +561,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </table>
 </div>
 <div class="sect2">
-<h3 id="Custom-Exception-Error"><a class="link" href="#Custom-Exception-Error">1.4. 예외 코드 범위</a></h3>
+<h3 id="custom-exception-error"><a class="link" href="#custom-exception-error">1.4. 예외 코드 범위</a></h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -720,7 +721,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="Endpoint"><a class="link" href="#Endpoint">2. API</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="Auth"><a class="link" href="#Auth">2.1. 인증</a></h3>
+<h3 id="auth"><a class="link" href="#auth">2.1. 인증</a></h3>
 <div class="sect3">
 <h4 id="Kakao-login"><a class="link" href="#Kakao-login">2.1.1. 카카오 로그인</a></h4>
 <div class="sect4">
@@ -862,15 +863,15 @@ Content-Length: 166
 </div>
 </div>
 <div class="sect2">
-<h3 id="User"><a class="link" href="#User">2.2. 사용자</a></h3>
+<h3 id="user"><a class="link" href="#user">2.2. 사용자</a></h3>
 <div class="sect3">
-<h4 id="User-statistics"><a class="link" href="#User-statistics">2.2.1. 사용자 활동 통계</a></h4>
+<h4 id="user-statistics"><a class="link" href="#user-statistics">2.2.1. 사용자 활동 통계</a></h4>
 <div class="sect4">
 <h5 id="user-statistics"><a class="link" href="#user-statistics">HTTP Request</a></h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/v1/users/statistics HTTP/1.1
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTQ3NjQyMywiZXhwIjoxNjk1NTYyODIzfQ.oz8J8XduNcpZCjUZW5HncdiOAkflx5KqzmVHPUXIEw8
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTQ4ODQ3MSwiZXhwIjoxNjk1NTc0ODcxfQ.M-gqefbS0shi3GMFTIuANDWlQt_bPNyelqPP6xx1ucc
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -1010,9 +1011,313 @@ Content-Length: 127
 </table>
 </div>
 </div>
+<div class="sect3">
+<h4 id="user-questions"><a class="link" href="#user-questions">2.2.2. 사용자 질문 리스트 조회</a></h4>
+<div class="sect4">
+<h5 id="user-questions"><a class="link" href="#user-questions">HTTP Request</a></h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/v1/users/questions?type=ME&amp;page=0&amp;size=2 HTTP/1.1
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTQ4ODQ3MSwiZXhwIjoxNjk1NTc0ODcxfQ.M-gqefbS0shi3GMFTIuANDWlQt_bPNyelqPP6xx1ucc
+Host: localhost:8080</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_notes_5"><a class="link" href="#_notes_5">Notes</a></h5>
+<div class="ulist">
+<ul>
+<li>
+<p>이 API는 사용자와 관련된 질문 목록을 검색할 때 사용됩니다.</p>
+</li>
+<li>
+<p>요청 헤더에는 유효한 토큰이 포함되어 있어야 합니다.</p>
+</li>
+<li>
+<p>쿼리 파라미터로 유형(type)을 사용하여 질문을 필터링할 수 있습니다.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_request_query_parameter"><a class="link" href="#_request_query_parameter">Request Query Parameter</a></h5>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[Required] 타입 (가능한 값: [ME, BOOKMARKED, VOTED])</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>page</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[Optional] 페이지 번호 (default: 0)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>size</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[Optional] 페이지 사이즈 (default: 10)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_request_header_2"><a class="link" href="#_request_header_2">Request Header</a></h5>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[Required] 인증 토큰 (타입: 문자열)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_http_response_3"><a class="link" href="#_http_response_3">HTTP Response</a></h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length: 1527
+
+{
+  "code" : 200,
+  "message" : "OK",
+  "data" : {
+    "content" : [ {
+      "id" : 0,
+      "title" : "question title 0",
+      "type" : "ETC",
+      "status" : "IN_PROGRESS",
+      "viewCount" : 0,
+      "commentCount" : 0,
+      "bookmarkCount" : 0
+    }, {
+      "id" : 1,
+      "title" : "question title 1",
+      "type" : "ETC",
+      "status" : "IN_PROGRESS",
+      "viewCount" : 0,
+      "commentCount" : 0,
+      "bookmarkCount" : 0
+    }, {
+      "id" : 2,
+      "title" : "question title 2",
+      "type" : "ETC",
+      "status" : "IN_PROGRESS",
+      "viewCount" : 0,
+      "commentCount" : 0,
+      "bookmarkCount" : 0
+    }, {
+      "id" : 3,
+      "title" : "question title 3",
+      "type" : "ETC",
+      "status" : "IN_PROGRESS",
+      "viewCount" : 0,
+      "commentCount" : 0,
+      "bookmarkCount" : 0
+    }, {
+      "id" : 4,
+      "title" : "question title 4",
+      "type" : "ETC",
+      "status" : "IN_PROGRESS",
+      "viewCount" : 0,
+      "commentCount" : 0,
+      "bookmarkCount" : 0
+    } ],
+    "pageable" : {
+      "pageNumber" : 0,
+      "pageSize" : 2,
+      "sort" : {
+        "empty" : true,
+        "sorted" : false,
+        "unsorted" : true
+      },
+      "offset" : 0,
+      "paged" : true,
+      "unpaged" : false
+    },
+    "last" : false,
+    "totalElements" : 5,
+    "totalPages" : 3,
+    "first" : true,
+    "size" : 2,
+    "number" : 0,
+    "sort" : {
+      "empty" : true,
+      "sorted" : false,
+      "unsorted" : true
+    },
+    "numberOfElements" : 5,
+    "empty" : false
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_potential_errors_3"><a class="link" href="#_potential_errors_3">Potential Errors</a></h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>INVALID_TOKEN</code>: 토큰없이 요청하거나, 만료된 토큰을 사용했을 때</p>
+</li>
+<li>
+<p><code>INVALID_ARGUMENT</code>: 올바르지 않은 type 으로 요청할 때</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_response_fields_3"><a class="link" href="#_response_fields_3">Response Fields</a></h5>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Nullable</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">메시지</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">질문 목록</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">질문 아이디</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].title</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">질문 제목</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">질문 타입 [CAREER, SPEC, COMPANY, ETC]</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].status</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">질문 상태 [IN_PROGRESS, COMPLETED]</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].viewCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">질문 조회수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].commentCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">질문 댓글수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].bookmarkCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">질문 저장수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.totalPages</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">총 페이지 수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.totalElements</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">총 원소 개수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.last</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">마지막 페이지 여부</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.first</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">처음 페이지 여부</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.size</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">현재 페이지 크기</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.numberOfElements</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">현재 페이지 원소 개수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.empty</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">현재 페이지 원소 존재 여부</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">현재 페이지 번호</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="Question"><a class="link" href="#Question">2.3. 질문</a></h3>
+<h3 id="question"><a class="link" href="#question">2.3. 질문</a></h3>
 <div class="sect3">
 <h4 id="question-create"><a class="link" href="#question-create">2.3.1. 질문 등록</a></h4>
 <div class="sect4">
@@ -1021,7 +1326,7 @@ Content-Length: 127
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/v1/questions HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTQ3NjQyMiwiZXhwIjoxNjk1NTYyODIyfQ.plD_aP8qkujMYTBVtdrqifCmRLKyosTMPsOms14vTqI
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTQ4ODQ3MCwiZXhwIjoxNjk1NTc0ODcwfQ.OhQEv5XCuSP5osgWPUOxf5Ya1l0oMYwcKOGS3lQRpYQ
 Content-Length: 194
 Host: localhost:8080
 
@@ -1029,7 +1334,7 @@ Host: localhost:8080
   "title" : "title",
   "content" : "content",
   "type" : "SPEC",
-  "closeAt" : "2023-09-23T23:10:22",
+  "closeAt" : "2023-09-24T02:31:10",
   "options" : [ {
     "name" : "option name 1"
   }, {
@@ -1040,7 +1345,7 @@ Host: localhost:8080
 </div>
 </div>
 <div class="sect4">
-<h5 id="_notes_5"><a class="link" href="#_notes_5">Notes</a></h5>
+<h5 id="_notes_6"><a class="link" href="#_notes_6">Notes</a></h5>
 <div class="ulist">
 <ul>
 <li>
@@ -1053,7 +1358,7 @@ Host: localhost:8080
 </div>
 </div>
 <div class="sect4">
-<h5 id="_request_header_2"><a class="link" href="#_request_header_2">Request Header</a></h5>
+<h5 id="_request_header_3"><a class="link" href="#_request_header_3">Request Header</a></h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -1131,7 +1436,7 @@ Host: localhost:8080
 </table>
 </div>
 <div class="sect4">
-<h5 id="_http_response_3"><a class="link" href="#_http_response_3">HTTP Response</a></h5>
+<h5 id="_http_response_4"><a class="link" href="#_http_response_4">HTTP Response</a></h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
@@ -1149,7 +1454,7 @@ Content-Length: 75
 </div>
 </div>
 <div class="sect4">
-<h5 id="_notes_6"><a class="link" href="#_notes_6">Notes</a></h5>
+<h5 id="_notes_7"><a class="link" href="#_notes_7">Notes</a></h5>
 <div class="ulist">
 <ul>
 <li>
@@ -1162,7 +1467,7 @@ Content-Length: 75
 </div>
 </div>
 <div class="sect4">
-<h5 id="_potential_errors_3"><a class="link" href="#_potential_errors_3">Potential Errors</a></h5>
+<h5 id="_potential_errors_4"><a class="link" href="#_potential_errors_4">Potential Errors</a></h5>
 <div class="ulist">
 <ul>
 <li>
@@ -1175,7 +1480,7 @@ Content-Length: 75
 </div>
 </div>
 <div class="sect4">
-<h5 id="_response_fields_3"><a class="link" href="#_response_fields_3">Response Fields</a></h5>
+<h5 id="_response_fields_4"><a class="link" href="#_response_fields_4">Response Fields</a></h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -1227,13 +1532,13 @@ Content-Length: 75
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/v1/questions?type=COMPANY&amp;status=IN_PROGRESS&amp;page=0&amp;size=2 HTTP/1.1
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTQ3NjQyMiwiZXhwIjoxNjk1NTYyODIyfQ.plD_aP8qkujMYTBVtdrqifCmRLKyosTMPsOms14vTqI
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTQ4ODQ3MCwiZXhwIjoxNjk1NTc0ODcwfQ.OhQEv5XCuSP5osgWPUOxf5Ya1l0oMYwcKOGS3lQRpYQ
 Host: localhost:8080</code></pre>
 </div>
 </div>
 </div>
 <div class="sect4">
-<h5 id="_notes_7"><a class="link" href="#_notes_7">Notes</a></h5>
+<h5 id="_notes_8"><a class="link" href="#_notes_8">Notes</a></h5>
 <div class="ulist">
 <ul>
 <li>
@@ -1249,7 +1554,7 @@ Host: localhost:8080</code></pre>
 </div>
 </div>
 <div class="sect4">
-<h5 id="_request_query_parameter"><a class="link" href="#_request_query_parameter">Request Query Parameter</a></h5>
+<h5 id="_request_query_parameter_2"><a class="link" href="#_request_query_parameter_2">Request Query Parameter</a></h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -1282,7 +1587,7 @@ Host: localhost:8080</code></pre>
 </table>
 </div>
 <div class="sect4">
-<h5 id="_request_header_3"><a class="link" href="#_request_header_3">Request Header</a></h5>
+<h5 id="_request_header_4"><a class="link" href="#_request_header_4">Request Header</a></h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -1303,7 +1608,7 @@ Host: localhost:8080</code></pre>
 </table>
 </div>
 <div class="sect4">
-<h5 id="_http_response_4"><a class="link" href="#_http_response_4">HTTP Response</a></h5>
+<h5 id="_http_response_5"><a class="link" href="#_http_response_5">HTTP Response</a></h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
@@ -1386,7 +1691,7 @@ Content-Length: 1547
 </div>
 </div>
 <div class="sect4">
-<h5 id="_notes_8"><a class="link" href="#_notes_8">Notes</a></h5>
+<h5 id="_notes_9"><a class="link" href="#_notes_9">Notes</a></h5>
 <div class="ulist">
 <ul>
 <li>
@@ -1400,7 +1705,7 @@ Content-Length: 1547
 </div>
 </div>
 <div class="sect4">
-<h5 id="_potential_errors_4"><a class="link" href="#_potential_errors_4">Potential Errors</a></h5>
+<h5 id="_potential_errors_5"><a class="link" href="#_potential_errors_5">Potential Errors</a></h5>
 <div class="ulist">
 <ul>
 <li>
@@ -1413,7 +1718,7 @@ Content-Length: 1547
 </div>
 </div>
 <div class="sect4">
-<h5 id="_response_fields_4"><a class="link" href="#_response_fields_4">Response Fields</a></h5>
+<h5 id="_response_fields_5"><a class="link" href="#_response_fields_5">Response Fields</a></h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -1550,13 +1855,13 @@ Content-Length: 1547
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/v1/questions/1 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTQ3NjQyMiwiZXhwIjoxNjk1NTYyODIyfQ.plD_aP8qkujMYTBVtdrqifCmRLKyosTMPsOms14vTqI
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTQ4ODQ3MCwiZXhwIjoxNjk1NTc0ODcwfQ.OhQEv5XCuSP5osgWPUOxf5Ya1l0oMYwcKOGS3lQRpYQ
 Host: localhost:8080</code></pre>
 </div>
 </div>
 </div>
 <div class="sect4">
-<h5 id="_notes_9"><a class="link" href="#_notes_9">Notes</a></h5>
+<h5 id="_notes_10"><a class="link" href="#_notes_10">Notes</a></h5>
 <div class="ulist">
 <ul>
 <li>
@@ -1591,7 +1896,7 @@ Host: localhost:8080</code></pre>
 </table>
 </div>
 <div class="sect4">
-<h5 id="_request_header_4"><a class="link" href="#_request_header_4">Request Header</a></h5>
+<h5 id="_request_header_5"><a class="link" href="#_request_header_5">Request Header</a></h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -1612,7 +1917,7 @@ Host: localhost:8080</code></pre>
 </table>
 </div>
 <div class="sect4">
-<h5 id="_http_response_5"><a class="link" href="#_http_response_5">HTTP Response</a></h5>
+<h5 id="_http_response_6"><a class="link" href="#_http_response_6">HTTP Response</a></h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
@@ -1627,7 +1932,7 @@ Content-Length: 353
     "title" : "title",
     "content" : "content",
     "type" : "COMPANY",
-    "closeAt" : "2023-09-23T23:10:22",
+    "closeAt" : "2023-09-24T02:31:10",
     "status" : "IN_PROGRESS",
     "viewCount" : 0,
     "commentCount" : 0,
@@ -1641,7 +1946,7 @@ Content-Length: 353
 </div>
 </div>
 <div class="sect4">
-<h5 id="_notes_10"><a class="link" href="#_notes_10">Notes</a></h5>
+<h5 id="_notes_11"><a class="link" href="#_notes_11">Notes</a></h5>
 <div class="ulist">
 <ul>
 <li>
@@ -1654,7 +1959,7 @@ Content-Length: 353
 </div>
 </div>
 <div class="sect4">
-<h5 id="_potential_errors_5"><a class="link" href="#_potential_errors_5">Potential Errors</a></h5>
+<h5 id="_potential_errors_6"><a class="link" href="#_potential_errors_6">Potential Errors</a></h5>
 <div class="ulist">
 <ul>
 <li>
@@ -1670,7 +1975,7 @@ Content-Length: 353
 </div>
 </div>
 <div class="sect4">
-<h5 id="_response_fields_5"><a class="link" href="#_response_fields_5">Response Fields</a></h5>
+<h5 id="_response_fields_6"><a class="link" href="#_response_fields_6">Response Fields</a></h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -1789,13 +2094,13 @@ Content-Length: 353
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/v1/questions/25/options HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTQ3NjQyMiwiZXhwIjoxNjk1NTYyODIyfQ.plD_aP8qkujMYTBVtdrqifCmRLKyosTMPsOms14vTqI
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTQ4ODQ3MCwiZXhwIjoxNjk1NTc0ODcwfQ.OhQEv5XCuSP5osgWPUOxf5Ya1l0oMYwcKOGS3lQRpYQ
 Host: localhost:8080</code></pre>
 </div>
 </div>
 </div>
 <div class="sect4">
-<h5 id="_notes_11"><a class="link" href="#_notes_11">Notes</a></h5>
+<h5 id="_notes_12"><a class="link" href="#_notes_12">Notes</a></h5>
 <div class="ulist">
 <ul>
 <li>
@@ -1836,7 +2141,7 @@ Host: localhost:8080</code></pre>
 </table>
 </div>
 <div class="sect4">
-<h5 id="_request_header_5"><a class="link" href="#_request_header_5">Request Header</a></h5>
+<h5 id="_request_header_6"><a class="link" href="#_request_header_6">Request Header</a></h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -1857,7 +2162,7 @@ Host: localhost:8080</code></pre>
 </table>
 </div>
 <div class="sect4">
-<h5 id="_http_response_6"><a class="link" href="#_http_response_6">HTTP Response</a></h5>
+<h5 id="_http_response_7"><a class="link" href="#_http_response_7">HTTP Response</a></h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
@@ -1885,7 +2190,7 @@ Content-Length: 286
 </div>
 </div>
 <div class="sect4">
-<h5 id="_notes_12"><a class="link" href="#_notes_12">Notes</a></h5>
+<h5 id="_notes_13"><a class="link" href="#_notes_13">Notes</a></h5>
 <div class="ulist">
 <ul>
 <li>
@@ -1899,7 +2204,7 @@ Content-Length: 286
 </div>
 </div>
 <div class="sect4">
-<h5 id="_potential_errors_6"><a class="link" href="#_potential_errors_6">Potential Errors</a></h5>
+<h5 id="_potential_errors_7"><a class="link" href="#_potential_errors_7">Potential Errors</a></h5>
 <div class="ulist">
 <ul>
 <li>
@@ -1912,7 +2217,7 @@ Content-Length: 286
 </div>
 </div>
 <div class="sect4">
-<h5 id="_response_fields_6"><a class="link" href="#_response_fields_6">Response Fields</a></h5>
+<h5 id="_response_fields_7"><a class="link" href="#_response_fields_7">Response Fields</a></h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -1997,14 +2302,14 @@ Content-Length: 286
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/v1/questions/25/options/100 HTTP/1.1
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTQ3NjQyMiwiZXhwIjoxNjk1NTYyODIyfQ.plD_aP8qkujMYTBVtdrqifCmRLKyosTMPsOms14vTqI
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTQ4ODQ3MCwiZXhwIjoxNjk1NTc0ODcwfQ.OhQEv5XCuSP5osgWPUOxf5Ya1l0oMYwcKOGS3lQRpYQ
 Host: localhost:8080
 Content-Type: application/x-www-form-urlencoded</code></pre>
 </div>
 </div>
 </div>
 <div class="sect4">
-<h5 id="_notes_13"><a class="link" href="#_notes_13">Notes</a></h5>
+<h5 id="_notes_14"><a class="link" href="#_notes_14">Notes</a></h5>
 <div class="ulist">
 <ul>
 <li>
@@ -2029,159 +2334,6 @@ Content-Type: application/x-www-form-urlencoded</code></pre>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 3. /api/v1/questions/{questionId}/options/{optionId}</caption>
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Parameter</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>questionId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">[Required] 질문 아이디 (타입: 숫자)</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>optionId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">[Required] 옵션 아이디 (타입: 숫자)</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect4">
-<h5 id="_request_header_6"><a class="link" href="#_request_header_6">Request Header</a></h5>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">[Required] 인증 토큰 (타입: 문자열)</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect4">
-<h5 id="_http_response_7"><a class="link" href="#_http_response_7">HTTP Response</a></h5>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
-Content-Type: application/json;charset=UTF-8
-Content-Length: 60
-
-{
-  "code" : 201,
-  "message" : "CREATED",
-  "data" : null
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect4">
-<h5 id="_potential_errors_7"><a class="link" href="#_potential_errors_7">Potential Errors</a></h5>
-<div class="ulist">
-<ul>
-<li>
-<p><code>INVALID_TOKEN</code>: 토큰없이 요청하거나, 만료된 토큰을 사용했을 때</p>
-</li>
-<li>
-<p><code>FORBIDDEN</code>: 질문 작성자가 자신의 질문에 투표를 시도할 때</p>
-</li>
-<li>
-<p><code>DUPLICATE_VOTE</code>: 이미 투표한 투표자가 다시 투표를 시도할 때</p>
-</li>
-<li>
-<p><code>QUESTION_CLOSED</code>: 마감된 질문에 투표를 시도할 때</p>
-</li>
-<li>
-<p><code>QUESTION_NOT_FOUND</code>: 존재하지 않는 질문에 투표를 시도할 때</p>
-</li>
-<li>
-<p><code>OPTION_NOT_FOUND</code>: 존재하지 않는 옵션에 투표를 시도할 때</p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect4">
-<h5 id="_response_fields_7"><a class="link" href="#_response_fields_7">Response Fields</a></h5>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Nullable</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">코드</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">메시지</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">응답 데이터</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="sect3">
-<h4 id="vote-delete"><a class="link" href="#vote-delete">2.4.2. 투표 취소</a></h4>
-<div class="sect4">
-<h5 id="vote-delete"><a class="link" href="#vote-delete">HTTP Request</a></h5>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">DELETE /api/v1/questions/25/options/100 HTTP/1.1
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTQ3NjQyMiwiZXhwIjoxNjk1NTYyODIyfQ.plD_aP8qkujMYTBVtdrqifCmRLKyosTMPsOms14vTqI
-Host: localhost:8080</code></pre>
-</div>
-</div>
-</div>
-<div class="sect4">
-<h5 id="_notes_14"><a class="link" href="#_notes_14">Notes</a></h5>
-<div class="ulist">
-<ul>
-<li>
-<p>이 API는 사용자의 투표를 삭제합니다.</p>
-</li>
-<li>
-<p>투표를 한 사용자만 해당 투표를 삭제할 수 있습니다.</p>
-</li>
-<li>
-<p>이미 삭제된 투표에 대한 삭제 요청은 에러를 반환합니다.</p>
-</li>
-</ul>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 4. /api/v1/questions/{questionId}/options/{optionId}</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -2231,27 +2383,14 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 55
+Content-Length: 60
 
 {
-  "code" : 200,
-  "message" : "OK",
+  "code" : 201,
+  "message" : "CREATED",
   "data" : null
 }</code></pre>
 </div>
-</div>
-</div>
-<div class="sect4">
-<h5 id="_notes_15"><a class="link" href="#_notes_15">Notes</a></h5>
-<div class="ulist">
-<ul>
-<li>
-<p>성공적으로 투표를 삭제했을 때는 응답 코드 <code>200 OK`와 함께 `data</code> 필드가 `null`로 반환됩니다.</p>
-</li>
-<li>
-<p>투표를 이미 삭제하거나 투표하지 않았을 경우에는 에러 코드와 함께 <code>404 Not Found</code> 응답이 반환됩니다.</p>
-</li>
-</ul>
 </div>
 </div>
 <div class="sect4">
@@ -2262,7 +2401,19 @@ Content-Length: 55
 <p><code>INVALID_TOKEN</code>: 토큰없이 요청하거나, 만료된 토큰을 사용했을 때</p>
 </li>
 <li>
-<p><code>VOTE_NOT_FOUND</code>: 투표하지 않았는데 삭제하려고 시도할 때</p>
+<p><code>FORBIDDEN</code>: 질문 작성자가 자신의 질문에 투표를 시도할 때</p>
+</li>
+<li>
+<p><code>DUPLICATE_VOTE</code>: 이미 투표한 투표자가 다시 투표를 시도할 때</p>
+</li>
+<li>
+<p><code>QUESTION_CLOSED</code>: 마감된 질문에 투표를 시도할 때</p>
+</li>
+<li>
+<p><code>QUESTION_NOT_FOUND</code>: 존재하지 않는 질문에 투표를 시도할 때</p>
+</li>
+<li>
+<p><code>OPTION_NOT_FOUND</code>: 존재하지 않는 옵션에 투표를 시도할 때</p>
 </li>
 </ul>
 </div>
@@ -2307,9 +2458,163 @@ Content-Length: 55
 </table>
 </div>
 </div>
+<div class="sect3">
+<h4 id="vote-delete"><a class="link" href="#vote-delete">2.4.2. 투표 취소</a></h4>
+<div class="sect4">
+<h5 id="vote-delete"><a class="link" href="#vote-delete">HTTP Request</a></h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">DELETE /api/v1/questions/25/options/100 HTTP/1.1
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTQ4ODQ3MCwiZXhwIjoxNjk1NTc0ODcwfQ.OhQEv5XCuSP5osgWPUOxf5Ya1l0oMYwcKOGS3lQRpYQ
+Host: localhost:8080</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_notes_15"><a class="link" href="#_notes_15">Notes</a></h5>
+<div class="ulist">
+<ul>
+<li>
+<p>이 API는 사용자의 투표를 삭제합니다.</p>
+</li>
+<li>
+<p>투표를 한 사용자만 해당 투표를 삭제할 수 있습니다.</p>
+</li>
+<li>
+<p>이미 삭제된 투표에 대한 삭제 요청은 에러를 반환합니다.</p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 4. /api/v1/questions/{questionId}/options/{optionId}</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>questionId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[Required] 질문 아이디 (타입: 숫자)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>optionId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[Required] 옵션 아이디 (타입: 숫자)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_request_header_8"><a class="link" href="#_request_header_8">Request Header</a></h5>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[Required] 인증 토큰 (타입: 문자열)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_http_response_9"><a class="link" href="#_http_response_9">HTTP Response</a></h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length: 55
+
+{
+  "code" : 200,
+  "message" : "OK",
+  "data" : null
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_notes_16"><a class="link" href="#_notes_16">Notes</a></h5>
+<div class="ulist">
+<ul>
+<li>
+<p>성공적으로 투표를 삭제했을 때는 응답 코드 <code>200 OK`와 함께 `data</code> 필드가 `null`로 반환됩니다.</p>
+</li>
+<li>
+<p>투표를 이미 삭제하거나 투표하지 않았을 경우에는 에러 코드와 함께 <code>404 Not Found</code> 응답이 반환됩니다.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_potential_errors_9"><a class="link" href="#_potential_errors_9">Potential Errors</a></h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>INVALID_TOKEN</code>: 토큰없이 요청하거나, 만료된 토큰을 사용했을 때</p>
+</li>
+<li>
+<p><code>VOTE_NOT_FOUND</code>: 투표하지 않았는데 삭제하려고 시도할 때</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_response_fields_9"><a class="link" href="#_response_fields_9">Response Fields</a></h5>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Nullable</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">메시지</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 데이터</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="Comment"><a class="link" href="#Comment">2.5. 댓글</a></h3>
+<h3 id="comment"><a class="link" href="#comment">2.5. 댓글</a></h3>
 <div class="sect3">
 <h4 id="comment-list"><a class="link" href="#comment-list">2.5.1. 댓글 리스트 조회</a></h4>
 <div class="sect4">
@@ -2317,13 +2622,13 @@ Content-Length: 55
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/v1/questions/122/comments?page=0&amp;size=2 HTTP/1.1
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTQ3NjQyMiwiZXhwIjoxNjk1NTYyODIyfQ.plD_aP8qkujMYTBVtdrqifCmRLKyosTMPsOms14vTqI
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTQ4ODQ3MCwiZXhwIjoxNjk1NTc0ODcwfQ.OhQEv5XCuSP5osgWPUOxf5Ya1l0oMYwcKOGS3lQRpYQ
 Host: localhost:8080</code></pre>
 </div>
 </div>
 </div>
 <div class="sect4">
-<h5 id="_notes_16"><a class="link" href="#_notes_16">Notes</a></h5>
+<h5 id="_notes_17"><a class="link" href="#_notes_17">Notes</a></h5>
 <div class="ulist">
 <ul>
 <li>
@@ -2358,7 +2663,7 @@ Host: localhost:8080</code></pre>
 </table>
 </div>
 <div class="sect4">
-<h5 id="_request_query_parameter_2"><a class="link" href="#_request_query_parameter_2">Request Query Parameter</a></h5>
+<h5 id="_request_query_parameter_3"><a class="link" href="#_request_query_parameter_3">Request Query Parameter</a></h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -2383,7 +2688,7 @@ Host: localhost:8080</code></pre>
 </table>
 </div>
 <div class="sect4">
-<h5 id="_request_header_8"><a class="link" href="#_request_header_8">Request Header</a></h5>
+<h5 id="_request_header_9"><a class="link" href="#_request_header_9">Request Header</a></h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -2404,7 +2709,7 @@ Host: localhost:8080</code></pre>
 </table>
 </div>
 <div class="sect4">
-<h5 id="_http_response_9"><a class="link" href="#_http_response_9">HTTP Response</a></h5>
+<h5 id="_http_response_10"><a class="link" href="#_http_response_10">HTTP Response</a></h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
@@ -2419,31 +2724,31 @@ Content-Length: 1367
       "id" : 0,
       "content" : "content",
       "commenterAlias" : "별랑이1",
-      "createdAt" : "2023-09-23T22:40",
+      "createdAt" : "2023-09-24T02:01",
       "editable" : false
     }, {
       "id" : 1,
       "content" : "content",
       "commenterAlias" : "별랑이2",
-      "createdAt" : "2023-09-23T22:40",
+      "createdAt" : "2023-09-24T02:01",
       "editable" : false
     }, {
       "id" : 2,
       "content" : "content",
       "commenterAlias" : "별랑이3",
-      "createdAt" : "2023-09-23T22:40",
+      "createdAt" : "2023-09-24T02:01",
       "editable" : false
     }, {
       "id" : 3,
       "content" : "content",
       "commenterAlias" : "별랑이4",
-      "createdAt" : "2023-09-23T22:40",
+      "createdAt" : "2023-09-24T02:01",
       "editable" : false
     }, {
       "id" : 4,
       "content" : "content",
       "commenterAlias" : "별랑이5",
-      "createdAt" : "2023-09-23T22:40",
+      "createdAt" : "2023-09-24T02:01",
       "editable" : false
     } ],
     "pageable" : {
@@ -2477,7 +2782,7 @@ Content-Length: 1367
 </div>
 </div>
 <div class="sect4">
-<h5 id="_potential_errors_9"><a class="link" href="#_potential_errors_9">Potential Errors</a></h5>
+<h5 id="_potential_errors_10"><a class="link" href="#_potential_errors_10">Potential Errors</a></h5>
 <div class="ulist">
 <ul>
 <li>
@@ -2490,7 +2795,7 @@ Content-Length: 1367
 </div>
 </div>
 <div class="sect4">
-<h5 id="_response_fields_9"><a class="link" href="#_response_fields_9">Response Fields</a></h5>
+<h5 id="_response_fields_10"><a class="link" href="#_response_fields_10">Response Fields</a></h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -2615,7 +2920,7 @@ Content-Length: 1367
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/v1/questions/53/comments HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTQ3NjQyMiwiZXhwIjoxNjk1NTYyODIyfQ.plD_aP8qkujMYTBVtdrqifCmRLKyosTMPsOms14vTqI
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTQ4ODQ3MCwiZXhwIjoxNjk1NTc0ODcwfQ.OhQEv5XCuSP5osgWPUOxf5Ya1l0oMYwcKOGS3lQRpYQ
 Content-Length: 27
 Host: localhost:8080
 
@@ -2626,7 +2931,7 @@ Host: localhost:8080
 </div>
 </div>
 <div class="sect4">
-<h5 id="_notes_17"><a class="link" href="#_notes_17">Notes</a></h5>
+<h5 id="_notes_18"><a class="link" href="#_notes_18">Notes</a></h5>
 <div class="ulist">
 <ul>
 <li>
@@ -2664,7 +2969,7 @@ Host: localhost:8080
 </table>
 </div>
 <div class="sect4">
-<h5 id="_request_header_9"><a class="link" href="#_request_header_9">Request Header</a></h5>
+<h5 id="_request_header_10"><a class="link" href="#_request_header_10">Request Header</a></h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -2712,7 +3017,7 @@ Host: localhost:8080
 </table>
 </div>
 <div class="sect4">
-<h5 id="_http_response_10"><a class="link" href="#_http_response_10">HTTP Response</a></h5>
+<h5 id="_http_response_11"><a class="link" href="#_http_response_11">HTTP Response</a></h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
@@ -2728,7 +3033,7 @@ Content-Length: 60
 </div>
 </div>
 <div class="sect4">
-<h5 id="_potential_errors_10"><a class="link" href="#_potential_errors_10">Potential Errors</a></h5>
+<h5 id="_potential_errors_11"><a class="link" href="#_potential_errors_11">Potential Errors</a></h5>
 <div class="ulist">
 <ul>
 <li>
@@ -2744,7 +3049,7 @@ Content-Length: 60
 </div>
 </div>
 <div class="sect4">
-<h5 id="_response_fields_10"><a class="link" href="#_response_fields_10">Response Fields</a></h5>
+<h5 id="_response_fields_11"><a class="link" href="#_response_fields_11">Response Fields</a></h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -2785,7 +3090,7 @@ Content-Length: 60
 </div>
 </div>
 <div class="sect2">
-<h3 id="Bookmark"><a class="link" href="#Bookmark">2.6. 북마크</a></h3>
+<h3 id="bookmark"><a class="link" href="#bookmark">2.6. 북마크</a></h3>
 <div class="sect3">
 <h4 id="bookmark-question"><a class="link" href="#bookmark-question">2.6.1. 북마크 등록/해제</a></h4>
 <div class="sect4">
@@ -2793,14 +3098,14 @@ Content-Length: 60
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/v1/questions/651/bookmark HTTP/1.1
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTQ3NjQyMiwiZXhwIjoxNjk1NTYyODIyfQ.plD_aP8qkujMYTBVtdrqifCmRLKyosTMPsOms14vTqI
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlhdCI6MTY5NTQ4ODQ3MCwiZXhwIjoxNjk1NTc0ODcwfQ.OhQEv5XCuSP5osgWPUOxf5Ya1l0oMYwcKOGS3lQRpYQ
 Host: localhost:8080
 Content-Type: application/x-www-form-urlencoded</code></pre>
 </div>
 </div>
 </div>
 <div class="sect4">
-<h5 id="_notes_18"><a class="link" href="#_notes_18">Notes</a></h5>
+<h5 id="_notes_19"><a class="link" href="#_notes_19">Notes</a></h5>
 <div class="ulist">
 <ul>
 <li>
@@ -2836,7 +3141,7 @@ Content-Type: application/x-www-form-urlencoded</code></pre>
 </table>
 </div>
 <div class="sect4">
-<h5 id="_request_header_10"><a class="link" href="#_request_header_10">Request Header</a></h5>
+<h5 id="_request_header_11"><a class="link" href="#_request_header_11">Request Header</a></h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -2857,7 +3162,7 @@ Content-Type: application/x-www-form-urlencoded</code></pre>
 </table>
 </div>
 <div class="sect4">
-<h5 id="_http_response_11"><a class="link" href="#_http_response_11">HTTP Response</a></h5>
+<h5 id="_http_response_12"><a class="link" href="#_http_response_12">HTTP Response</a></h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
@@ -2875,7 +3180,7 @@ Content-Length: 76
 </div>
 </div>
 <div class="sect4">
-<h5 id="_potential_errors_11"><a class="link" href="#_potential_errors_11">Potential Errors</a></h5>
+<h5 id="_potential_errors_12"><a class="link" href="#_potential_errors_12">Potential Errors</a></h5>
 <div class="ulist">
 <ul>
 <li>
@@ -2888,7 +3193,7 @@ Content-Length: 76
 </div>
 </div>
 <div class="sect4">
-<h5 id="_response_fields_11"><a class="link" href="#_response_fields_11">Response Fields</a></h5>
+<h5 id="_response_fields_12"><a class="link" href="#_response_fields_12">Response Fields</a></h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">

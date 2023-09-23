@@ -198,9 +198,7 @@ class QuestionServiceTest extends AbstractIntegrationTest {
         Assertions.assertThat(response.getContent()).hasSize(PAGE_SIZE);
         Assertions.assertThat(response.getTotalPages()).isEqualTo(2);
     }
-
-    // TODO 질문을 단건 조회하면 조회 이벤트를 발행한다
-
+    
     public QuestionEntity createQuestion(UserEntity userEntity, QuestionType type) {
         return QuestionEntity.builder()
                 .userEntity(userEntity)

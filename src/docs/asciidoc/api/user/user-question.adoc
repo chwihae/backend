@@ -1,0 +1,29 @@
+[[user-questions]]
+===== HTTP Request
+
+include::{snippets}/user-questions/http-request.adoc[]
+
+===== Notes
+
+* 이 API는 사용자와 관련된 질문 목록을 검색할 때 사용됩니다.
+* 요청 헤더에는 유효한 토큰이 포함되어 있어야 합니다.
+* 쿼리 파라미터로 유형(type)을 사용하여 질문을 필터링할 수 있습니다.
+
+===== Request Query Parameter
+
+include::{snippets}/user-questions/query-parameters.adoc[]
+
+===== Request Header
+
+include::{snippets}/user-questions/request-headers.adoc[]
+
+===== HTTP Response
+
+include::{snippets}/user-questions/http-response.adoc[]
+
+===== Potential Errors
+
+* `INVALID_TOKEN`: 토큰없이 요청하거나, 만료된 토큰을 사용했을 때
+* `INVALID_ARGUMENT`: 올바르지 않은 type 으로 요청할 때
+
+include::{snippets}/user-questions/response-fields.adoc[]

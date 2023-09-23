@@ -1,4 +1,4 @@
-[[Bookmark]]
+[[bookmark]]
 === 북마크
 
 [[bookmark-question]]
