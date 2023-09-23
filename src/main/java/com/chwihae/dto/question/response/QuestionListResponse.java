@@ -17,7 +17,7 @@ public class QuestionListResponse {
     private String title;
     private QuestionType type;
     private QuestionStatus status;
-    private long viewCount = 0;
+    private long viewCount;
     private long commentCount;
     private long bookmarkCount;
 
@@ -33,7 +33,7 @@ public class QuestionListResponse {
                 .bookmarkCount(bookmarkCount)
                 .build();
     }
-    
+
     @Builder
     private QuestionListResponse(Long id,
                                  String title,

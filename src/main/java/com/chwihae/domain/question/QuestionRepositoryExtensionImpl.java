@@ -19,8 +19,10 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 import java.util.List;
 import java.util.Optional;
 
+import static com.chwihae.domain.bookmark.QBookmarkEntity.bookmarkEntity;
 import static com.chwihae.domain.comment.QCommentEntity.commentEntity;
 import static com.chwihae.domain.question.QQuestionEntity.questionEntity;
+import static com.chwihae.domain.user.QUserEntity.userEntity;
 import static com.chwihae.domain.vote.QVoteEntity.voteEntity;
 
 public class QuestionRepositoryExtensionImpl extends QuerydslRepositorySupport implements QuestionRepositoryExtension {
@@ -31,13 +33,101 @@ public class QuestionRepositoryExtensionImpl extends QuerydslRepositorySupport i
 
     @Override
     public Page<QuestionListResponse> findByTypeAndStatusWithCounts(QuestionStatus status, QuestionType type, Pageable pageable) {
-        List<Tuple> tuples = fetchTuples(status, type, pageable);
+        List<Tuple> tuples = fetchTuplesByTypeAndStatus(status, type, pageable);
         List<QuestionListResponse> questionListResponses = transformTuplesToDTOs(tuples);
         long totalCount = countQuestions(status, type);
         return new PageImpl<>(questionListResponses, pageable, totalCount);
     }
 
-    private List<Tuple> fetchTuples(QuestionStatus status, QuestionType type, Pageable pageable) {
+    @Override
+    public Page<QuestionListResponse> findMyByUserIdWithCounts(Long userId, Pageable pageable) {
+        List<Tuple> tuples = fetchMyTuplesByUserId(userId, pageable);
+        List<QuestionListResponse> questionListResponses = transformTuplesToDTOs(tuples);
+        long totalCount = countQuestionsByUserId(userId);
+        return new PageImpl<>(questionListResponses, pageable, totalCount);
+    }
+
+    @Override
+    public Page<QuestionListResponse> findBookmarkedByUserIdWithCounts(Long userId, Pageable pageable) {
+        List<Tuple> tuples = fetchBookmarkedTuplesByUserId(userId, pageable);
+        List<QuestionListResponse> questionListResponses = transformTuplesToDTOs(tuples);
+        long totalCount = countBookmarkedQuestionsByUserId(userId);
+        return new PageImpl<>(questionListResponses, pageable, totalCount);
+    }
+
+    @Override
+    public Page<QuestionListResponse> findVotedByUserIdWithCounts(Long userId, Pageable pageable) {
+        List<Tuple> tuples = fetchVotedTuplesByUserId(userId, pageable);
+        List<QuestionListResponse> questionListResponses = transformTuplesToDTOs(tuples);
+        long totalCount = countVotedQuestionsByUserId(userId);
+        return new PageImpl<>(questionListResponses, pageable, totalCount);
+    }
+
+    private List<Tuple> fetchMyTuplesByUserId(Long userId, Pageable pageable) {
+        JPAQueryFactory queryFactory = new JPAQueryFactory(getEntityManager());
+        return queryFactory
+                .select(questionEntity, commentCountSubQuery(), voteCountSubQuery())
+                .from(questionEntity)
+                .join(questionEntity.userEntity, userEntity)
+                .where(questionEntity.userEntity.id.eq(userId))
+                .orderBy(getOrderSpecifiers(pageable.getSort()))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+    }
+
+    private List<Tuple> fetchVotedTuplesByUserId(Long userId, Pageable pageable) {
+        JPAQueryFactory queryFactory = new JPAQueryFactory(getEntityManager());
+        return queryFactory
+                .select(questionEntity, commentCountSubQuery(), voteCountSubQuery())
+                .from(questionEntity)
+                .join(voteEntity).on(voteEntity.questionEntity.id.eq(questionEntity.id))
+                .where(voteEntity.userEntity.id.eq(userId))
+                .orderBy(getOrderSpecifiers(pageable.getSort()))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+    }
+
+    private long countVotedQuestionsByUserId(Long userId) {
+        JPAQueryFactory queryFactory = new JPAQueryFactory(getEntityManager());
+        return queryFactory.selectFrom(questionEntity)
+                .join(voteEntity).on(voteEntity.questionEntity.id.eq(questionEntity.id))
+                .where(voteEntity.userEntity.id.eq(userId))
+                .fetchCount();
+    }
+
+    private List<Tuple> fetchBookmarkedTuplesByUserId(Long userId, Pageable pageable) {
+        JPAQueryFactory queryFactory = new JPAQueryFactory(getEntityManager());
+        return queryFactory
+                .select(questionEntity, commentCountSubQuery(), voteCountSubQuery())
+                .from(questionEntity)
+                .join(bookmarkEntity).on(bookmarkEntity.questionEntity.id.eq(questionEntity.id))
+                .where(bookmarkEntity.userEntity.id.eq(userId))
+                .orderBy(getOrderSpecifiers(pageable.getSort()))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+    }
+
+    private long countBookmarkedQuestionsByUserId(Long userId) {
+        JPAQueryFactory queryFactory = new JPAQueryFactory(getEntityManager());
+        return queryFactory.selectFrom(questionEntity)
+                .join(bookmarkEntity).on(bookmarkEntity.questionEntity.id.eq(questionEntity.id))
+                .where(bookmarkEntity.userEntity.id.eq(userId))
+                .fetchCount();
+    }
+
+    private long countQuestionsByUserId(Long userId) {
+        JPAQueryFactory queryFactory = new JPAQueryFactory(getEntityManager());
+
+        return queryFactory.selectFrom(questionEntity)
+                .join(questionEntity.userEntity, userEntity)
+                .where(userEntity.id.eq(userId))
+                .fetchCount();
+    }
+
+    private List<Tuple> fetchTuplesByTypeAndStatus(QuestionStatus status, QuestionType type, Pageable pageable) {
         JPAQueryFactory queryFactory = new JPAQueryFactory(getEntityManager());
         BooleanBuilder conditions = baseConditions(status, type);
 

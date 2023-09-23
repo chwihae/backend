@@ -7,5 +7,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
 public interface QuestionRepositoryExtension {
+
     Page<QuestionListResponse> findByTypeAndStatusWithCounts(QuestionStatus status, QuestionType type, Pageable pageable);
+
+    Page<QuestionListResponse> findMyByUserIdWithCounts(Long userId, Pageable pageable);
+
+    Page<QuestionListResponse> findBookmarkedByUserIdWithCounts(Long userId, Pageable pageable);
+
+    Page<QuestionListResponse> findVotedByUserIdWithCounts(Long userId, Pageable pageable);
 }
