@@ -57,4 +57,8 @@ public class VoteEntity extends BaseEntity {
         this.optionEntity = optionEntity;
         this.userEntity = userEntity;
     }
+
+    public Long getOptionId() {
+        return this.optionEntity.getId();
+    }
 }

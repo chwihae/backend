@@ -79,7 +79,7 @@ public class VoteService {
 
     private Long getVotedOptionId(Long questionId, Long userId) {
         return voteRepository.findByQuestionEntityIdAndUserEntityId(questionId, userId)
-                .map(VoteEntity::getId)
+                .map(VoteEntity::getOptionId)
                 .orElse(null);
     }
 
