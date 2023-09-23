@@ -80,7 +80,7 @@ public class QuestionViewService {
         });
     }
 
-    private Optional<Long> extractQuestionIdFromKey(String key) {
+    public Optional<Long> extractQuestionIdFromKey(String key) {
         Pattern pattern = Pattern.compile("^question:(\\d+):views$");
         Matcher matcher = pattern.matcher(key);
 

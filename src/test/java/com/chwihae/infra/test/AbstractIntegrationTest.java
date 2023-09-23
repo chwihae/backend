@@ -1,6 +1,6 @@
 package com.chwihae.infra.test;
 
-import com.chwihae.batch.question.CloseExpiredQuestionJobConfig;
+import com.chwihae.batch.CloseExpiredQuestionJobConfig;
 import com.chwihae.client.kakao.KakaoTokenFeignClient;
 import com.chwihae.client.kakao.KakaoUserInfoFeignClient;
 import com.chwihae.config.properties.JwtTokenProperties;

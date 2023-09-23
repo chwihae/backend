@@ -52,7 +52,7 @@ public class CommentService {
     }
 
     private CommenterAliasEntity getOrCreateCommenterAlias(UserEntity userEntity, QuestionEntity questionEntity) {
-        return commentRepository.findTopCommentByQuestionIdAndUserId(questionEntity.getId(), userEntity.getId())
+        return commentRepository.findFirstByQuestionEntityIdAndUserEntityId(questionEntity.getId(), userEntity.getId())
                 .map(CommentEntity::getCommenterAliasEntity)
                 .orElseGet(() -> createCommenterAlias(questionEntity, userEntity));
     }
