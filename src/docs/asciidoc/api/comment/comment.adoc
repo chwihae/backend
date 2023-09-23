@@ -1,4 +1,4 @@
-[[Comment]]
+[[comment]]
 === 댓글
 
 [[comment-list]]

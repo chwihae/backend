@@ -1,7 +1,12 @@
-[[User]]
+[[user]]
 === 사용자
 
-[[User-statistics]]
+[[user-statistics]]
 ==== 사용자 활동 통계
 
 include::user-statistics.adoc[]
+
+[[user-questions]]
+==== 사용자 질문 리스트 조회
+
+include::user-question.adoc[]

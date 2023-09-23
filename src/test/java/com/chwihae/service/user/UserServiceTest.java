@@ -187,7 +187,6 @@ class UserServiceTest extends AbstractIntegrationTest {
                 .isInstanceOf(IllegalStateException.class);
     }
 
-
     public QuestionEntity createQuestion(UserEntity userEntity, QuestionType type) {
         return QuestionEntity.builder()
                 .userEntity(userEntity)
