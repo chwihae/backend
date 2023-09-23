@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.Duration;
 import java.util.Optional;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @Repository
@@ -26,7 +27,25 @@ public class QuestionViewCacheRepository {
         return Optional.ofNullable(viewCount);
     }
 
-    private String getKey(Long questionId) {
+    public void incrementViewCount(Long questionId) {
+        String key = getKey(questionId);
+        questionViewRedisTemplate.opsForValue().increment(key, 1);
+    }
+
+    public boolean existsByKey(Long questionId) {
+        String key = getKey(questionId);
+        return questionViewRedisTemplate.hasKey(key);
+    }
+
+    public String getKey(Long questionId) {
         return "question:" + questionId + ":views";
+    }
+
+    public Set<String> findAllQuestionViewKeys() {
+        return questionViewRedisTemplate.keys("question:*:views");
+    }
+
+    public void deleteKey(String key) {
+        questionViewRedisTemplate.delete(key);
     }
 }

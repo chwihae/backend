@@ -6,7 +6,6 @@ import com.chwihae.domain.question.QuestionViewEntity;
 import com.chwihae.domain.question.QuestionViewRepository;
 import com.chwihae.exception.CustomException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +26,6 @@ public class QuestionViewService {
     private static final long ONE_HOUR_IN_MILLISECONDS = 3_600_000L;
     private final QuestionViewRepository questionViewRepository;
     private final QuestionViewCacheRepository questionViewCacheRepository;
-    private final RedisTemplate<String, Integer> questionViewRedisTemplate;
 
     @Transactional
     public void createQuestionView(QuestionEntity questionEntity) {
@@ -38,49 +36,46 @@ public class QuestionViewService {
 
     public Integer getViewCount(Long questionId) {
         return questionViewCacheRepository.getQuestionView(questionId)
-                .orElseGet(() -> {
-                    return questionViewRepository.findViewCountByQuestionEntityId(questionId)
-                            .map(viewCount -> {
-                                questionViewCacheRepository.setQuestionView(questionId, viewCount);
-                                return viewCount;
-                            })
-                            .orElseThrow(() -> new CustomException(QUESTION_NOT_FOUND));
-                });
+                .orElseGet(() -> questionViewRepository.findViewCountByQuestionEntityId(questionId)
+                        .map(viewCount -> {
+                            questionViewCacheRepository.setQuestionView(questionId, viewCount);
+                            return viewCount;
+                        })
+                        .orElseThrow(() -> new CustomException(QUESTION_NOT_FOUND))
+                );
+    }
+
+    public void incrementViewCount(Long questionId) {
+        if (!questionViewCacheRepository.existsByKey(questionId)) {
+            int viewCount = questionViewRepository.findViewCountByQuestionEntityId(questionId)
+                    .orElseThrow(() -> new CustomException(QUESTION_NOT_FOUND));
+            questionViewCacheRepository.setQuestionView(questionId, viewCount);
+        }
+        questionViewCacheRepository.incrementViewCount(questionId);
     }
 
     @Transactional
     @Scheduled(fixedDelay = ONE_HOUR_IN_MILLISECONDS)
     public void syncQuestionViewCount() {
-        Set<String> keys = Optional.ofNullable(questionViewRedisTemplate.keys("question:*:views"))
+        Set<String> keys = Optional.ofNullable(questionViewCacheRepository.findAllQuestionViewKeys())
                 .orElse(Collections.emptySet());
 
-        keys.forEach(key -> {
+        for (String key : keys) {
             Optional<Long> questionIdOpt = extractQuestionIdFromKey(key);
-
-            if (questionIdOpt.isEmpty()) {
-                return;
-            }
-
-            Long questionId = questionIdOpt.get();
-            Integer viewCountFromRedis = questionViewRedisTemplate.opsForValue().get(key);
-
-            if (viewCountFromRedis == null) {
-                return;
-            }
-
-            questionViewRepository.findByQuestionEntityId(questionId).ifPresentOrElse(
-                    entity -> {
-                        entity.setViewCount(entity.getViewCount() + viewCountFromRedis);
-                        questionViewRepository.save(entity);
-                        questionViewRedisTemplate.opsForValue().set(key, entity.getViewCount());
-                    },
-                    () -> {
-                        questionViewRedisTemplate.delete(key);
-                    }
-            );
-        });
+            questionIdOpt.ifPresent(this::updateViewCount);
+            questionViewCacheRepository.deleteKey(key);
+        }
     }
 
+    private void updateViewCount(Long questionId) {
+        questionViewCacheRepository.getQuestionView(questionId).ifPresent(viewCount -> {
+            questionViewRepository.findByQuestionEntityId(questionId)
+                    .ifPresent(entity -> {
+                        entity.setViewCount(entity.getViewCount() + viewCount);
+                        questionViewRepository.save(entity);
+                    });
+        });
+    }
 
     private Optional<Long> extractQuestionIdFromKey(String key) {
         Pattern pattern = Pattern.compile("^question:(\\d+):views$");
