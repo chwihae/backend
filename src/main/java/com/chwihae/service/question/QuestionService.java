@@ -12,12 +12,14 @@ import com.chwihae.dto.option.request.OptionCreateRequest;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
 import com.chwihae.dto.question.response.QuestionDetailResponse;
 import com.chwihae.dto.question.response.QuestionListResponse;
+import com.chwihae.event.question.QuestionViewEvent;
 import com.chwihae.exception.CustomException;
 import com.chwihae.service.bookmark.BookmarkService;
 import com.chwihae.service.comment.CommentService;
 import com.chwihae.service.commenter.CommenterSequenceService;
 import com.chwihae.service.vote.VoteService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -40,6 +42,7 @@ public class QuestionService {
     private final CommentService commentService;
     private final VoteService voteService;
     private final BookmarkService bookmarkService;
+    private final ApplicationEventPublisher eventPublisher;
 
     public Page<QuestionListResponse> getQuestionsByTypeAndStatus(QuestionType type, QuestionStatus status, Pageable pageable) {
         return questionRepository.findByTypeAndStatusWithCounts(status, type, pageable);
@@ -56,6 +59,7 @@ public class QuestionService {
 
     public QuestionDetailResponse getQuestion(Long questionId, Long userId) {
         QuestionEntity questionEntity = findQuestionOrException(questionId);
+        eventPublisher.publishEvent(new QuestionViewEvent(questionId));
         boolean bookmarked = bookmarkService.isBookmarked(questionId, userId);
         long bookmarkCount = bookmarkService.getBookmarkCount(questionId);
         long voteCount = voteService.getVoteCount(questionId);
