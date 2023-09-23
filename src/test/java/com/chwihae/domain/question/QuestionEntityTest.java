@@ -83,4 +83,21 @@ class QuestionEntityTest {
         //then
         Assertions.assertThat(result).isFalse();
     }
+
+    @Test
+    @DisplayName("질문을 마감한다")
+    void close_pass() throws Exception {
+        //given
+        UserEntity userEntity = UserEntityFixture.of();
+        QuestionEntity questionEntity = QuestionEntity.builder()
+                .userEntity(userEntity)
+                .closeAt(LocalDateTime.now(ZoneId.of("Asia/Seoul")).plusDays(1))
+                .build();
+
+        //when
+        questionEntity.close();
+
+        //then
+        Assertions.assertThat(questionEntity.isClosed()).isTrue();
+    }
 }

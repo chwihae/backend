@@ -5,9 +5,13 @@ services:
     command: --default-authentication-plugin=mysql_native_password
     ports:
       - "3307:3306"
+    volumes:
+      - ./database/spring-batch-create.sql:/docker-entrypoint-initdb.d/spring-batch-create.sql
+      - ./database/service-domain-create.sql:/docker-entrypoint-initdb.d/service-domain-create.sql
     environment:
       - MYSQL_DATABASE=test
       - MYSQL_ROOT_PASSWORD=1234
+      - TZ=Asia/Seoul
 
   redis:
     image: redis:latest

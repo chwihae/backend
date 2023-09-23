@@ -13,6 +13,10 @@ spring.data:
   redis:
     url: ${SPRING_REDIS_URL}
 
+spring.batch:
+  job.enabled: false
+  jdbc.initialize-schema: never
+
 # Custom configurations
 jwt:
   secret-key: ${jwt.secret.key}
