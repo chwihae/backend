@@ -1,14 +1,21 @@
+# Springboot configurations
 spring.datasource:
   driver-class-name: org.mariadb.jdbc.Driver
 
 spring.jpa:
   hibernate:
-    ddl-auto: create
+    ddl-auto: none
   show-sql: true
   properties:
     hibernate:
       format_sql: true
 
+spring.batch:
+  job.enabled: false
+  jdbc:
+    initialize-schema: always
+
+# Custom configurations
 kakao:
   oauth2.endpoint: "http://localhost:8089"
   userInfo.endpoint: "http://localhost:8089"

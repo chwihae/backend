@@ -1,23 +1,19 @@
 package com.chwihae.client.kakao.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
+@Data
 @NoArgsConstructor
-@Setter
-@Getter
 public class KakaoTokenResponse {
 
-    private String access_token;
+    @JsonProperty("access_token")
+    private String accessToken;
 
     @Builder
-    private KakaoTokenResponse(String access_token) {
-        this.access_token = access_token;
-    }
-
-    public String getAccessToken() {
-        return this.access_token;
+    private KakaoTokenResponse(String accessToken) {
+        this.accessToken = accessToken;
     }
 }

@@ -44,7 +44,7 @@ class KakaoAuthHandlerTest {
                 .willReturn("client secret");
 
         KakaoTokenResponse kakaoTokenResponse = KakaoTokenResponse.builder()
-                .access_token("access token")
+                .accessToken("access token")
                 .build();
 
         given(kakaoTokenFeignClient.requestToken(anyString(), anyString(), anyString(), anyString(), anyString()))
@@ -52,7 +52,7 @@ class KakaoAuthHandlerTest {
 
         String userEmail = "test@email.com";
         KakaoUserInfoResponse kakaoUserInfoResponse = KakaoUserInfoResponse.builder()
-                .kakao_account(KakaoUserInfoResponse.KakaoAccount.builder()
+                .kakaoAccount(KakaoUserInfoResponse.KakaoAccount.builder()
                         .email(userEmail)
                         .build())
                 .build();

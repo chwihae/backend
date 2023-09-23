@@ -27,7 +27,7 @@ class KakaoUserInfoFeignClientTest extends AbstractIntegrationTest {
         //given
         String userEmail = "test@email.com";
         KakaoUserInfoResponse kakaoUserInfoResponse = KakaoUserInfoResponse.builder()
-                .kakao_account(KakaoUserInfoResponse.KakaoAccount.builder()
+                .kakaoAccount(KakaoUserInfoResponse.KakaoAccount.builder()
                         .email(userEmail)
                         .build())
                 .build();

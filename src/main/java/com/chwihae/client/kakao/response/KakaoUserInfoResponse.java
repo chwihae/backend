@@ -1,24 +1,24 @@
 package com.chwihae.client.kakao.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
+@Data
 @NoArgsConstructor
-@Setter
-@Getter
 public class KakaoUserInfoResponse {
-    private KakaoAccount kakao_account;
+
+    @JsonProperty("kakao_account")
+    private KakaoAccount kakaoAccount;
 
     @Builder
-    private KakaoUserInfoResponse(KakaoAccount kakao_account) {
-        this.kakao_account = kakao_account;
+    private KakaoUserInfoResponse(KakaoAccount kakaoAccount) {
+        this.kakaoAccount = kakaoAccount;
     }
 
+    @Data
     @NoArgsConstructor
-    @Setter
-    @Getter
     public static class KakaoAccount {
         private String email;
 
@@ -26,9 +26,5 @@ public class KakaoUserInfoResponse {
         private KakaoAccount(String email) {
             this.email = email;
         }
-    }
-
-    public KakaoAccount getKakaoAccount() {
-        return this.kakao_account;
     }
 }

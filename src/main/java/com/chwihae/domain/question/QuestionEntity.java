@@ -24,7 +24,10 @@ import static jakarta.persistence.EnumType.STRING;
         indexes = {
                 @Index(name = "idx_question_type", columnList = "type"),
                 @Index(name = "idx_question_status", columnList = "status"),
-                @Index(name = "idx_question_type_status", columnList = "type, status")
+                @Index(name = "idx_question_type_status", columnList = "type, status"),
+                @Index(name = "idx_question_close_at", columnList = "close_at"),
+                @Index(name = "idx_question_deleted_at", columnList = "deleted_at"),
+                @Index(name = "idx_question_close_at_deleted_at", columnList = "close_at, deleted_at")
         }
 )
 @SQLDelete(sql = "UPDATE question SET deleted_at = NOW() WHERE id_question = ?")
@@ -78,5 +81,9 @@ public class QuestionEntity extends BaseEntity {
 
     public boolean isClosed() {
         return Objects.equals(this.status, COMPLETED) || this.closeAt.isBefore(LocalDateTime.now(KST));
+    }
+
+    public void close() {
+        this.status = COMPLETED;
     }
 }
