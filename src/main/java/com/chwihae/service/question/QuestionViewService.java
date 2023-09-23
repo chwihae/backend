@@ -23,7 +23,7 @@ import static com.chwihae.exception.CustomExceptionError.QUESTION_NOT_FOUND;
 @Service
 public class QuestionViewService {
 
-    private static final long ONE_HOUR_IN_MILLISECONDS = 3_600_000L;
+    private static final long TEN_MINUTES_IN_MILLISECONDS = 10 * 60 * 1000L;
     private final QuestionViewRepository questionViewRepository;
     private final QuestionViewCacheRepository questionViewCacheRepository;
 
@@ -45,6 +45,9 @@ public class QuestionViewService {
                 );
     }
 
+    /**
+     * NOTE: This method may encounter concurrency issues, so caution is advised.
+     */
     public void incrementViewCount(Long questionId) {
         if (!questionViewCacheRepository.existsByKey(questionId)) {
             int viewCount = questionViewRepository.findViewCountByQuestionEntityId(questionId)
@@ -55,7 +58,7 @@ public class QuestionViewService {
     }
 
     @Transactional
-    @Scheduled(fixedDelay = ONE_HOUR_IN_MILLISECONDS)
+    @Scheduled(fixedDelay = TEN_MINUTES_IN_MILLISECONDS)
     public void syncQuestionViewCount() {
         Set<String> keys = Optional.ofNullable(questionViewCacheRepository.findAllQuestionViewKeys())
                 .orElse(Collections.emptySet());
@@ -71,7 +74,7 @@ public class QuestionViewService {
         questionViewCacheRepository.getQuestionView(questionId).ifPresent(viewCount -> {
             questionViewRepository.findByQuestionEntityId(questionId)
                     .ifPresent(entity -> {
-                        entity.setViewCount(entity.getViewCount() + viewCount);
+                        entity.setViewCount(viewCount);
                         questionViewRepository.save(entity);
                     });
         });

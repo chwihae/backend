@@ -15,6 +15,7 @@ import com.chwihae.domain.question.QuestionRepository;
 import com.chwihae.domain.question.QuestionViewRepository;
 import com.chwihae.domain.user.UserRepository;
 import com.chwihae.domain.vote.VoteRepository;
+import com.chwihae.dto.user.UserContext;
 import com.chwihae.event.question.QuestionViewEventListener;
 import com.chwihae.infra.support.IntegrationTestSupport;
 import com.chwihae.service.bookmark.BookmarkService;
@@ -28,6 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.redis.core.RedisTemplate;
 
 @IntegrationTestSupport
 public class AbstractIntegrationTest extends AbstractContainerBaseTest {
@@ -106,4 +108,7 @@ public class AbstractIntegrationTest extends AbstractContainerBaseTest {
 
     @Autowired
     protected UserContextCacheRepository userContextCacheRepository;
+
+    @Autowired
+    protected RedisTemplate<String, UserContext> userContextRedisTemplate;
 }
