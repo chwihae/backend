@@ -27,7 +27,7 @@ class KakaoTokenFeignClientTest extends AbstractIntegrationTest {
     void requestToken_returnsToken() throws Exception {
         //given
         KakaoTokenResponse kakaoTokenResponse = KakaoTokenResponse.builder()
-                .access_token("token")
+                .accessToken("token")
                 .build();
 
         String grantType = "grant type";
