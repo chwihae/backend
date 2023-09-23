@@ -43,7 +43,7 @@ public class CommentService {
                 .map(it -> Comment.of(it, it.isCreatedBy(userId), it.getCommenterAliasEntity().getAlias()));
     }
 
-    public long getCommentCount(Long questionId) {
+    public int getCommentCount(Long questionId) {
         return commentRepository.countByQuestionEntityId(questionId);
     }
 

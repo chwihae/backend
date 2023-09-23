@@ -42,6 +42,7 @@ public class QuestionService {
     private final CommentService commentService;
     private final VoteService voteService;
     private final BookmarkService bookmarkService;
+    private final QuestionViewService questionViewService;
     private final ApplicationEventPublisher eventPublisher;
 
     public Page<QuestionListResponse> getQuestionsByTypeAndStatus(QuestionType type, QuestionStatus status, Pageable pageable) {
@@ -54,18 +55,33 @@ public class QuestionService {
         QuestionEntity questionEntity = questionRepository.save(request.toEntity(userEntity));
         optionRepository.saveAll(buildOptionEntities(request.getOptions(), questionEntity));
         commenterSequenceService.createCommenterSequence(questionEntity);
+        questionViewService.createQuestionView(questionEntity);
         return questionEntity.getId();
     }
 
     public QuestionDetailResponse getQuestion(Long questionId, Long userId) {
         QuestionEntity questionEntity = findQuestionOrException(questionId);
         eventPublisher.publishEvent(new QuestionViewEvent(questionId));
+        return buildQuestionDetailResponse(questionId, userId, questionEntity);
+    }
+
+    private QuestionDetailResponse buildQuestionDetailResponse(Long questionId, Long userId, QuestionEntity questionEntity) {
         boolean bookmarked = bookmarkService.isBookmarked(questionId, userId);
-        long bookmarkCount = bookmarkService.getBookmarkCount(questionId);
-        long voteCount = voteService.getVoteCount(questionId);
-        long commentCount = commentService.getCommentCount(questionId);
+        int viewCount = questionViewService.getViewCount(questionId);
+        int bookmarkCount = bookmarkService.getBookmarkCount(questionId);
+        int voteCount = voteService.getVoteCount(questionId);
+        int commentCount = commentService.getCommentCount(questionId);
         boolean isEditable = questionEntity.isCreatedBy(userId);
-        return QuestionDetailResponse.of(questionEntity, bookmarkCount, commentCount, voteCount, bookmarked, isEditable);
+
+        return QuestionDetailResponse.of(
+                questionEntity,
+                viewCount,
+                bookmarkCount,
+                commentCount,
+                voteCount,
+                bookmarked,
+                isEditable
+        );
     }
 
     private List<OptionEntity> buildOptionEntities(List<OptionCreateRequest> options, QuestionEntity questionEntity) {

@@ -3,6 +3,7 @@ package com.chwihae.service.question;
 import com.chwihae.domain.question.QuestionEntity;
 import com.chwihae.domain.question.QuestionStatus;
 import com.chwihae.domain.question.QuestionType;
+import com.chwihae.domain.question.QuestionViewEntity;
 import com.chwihae.domain.user.UserEntity;
 import com.chwihae.dto.option.request.OptionCreateRequest;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
@@ -105,6 +106,7 @@ class QuestionServiceTest extends AbstractIntegrationTest {
         //given
         UserEntity userEntity = userRepository.save(UserEntityFixture.of());
         QuestionEntity questionEntity = questionRepository.save(createQuestion(userEntity, SPEC));
+        questionViewRepository.save(createQuestionView(questionEntity));
 
         //when
         QuestionDetailResponse response = questionService.getQuestion(questionEntity.getId(), userEntity.getId());
@@ -165,6 +167,12 @@ class QuestionServiceTest extends AbstractIntegrationTest {
                 .content("content")
                 .closeAt(LocalDateTime.of(2023, 11, 11, 0, 0))
                 .type(type)
+                .build();
+    }
+
+    public QuestionViewEntity createQuestionView(QuestionEntity questionEntity) {
+        return QuestionViewEntity.builder()
+                .questionEntity(questionEntity)
                 .build();
     }
 }

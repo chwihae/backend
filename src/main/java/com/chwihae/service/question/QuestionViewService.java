@@ -1,6 +1,8 @@
 package com.chwihae.service.question;
 
 import com.chwihae.config.redis.QuestionViewCacheRepository;
+import com.chwihae.domain.question.QuestionEntity;
+import com.chwihae.domain.question.QuestionViewEntity;
 import com.chwihae.domain.question.QuestionViewRepository;
 import com.chwihae.exception.CustomException;
 import lombok.RequiredArgsConstructor;
@@ -17,13 +19,22 @@ import java.util.regex.Pattern;
 
 import static com.chwihae.exception.CustomExceptionError.QUESTION_NOT_FOUND;
 
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
 public class QuestionViewService {
 
+    private static final long ONE_HOUR_IN_MILLISECONDS = 3_600_000L;
     private final QuestionViewRepository questionViewRepository;
     private final QuestionViewCacheRepository questionViewCacheRepository;
     private final RedisTemplate<String, Integer> questionViewRedisTemplate;
+
+    @Transactional
+    public void createQuestionView(QuestionEntity questionEntity) {
+        questionViewRepository.save(QuestionViewEntity.builder()
+                .questionEntity(questionEntity)
+                .build());
+    }
 
     public Integer getViewCount(Long questionId) {
         return questionViewCacheRepository.getQuestionView(questionId)
@@ -38,7 +49,7 @@ public class QuestionViewService {
     }
 
     @Transactional
-    @Scheduled(fixedDelay = 60000)  // per 1 minutes
+    @Scheduled(fixedDelay = ONE_HOUR_IN_MILLISECONDS)
     public void syncQuestionViewCount() {
         Set<String> keys = Optional.ofNullable(questionViewRedisTemplate.keys("question:*:views"))
                 .orElse(Collections.emptySet());
@@ -47,25 +58,29 @@ public class QuestionViewService {
             Optional<Long> questionIdOpt = extractQuestionIdFromKey(key);
 
             if (questionIdOpt.isEmpty()) {
-                return; // Skip to the next iteration if questionId couldn't be extracted
+                return;
             }
 
             Long questionId = questionIdOpt.get();
-            Integer viewCount = questionViewRedisTemplate.opsForValue().get(key);
+            Integer viewCountFromRedis = questionViewRedisTemplate.opsForValue().get(key);
 
-            if (viewCount == null) {
-                return; // Skip to the next iteration if viewCount is null
+            if (viewCountFromRedis == null) {
+                return;
             }
 
-            questionViewRepository.findByQuestionEntityId(questionId).ifPresent(entity -> {
-                entity.setViewCount(entity.getViewCount() + viewCount);
-                questionViewRepository.save(entity);
-            });
-
-            // Delete the key from Redis, regardless of whether we updated the database or not
-            questionViewRedisTemplate.delete(key);
+            questionViewRepository.findByQuestionEntityId(questionId).ifPresentOrElse(
+                    entity -> {
+                        entity.setViewCount(entity.getViewCount() + viewCountFromRedis);
+                        questionViewRepository.save(entity);
+                        questionViewRedisTemplate.opsForValue().set(key, entity.getViewCount());
+                    },
+                    () -> {
+                        questionViewRedisTemplate.delete(key);
+                    }
+            );
         });
     }
+
 
     private Optional<Long> extractQuestionIdFromKey(String key) {
         Pattern pattern = Pattern.compile("^question:(\\d+):views$");

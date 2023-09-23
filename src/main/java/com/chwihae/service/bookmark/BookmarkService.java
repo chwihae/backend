@@ -35,7 +35,7 @@ public class BookmarkService {
                 .orElseGet(() -> saveBookmark(userEntity, questionEntity));
     }
 
-    public long getBookmarkCount(Long questionId) {
+    public int getBookmarkCount(Long questionId) {
         return bookmarkRepository.countByQuestionEntityId(questionId);
     }
 

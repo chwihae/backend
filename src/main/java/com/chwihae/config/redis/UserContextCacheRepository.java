@@ -15,7 +15,7 @@ import java.util.Optional;
 public class UserContextCacheRepository {
 
     private final RedisTemplate<String, UserContext> userContextRedisTemplate;
-    private static final Duration USER_CACHE_TTL = Duration.ofDays(1);
+    private static final Duration USER_CACHE_TTL = Duration.ofDays(3);
 
     public UserContext setUserContext(UserContext userContext) {
         String key = getKey(userContext.getId());
