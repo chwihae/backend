@@ -1,3 +1,4 @@
+# Springboot configurations
 spring.datasource:
   url: ${aws.rds.hostname}
   driver-class-name: org.mariadb.jdbc.Driver
@@ -8,6 +9,11 @@ spring.jpa:
   hibernate:
     ddl-auto: none # do not change
 
+spring.data:
+  redis:
+    url: ${SPRING_REDIS_URL}
+
+# Custom configurations
 jwt:
   secret-key: ${jwt.secret.key}
 

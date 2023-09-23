@@ -1,10 +1,15 @@
 spring.profiles.default: local
 
+# Springboot configurations
 spring.datasource:
   url: jdbc:mariadb://localhost:3306/chwihae
   driver-class-name: org.mariadb.jdbc.Driver
   username: root
   password: 1234
+
+spring.data:
+  redis:
+    url: redis://:1234@localhost:6379
 
 spring.jpa:
   hibernate:
@@ -15,6 +20,7 @@ spring.jpa:
       format_sql: true
   open-in-view: false
 
+# Custom configurations
 kakao:
   client-id: "this is secret value"
   client-secret: "this is secret value"
