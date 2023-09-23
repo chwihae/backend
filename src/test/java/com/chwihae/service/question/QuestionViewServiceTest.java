@@ -126,7 +126,6 @@ class QuestionViewServiceTest extends AbstractMockTest {
         keys.add(givenKey);
 
         QuestionViewEntity givenEntity = mock(QuestionViewEntity.class);
-        when(givenEntity.getViewCount()).thenReturn(0);
 
         when(questionViewCacheRepository.findAllQuestionViewKeys()).thenReturn(keys);
         when(questionViewCacheRepository.getQuestionView(givenQuestionId)).thenReturn(Optional.of(cachedViewCount));
@@ -140,7 +139,7 @@ class QuestionViewServiceTest extends AbstractMockTest {
         verify(givenEntity).setViewCount(cachedViewCount);
         verify(questionViewRepository).save(givenEntity);
     }
-    
+
     @Test
     @DisplayName("캐시에서 키 목록을 가져오지 못하면 DB와 동기화가 되지 않는다")
     void syncQuestionViewCount_noKeysFromCache() {
@@ -187,7 +186,6 @@ class QuestionViewServiceTest extends AbstractMockTest {
         Set<String> keys = new HashSet<>();
         keys.add(givenKey);
         QuestionViewEntity givenEntity = mock(QuestionViewEntity.class);
-        when(givenEntity.getViewCount()).thenReturn(0);
 
         when(questionViewCacheRepository.findAllQuestionViewKeys()).thenReturn(keys);
         when(questionViewCacheRepository.getQuestionView(givenQuestionId)).thenReturn(Optional.of(cachedViewCount));
