@@ -4,6 +4,7 @@ import com.chwihae.client.kakao.KakaoTokenFeignClient;
 import com.chwihae.client.kakao.KakaoUserInfoFeignClient;
 import com.chwihae.config.properties.JwtTokenProperties;
 import com.chwihae.config.redis.QuestionViewCacheRepository;
+import com.chwihae.config.redis.UserContextCacheRepository;
 import com.chwihae.config.security.JwtTokenHandler;
 import com.chwihae.domain.bookmark.BookmarkRepository;
 import com.chwihae.domain.comment.CommentRepository;
@@ -102,4 +103,7 @@ public class AbstractIntegrationTest extends AbstractContainerBaseTest {
 
     @Autowired
     protected QuestionViewCacheRepository questionViewCacheRepository;
+
+    @Autowired
+    protected UserContextCacheRepository userContextCacheRepository;
 }
