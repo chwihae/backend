@@ -1,9 +1,9 @@
+-- Tables for domain
 create table users
 (
     created_at  datetime default current_timestamp() not null comment '생성 시간',
     deleted_at  datetime                             null comment '삭제 시간',
-    id_users    bigint auto_increment
-        primary key,
+    id_users    bigint auto_increment primary key,
     modified_at datetime default current_timestamp() not null on update current_timestamp() comment '수정 시간',
     email       varchar(50)                          not null comment '이메일',
     constraint uk_users_email unique (email)
@@ -24,6 +24,13 @@ create table question
     type          enum ('CAREER', 'COMPANY', 'ETC', 'SPEC') not null,
     constraint fk_question_users foreign key (id_questioner) references users (id_users)
 );
+
+create index idx_question_type on question (type);
+create index idx_question_status on question (status);
+create index idx_question_type_status on question (type, status);
+create index idx_question_close_at on question (close_at);
+create index idx_question_deleted_at on question (deleted_at);
+create index idx_question_close_at_deleted_at on question (close_at, deleted_at);
 
 create table bookmark
 (
@@ -109,12 +116,6 @@ create table `option`
 
 create  index idx_option_question on `option` (id_question);
 
-create  index idx_question_status on question (status);
-
-create  index idx_question_type on question (type);
-
-create  index idx_question_type_status on question (type, status);
-
 create  table question_view
 (
     view_count  int                                  not null comment '질문 조회 수',
@@ -148,4 +149,5 @@ create  index idx_vote_question on vote (id_question);
 create  index idx_vote_question_users on vote (id_question, id_voter);
 
 create  index idx_vote_users on vote (id_voter);
+
 
