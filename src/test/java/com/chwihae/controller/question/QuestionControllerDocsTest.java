@@ -225,7 +225,7 @@ class QuestionControllerDocsTest extends AbstractRestDocsTest {
                                 fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터"),
                                 fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("질문 아이디"),
                                 fieldWithPath("data.title").type(JsonFieldType.STRING).description("질문 제목"),
-                                fieldWithPath("data.content").type(JsonFieldType.STRING).description("질문 내용"),
+                                fieldWithPath("data.content").type(JsonFieldType.STRING).description("질문 내용").optional(),
                                 fieldWithPath("data.type").type(JsonFieldType.STRING).description("질문 타입 [CAREER, SPEC, COMPANY, ETC]"),
                                 fieldWithPath("data.status").type(JsonFieldType.STRING).description("질문 상태 [IN_PROGRESS, COMPLETED]"),
                                 fieldWithPath("data.closeAt").type(JsonFieldType.STRING).description("질문 마감 시간 (형식: yyyy-mm-ddThh:mm:ss)"),
