@@ -44,7 +44,8 @@ public class OptionRepositoryExtensionImpl extends QuerydslRepositorySupport imp
 
     private void appendVoteCountQuery(JPAQuery<Option> query, boolean canViewResults) {
         if (canViewResults) {
-            query.leftJoin(voteEntity).on(optionEntity.id.eq(voteEntity.optionEntity.id));
+            query.leftJoin(voteEntity)
+                    .on(optionEntity.id.eq(voteEntity.optionEntity.id).and(voteEntity.deletedAt.isNull()));  // soft delete된 vote를 제외
         }
     }
 
