@@ -69,8 +69,8 @@ public class QuestionService {
         boolean bookmarked = bookmarkService.isBookmarked(questionId, userId);
         int viewCount = questionViewService.getViewCount(questionId);
         int bookmarkCount = bookmarkService.getBookmarkCount(questionId);
-        int voteCount = voteService.getVoteCount(questionId);
-        int commentCount = commentService.getCommentCount(questionId);
+        int voteCount = voteService.getQuestionVoteCount(questionId);
+        int commentCount = commentService.getQuestionCommentCount(questionId);
         boolean isEditable = questionEntity.isCreatedBy(userId);
 
         return QuestionDetailResponse.of(

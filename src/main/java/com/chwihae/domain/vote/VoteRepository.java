@@ -15,7 +15,7 @@ import static jakarta.persistence.LockModeType.PESSIMISTIC_WRITE;
 public interface VoteRepository extends JpaRepository<VoteEntity, Long> {
     boolean existsByQuestionEntityIdAndUserEntityId(Long questionId, Long userId);
 
-    long countByUserEntityId(Long userId);
+    int countByUserEntityId(Long userId);
 
     int countByQuestionEntityId(Long questionId);
 

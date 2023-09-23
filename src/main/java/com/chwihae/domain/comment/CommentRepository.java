@@ -17,7 +17,7 @@ public interface CommentRepository extends JpaRepository<CommentEntity, Long> {
 
     int countByQuestionEntityId(Long questionId);
 
-    long countByUserEntityId(Long userId);
+    int countByUserEntityId(Long userId);
 
     @EntityGraph(attributePaths = "commenterAliasEntity")
     @Query("SELECT ce " +
