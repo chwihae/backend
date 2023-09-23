@@ -25,8 +25,7 @@ public class QuestionCreateRequest {
     @Size(max = 50)
     @NotBlank
     private String title;
-
-    @NotBlank
+    
     private String content;
 
     @NotNull

@@ -12,7 +12,11 @@ import org.hibernate.annotations.Where;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Table(name = "users")
+@Table(name = "users",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_users_email", columnNames = "email")
+        }
+)
 @SQLDelete(sql = "UPDATE users SET deleted_at = NOW() WHERE id_users = ?")
 @Where(clause = "deleted_at is NULL")
 @Entity

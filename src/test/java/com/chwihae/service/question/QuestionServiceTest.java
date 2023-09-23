@@ -3,6 +3,7 @@ package com.chwihae.service.question;
 import com.chwihae.domain.question.QuestionEntity;
 import com.chwihae.domain.question.QuestionStatus;
 import com.chwihae.domain.question.QuestionType;
+import com.chwihae.domain.question.QuestionViewEntity;
 import com.chwihae.domain.user.UserEntity;
 import com.chwihae.dto.option.request.OptionCreateRequest;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
@@ -15,14 +16,17 @@ import com.chwihae.infra.test.AbstractIntegrationTest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
+import org.testcontainers.shaded.org.awaitility.Awaitility;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static com.chwihae.domain.question.QuestionType.*;
 import static com.chwihae.exception.CustomExceptionError.USER_NOT_FOUND;
@@ -85,6 +89,27 @@ class QuestionServiceTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @DisplayName("질문 생성 시, 조회 수를 0으로 저장한다")
+    void createQuestionView() throws Exception {
+        //given
+        UserEntity user = userRepository.save(UserEntityFixture.of());
+
+        QuestionCreateRequest request = QuestionCreateRequest.builder()
+                .title("title")
+                .type(SPEC)
+                .closeAt(LocalDateTime.of(2023, 11, 11, 0, 0))
+                .content("content")
+                .options(List.of())
+                .build();
+
+        //when
+        questionService.createQuestion(request, user.getId());
+
+        //then
+        Assertions.assertThat(questionViewRepository.findAll()).hasSize(1);
+    }
+
+    @Test
     @DisplayName("등록 시 사용자가 조회되지 않으면 예외가 발생한다")
     void createQuestionWithOptions_whenUserNotFound_throwsCustomException() throws Exception {
         //given
@@ -105,6 +130,7 @@ class QuestionServiceTest extends AbstractIntegrationTest {
         //given
         UserEntity userEntity = userRepository.save(UserEntityFixture.of());
         QuestionEntity questionEntity = questionRepository.save(createQuestion(userEntity, SPEC));
+        questionViewRepository.save(createQuestionView(questionEntity));
 
         //when
         QuestionDetailResponse response = questionService.getQuestion(questionEntity.getId(), userEntity.getId());
@@ -113,6 +139,23 @@ class QuestionServiceTest extends AbstractIntegrationTest {
         Assertions.assertThat(response)
                 .extracting("title", "content", "type", "editable")
                 .containsExactly(questionEntity.getTitle(), questionEntity.getContent(), questionEntity.getType(), true);
+    }
+
+    @Test
+    @DisplayName("질문을 조회하면 질문 조회 이벤트를 발행한다")
+    void handleQuestionViewEvent() throws Exception {
+        //given
+        UserEntity userEntity = userRepository.save(UserEntityFixture.of());
+        QuestionEntity questionEntity = questionRepository.save(createQuestion(userEntity, SPEC));
+        questionViewRepository.save(createQuestionView(questionEntity));
+
+        //when
+        questionService.getQuestion(questionEntity.getId(), userEntity.getId());
+
+        //then
+        Awaitility.await()
+                .atMost(1, TimeUnit.SECONDS)
+                .untilAsserted(() -> Mockito.verify(questionViewEventListener, Mockito.times(1)).handleQuestionViewEvent(Mockito.any()));
     }
 
     @Test
@@ -156,6 +199,8 @@ class QuestionServiceTest extends AbstractIntegrationTest {
         Assertions.assertThat(response.getTotalPages()).isEqualTo(2);
     }
 
+    // TODO 질문을 단건 조회하면 조회 이벤트를 발행한다
+
     public QuestionEntity createQuestion(UserEntity userEntity, QuestionType type) {
         return QuestionEntity.builder()
                 .userEntity(userEntity)
@@ -163,6 +208,12 @@ class QuestionServiceTest extends AbstractIntegrationTest {
                 .content("content")
                 .closeAt(LocalDateTime.of(2023, 11, 11, 0, 0))
                 .type(type)
+                .build();
+    }
+
+    public QuestionViewEntity createQuestionView(QuestionEntity questionEntity) {
+        return QuestionViewEntity.builder()
+                .questionEntity(questionEntity)
                 .build();
     }
 }

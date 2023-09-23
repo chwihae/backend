@@ -69,7 +69,7 @@ public class VoteService {
         }
     }
 
-    public long getVoteCount(Long questionId) {
+    public int getVoteCount(Long questionId) {
         return voteRepository.countByQuestionEntityId(questionId);
     }
 

@@ -3,6 +3,8 @@ package com.chwihae.infra.test;
 import com.chwihae.client.kakao.KakaoTokenFeignClient;
 import com.chwihae.client.kakao.KakaoUserInfoFeignClient;
 import com.chwihae.config.properties.JwtTokenProperties;
+import com.chwihae.config.redis.QuestionViewCacheRepository;
+import com.chwihae.config.redis.UserContextCacheRepository;
 import com.chwihae.config.security.JwtTokenHandler;
 import com.chwihae.domain.bookmark.BookmarkRepository;
 import com.chwihae.domain.comment.CommentRepository;
@@ -10,18 +12,22 @@ import com.chwihae.domain.commenter.CommenterAliasRepository;
 import com.chwihae.domain.commenter.CommenterSequenceRepository;
 import com.chwihae.domain.option.OptionRepository;
 import com.chwihae.domain.question.QuestionRepository;
+import com.chwihae.domain.question.QuestionViewRepository;
 import com.chwihae.domain.user.UserRepository;
 import com.chwihae.domain.vote.VoteRepository;
+import com.chwihae.event.question.QuestionViewEventListener;
 import com.chwihae.infra.support.IntegrationTestSupport;
 import com.chwihae.service.bookmark.BookmarkService;
 import com.chwihae.service.comment.CommentService;
 import com.chwihae.service.commenter.CommenterSequenceService;
 import com.chwihae.service.question.QuestionService;
+import com.chwihae.service.question.QuestionViewService;
 import com.chwihae.service.user.UserService;
 import com.chwihae.service.vote.VoteService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 @IntegrationTestSupport
 public class AbstractIntegrationTest extends AbstractContainerBaseTest {
@@ -85,4 +91,19 @@ public class AbstractIntegrationTest extends AbstractContainerBaseTest {
 
     @Autowired
     protected BookmarkService bookmarkService;
+
+    @MockBean
+    protected QuestionViewEventListener questionViewEventListener;
+
+    @Autowired
+    protected QuestionViewService questionViewService;
+
+    @Autowired
+    protected QuestionViewRepository questionViewRepository;
+
+    @Autowired
+    protected QuestionViewCacheRepository questionViewCacheRepository;
+
+    @Autowired
+    protected UserContextCacheRepository userContextCacheRepository;
 }

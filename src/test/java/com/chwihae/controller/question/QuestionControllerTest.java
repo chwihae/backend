@@ -9,6 +9,7 @@ import com.chwihae.domain.option.OptionEntity;
 import com.chwihae.domain.question.QuestionEntity;
 import com.chwihae.domain.question.QuestionStatus;
 import com.chwihae.domain.question.QuestionType;
+import com.chwihae.domain.question.QuestionViewEntity;
 import com.chwihae.domain.user.UserEntity;
 import com.chwihae.domain.vote.VoteEntity;
 import com.chwihae.dto.comment.request.QuestionCommentCreateRequest;
@@ -173,6 +174,7 @@ class QuestionControllerTest extends AbstractMockMvcTest {
         UserEntity userEntity = userRepository.findByEmail("questioner@email.com").get();
         LocalDateTime closeAt = LocalDateTime.now(ZoneId.of("Asia/Seoul")).plusMinutes(30);
         QuestionEntity questionEntity = questionRepository.save(createQuestion(userEntity, closeAt));
+        questionViewRepository.save(createQuestionView(questionEntity));
 
         //when //then
         mockMvc.perform(
@@ -191,6 +193,7 @@ class QuestionControllerTest extends AbstractMockMvcTest {
         UserEntity userEntity = userRepository.save(UserEntityFixture.of("questioner@email.com"));
         LocalDateTime closeAt = LocalDateTime.now(ZoneId.of("Asia/Seoul")).plusMinutes(30);
         QuestionEntity questionEntity = questionRepository.save(createQuestion(userEntity, closeAt));
+        questionViewRepository.save(createQuestionView(questionEntity));
 
         //when //then
         mockMvc.perform(
@@ -211,6 +214,7 @@ class QuestionControllerTest extends AbstractMockMvcTest {
         LocalDateTime closeAt = LocalDateTime.now(ZoneId.of("Asia/Seoul")).plusMinutes(1);
         QuestionEntity questionEntity = questionRepository.save(createQuestion(questioner, closeAt));
         bookmarkRepository.save(createBookmark(viewer, questionEntity));
+        questionViewRepository.save(createQuestionView(questionEntity));
 
         //when //then
         mockMvc.perform(
@@ -993,6 +997,12 @@ class QuestionControllerTest extends AbstractMockMvcTest {
         return BookmarkEntity.builder()
                 .questionEntity(questionEntity)
                 .userEntity(userEntity)
+                .build();
+    }
+
+    public QuestionViewEntity createQuestionView(QuestionEntity questionEntity) {
+        return QuestionViewEntity.builder()
+                .questionEntity(questionEntity)
                 .build();
     }
 }

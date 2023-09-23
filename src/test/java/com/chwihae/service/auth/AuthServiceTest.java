@@ -1,21 +1,21 @@
 package com.chwihae.service.auth;
 
 import com.chwihae.config.properties.JwtTokenProperties;
+import com.chwihae.config.redis.UserContextCacheRepository;
 import com.chwihae.config.security.JwtTokenHandler;
 import com.chwihae.domain.user.UserEntity;
 import com.chwihae.domain.user.UserRepository;
 import com.chwihae.dto.auth.response.LoginResponse;
 import com.chwihae.exception.CustomException;
+import com.chwihae.infra.test.AbstractMockTest;
 import com.chwihae.service.user.UserService;
 import io.jsonwebtoken.JwtException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Optional;
@@ -25,8 +25,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 
-@ExtendWith(MockitoExtension.class)
-class AuthServiceMockTest {
+class AuthServiceTest extends AbstractMockTest {
 
     @InjectMocks
     AuthService authService;
@@ -45,6 +44,9 @@ class AuthServiceMockTest {
 
     @Mock
     JwtTokenProperties jwtTokenProperties;
+
+    @Mock
+    UserContextCacheRepository userContextCacheRepository;
 
     @Test
     @DisplayName("유효한 인가 코드로 카카오 인증 요청을 하면 카카오로부터 전달받은 사용자의 이메일을 조회/등록 한 후 사용자 아이디, 토큰을 반환한다")
