@@ -15,7 +15,7 @@ public class KakaoFeignErrorDecoder implements ErrorDecoder {
     @Override
     public Exception decode(String methodKey, Response response) {
         if (isClientRequestError(response.status())) {
-            log.error("Kakao authorization error detected for method {}: Response status: {}, Content: {}",
+            log.error("Kakao authorization request error detected for method {}: Response status: {}, Content: {}",
                     methodKey, response.status(), getErrorContent(response));
             throw new CustomException(CustomExceptionError.INVALID_KAKAO_AUTHORIZATION_CODE);
         }
