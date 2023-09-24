@@ -17,14 +17,14 @@ public class QuestionListResponse {
     private String title;
     private QuestionType type;
     private QuestionStatus status;
-    private int viewCount;
-    private int commentCount;
-    private int bookmarkCount;
+    private long viewCount;
+    private long commentCount;
+    private long bookmarkCount;
 
     public static QuestionListResponse of(QuestionEntity questionEntity,
-                                          int voteCount,
-                                          int commentCount,
-                                          int bookmarkCount) {
+                                          long voteCount,
+                                          long commentCount,
+                                          long bookmarkCount) {
         return QuestionListResponse.builder()
                 .id(questionEntity.getId())
                 .title(questionEntity.getTitle())
@@ -41,9 +41,9 @@ public class QuestionListResponse {
                                  String title,
                                  QuestionType type,
                                  QuestionStatus status,
-                                 int voteCount,
-                                 int commentCount,
-                                 int bookmarkCount) {
+                                 long voteCount,
+                                 long commentCount,
+                                 long bookmarkCount) {
         this.id = id;
         this.title = title;
         this.type = type;

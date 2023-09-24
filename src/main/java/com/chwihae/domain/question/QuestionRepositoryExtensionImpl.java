@@ -161,9 +161,9 @@ public class QuestionRepositoryExtensionImpl extends QuerydslRepositorySupport i
     private List<QuestionListResponse> transformTuplesToDTOs(List<Tuple> results) {
         return results.stream()
                 .map(tuple -> QuestionListResponse.of(tuple.get(questionEntity),
-                        tuple.get(1, Integer.class),
-                        tuple.get(2, Integer.class),
-                        tuple.get(3, Integer.class)))
+                        tuple.get(1, Long.class),
+                        tuple.get(2, Long.class),
+                        tuple.get(3, Long.class)))
                 .toList();
     }
 
