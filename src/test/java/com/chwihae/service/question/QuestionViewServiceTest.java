@@ -52,13 +52,13 @@ class QuestionViewServiceTest extends AbstractMockTest {
     void getViewCount() {
         // given
         Long givenQuestionId = 1L;
-        int givenViewCount = 100;
+        Long givenViewCount = 100L;
 
         when(questionViewCacheRepository.getQuestionView(givenQuestionId)).thenReturn(Optional.empty());
         when(questionViewRepository.findViewCountByQuestionEntityId(givenQuestionId)).thenReturn(Optional.of(givenViewCount));
 
         // when
-        Integer viewCount = questionViewService.getViewCount(givenQuestionId);
+        Long viewCount = questionViewService.getViewCount(givenQuestionId);
 
         // then
         Assertions.assertThat(givenViewCount).isEqualTo(viewCount);
@@ -101,7 +101,7 @@ class QuestionViewServiceTest extends AbstractMockTest {
     void incrementViewCount_whenQuestionIdNotCached() {
         // given
         Long givenQuestionId = 1L;
-        int givenViewCount = 100;
+        Long givenViewCount = 100L;
 
         when(questionViewCacheRepository.existsByKey(givenQuestionId)).thenReturn(false);
         when(questionViewRepository.findViewCountByQuestionEntityId(givenQuestionId)).thenReturn(Optional.of(givenViewCount));
@@ -120,7 +120,7 @@ class QuestionViewServiceTest extends AbstractMockTest {
         // given
         String givenKey = "question:1:views";
         Long givenQuestionId = 1L;
-        int cachedViewCount = 100;
+        Long cachedViewCount = 100L;
 
         Set<String> keys = new HashSet<>();
         keys.add(givenKey);
@@ -181,7 +181,7 @@ class QuestionViewServiceTest extends AbstractMockTest {
         // given
         String givenKey = "question:1:views";
         Long givenQuestionId = 1L;
-        int cachedViewCount = 100;
+        Long cachedViewCount = 100L;
 
         Set<String> keys = new HashSet<>();
         keys.add(givenKey);

@@ -23,7 +23,7 @@ public class QuestionDetailResponse {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime closeAt;
     private QuestionStatus status;
-    private int viewCount;
+    private long viewCount;
     private int commentCount;
     private int voteCount;
     private int bookmarkCount;
@@ -31,7 +31,7 @@ public class QuestionDetailResponse {
     private boolean editable;
 
     public static QuestionDetailResponse of(QuestionEntity questionEntity,
-                                            int viewCount,
+                                            long viewCount,
                                             int bookmarkCount,
                                             int commentCount,
                                             int voteCount,
@@ -60,7 +60,7 @@ public class QuestionDetailResponse {
                                    QuestionType type,
                                    LocalDateTime closeAt,
                                    QuestionStatus status,
-                                   int viewCount,
+                                   long viewCount,
                                    int bookmarkCount,
                                    int commentCount,
                                    int voteCount,

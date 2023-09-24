@@ -67,7 +67,7 @@ public class QuestionService {
 
     private QuestionDetailResponse buildQuestionDetailResponse(Long questionId, Long userId, QuestionEntity questionEntity) {
         boolean bookmarked = bookmarkService.isBookmarked(questionId, userId);
-        int viewCount = questionViewService.getViewCount(questionId);
+        long viewCount = questionViewService.getViewCount(questionId);
         int bookmarkCount = bookmarkService.getBookmarkCount(questionId);
         int voteCount = voteService.getQuestionVoteCount(questionId);
         int commentCount = commentService.getQuestionCommentCount(questionId);

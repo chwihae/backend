@@ -23,7 +23,7 @@ public class QuestionViewEntity extends BaseEntity {
     private Long id;
 
     @Column(name = "view_count", nullable = false, columnDefinition = "int COMMENT '질문 조회 수'")
-    private int viewCount = 0;
+    private Long viewCount = 0L;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_question", nullable = false, foreignKey = @ForeignKey(name = "fk_question_view_question"), columnDefinition = "bigint COMMENT '질문 PK'")
@@ -34,7 +34,7 @@ public class QuestionViewEntity extends BaseEntity {
         this.questionEntity = questionEntity;
     }
 
-    public void setViewCount(int viewCount) {
+    public void setViewCount(Long viewCount) {
         this.viewCount = viewCount;
     }
 }

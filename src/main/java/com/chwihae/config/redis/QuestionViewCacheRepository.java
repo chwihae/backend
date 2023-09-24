@@ -13,17 +13,17 @@ import java.util.Set;
 public class QuestionViewCacheRepository {
 
     private static final Duration VIEW_CACHE_TTL = Duration.ofDays(1);
-    private final RedisTemplate<String, Integer> questionViewRedisTemplate;
+    private final RedisTemplate<String, Long> questionViewRedisTemplate;
 
-    public Integer setQuestionView(Long questionId, Integer viewCount) {
+    public Long setQuestionView(Long questionId, Long viewCount) {
         String key = getKey(questionId);
         questionViewRedisTemplate.opsForValue().set(key, viewCount, VIEW_CACHE_TTL);
         return viewCount;
     }
 
-    public Optional<Integer> getQuestionView(Long questionId) {
+    public Optional<Long> getQuestionView(Long questionId) {
         String key = getKey(questionId);
-        Integer viewCount = questionViewRedisTemplate.opsForValue().get(key);
+        Long viewCount = questionViewRedisTemplate.opsForValue().get(key);
         return Optional.ofNullable(viewCount);
     }
 

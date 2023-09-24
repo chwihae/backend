@@ -48,12 +48,12 @@ class QuestionViewServiceIntegrationTest extends AbstractIntegrationTest {
     void getViewCount() {
         //given
         Long questionId = 1L;
-        int expectedViewCount = 100;
+        Long expectedViewCount = 100L;
 
         questionViewCacheRepository.setQuestionView(questionId, expectedViewCount);
 
         //when
-        Integer viewCount = questionViewService.getViewCount(questionId);
+        Long viewCount = questionViewService.getViewCount(questionId);
 
         //then
         assertThat(viewCount).isEqualTo(expectedViewCount);
@@ -78,7 +78,7 @@ class QuestionViewServiceIntegrationTest extends AbstractIntegrationTest {
         UserEntity user = userRepository.save(UserEntityFixture.of());
         QuestionEntity question = questionRepository.save(createQuestion(user));
         questionViewService.createQuestionView(question);
-        questionViewCacheRepository.setQuestionView(question.getId(), 0);
+        questionViewCacheRepository.setQuestionView(question.getId(), 0L);
 
         //when
         questionViewService.incrementViewCount(question.getId());
@@ -114,7 +114,7 @@ class QuestionViewServiceIntegrationTest extends AbstractIntegrationTest {
     @DisplayName("캐시된 모든 질문의 조회수를 동기화하고, 해당 키를 삭제한다")
     void syncQuestionViewCount() {
         //given
-        int cachedViewCount = 100;
+        Long cachedViewCount = 100L;
 
         UserEntity user = userRepository.save(UserEntityFixture.of());
         QuestionEntity question = questionRepository.save(createQuestion(user));

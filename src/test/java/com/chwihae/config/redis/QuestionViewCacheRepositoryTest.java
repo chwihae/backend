@@ -17,11 +17,11 @@ class QuestionViewCacheRepositoryTest extends AbstractIntegrationTest {
     void setAndGetQuestionView() {
         // given
         Long questionId = 1L;
-        Integer viewCount = 100;
+        Long viewCount = 100L;
 
         // when
         questionViewCacheRepository.setQuestionView(questionId, viewCount);
-        Optional<Integer> result = questionViewCacheRepository.getQuestionView(questionId);
+        Optional<Long> result = questionViewCacheRepository.getQuestionView(questionId);
 
         // then
         Assertions.assertThat(result)
@@ -35,12 +35,12 @@ class QuestionViewCacheRepositoryTest extends AbstractIntegrationTest {
     void incrementViewCount() {
         // given
         Long questionId = 2L;
-        int viewCount = 50;
+        Long viewCount = 50L;
         questionViewCacheRepository.setQuestionView(questionId, viewCount);
 
         // when
         questionViewCacheRepository.incrementViewCount(questionId);
-        Optional<Integer> result = questionViewCacheRepository.getQuestionView(questionId);
+        Optional<Long> result = questionViewCacheRepository.getQuestionView(questionId);
 
         // then
         Assertions.assertThat(result)
@@ -55,7 +55,7 @@ class QuestionViewCacheRepositoryTest extends AbstractIntegrationTest {
     void existsByKey() {
         // given
         Long questionId = 3L;
-        questionViewCacheRepository.setQuestionView(questionId, 30);
+        questionViewCacheRepository.setQuestionView(questionId, 30L);
 
         // when
         boolean result = questionViewCacheRepository.existsByKey(questionId);
@@ -70,8 +70,8 @@ class QuestionViewCacheRepositoryTest extends AbstractIntegrationTest {
         // given
         Long questionId1 = 4L;
         Long questionId2 = 5L;
-        questionViewCacheRepository.setQuestionView(questionId1, 40);
-        questionViewCacheRepository.setQuestionView(questionId2, 50);
+        questionViewCacheRepository.setQuestionView(questionId1, 40L);
+        questionViewCacheRepository.setQuestionView(questionId2, 50L);
 
         // when
         Set<String> keys = questionViewCacheRepository.findAllQuestionViewKeys();
@@ -87,7 +87,7 @@ class QuestionViewCacheRepositoryTest extends AbstractIntegrationTest {
         // given
         Long questionId = 6L;
         String key = questionViewCacheRepository.getKey(questionId);
-        questionViewCacheRepository.setQuestionView(questionId, 60);
+        questionViewCacheRepository.setQuestionView(questionId, 60L);
         assertTrue(questionViewCacheRepository.existsByKey(questionId));
 
         // when
@@ -105,7 +105,7 @@ class QuestionViewCacheRepositoryTest extends AbstractIntegrationTest {
         Long questionId = 7L;
 
         // when
-        Optional<Integer> result = questionViewCacheRepository.getQuestionView(questionId);
+        Optional<Long> result = questionViewCacheRepository.getQuestionView(questionId);
 
         // then
         Assertions.assertThat(result).isEmpty();

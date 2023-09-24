@@ -39,7 +39,7 @@ spring.config.activate.on-profile: local
 
 spring.jpa:
   hibernate:
-    ddl-auto: create
+    ddl-auto: none
   show-sql: true
   properties:
     hibernate:

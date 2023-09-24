@@ -40,11 +40,11 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String, Integer> questionViewRedisTemplate() {
-        RedisTemplate<String, Integer> redisTemplate = new RedisTemplate<>();
+    public RedisTemplate<String, Long> questionViewRedisTemplate() {
+        RedisTemplate<String, Long> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory());
         redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(Integer.class));
+        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(Long.class));
         return redisTemplate;
     }
 }

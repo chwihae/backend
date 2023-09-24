@@ -34,7 +34,7 @@ public class QuestionViewService {
                 .build());
     }
 
-    public Integer getViewCount(Long questionId) {
+    public Long getViewCount(Long questionId) {
         return questionViewCacheRepository.getQuestionView(questionId)
                 .orElseGet(() -> questionViewRepository.findViewCountByQuestionEntityId(questionId)
                         .map(viewCount -> {
@@ -50,7 +50,7 @@ public class QuestionViewService {
      */
     public void incrementViewCount(Long questionId) {
         if (!questionViewCacheRepository.existsByKey(questionId)) {
-            int viewCount = questionViewRepository.findViewCountByQuestionEntityId(questionId)
+            long viewCount = questionViewRepository.findViewCountByQuestionEntityId(questionId)
                     .orElseThrow(() -> new CustomException(QUESTION_NOT_FOUND));
             questionViewCacheRepository.setQuestionView(questionId, viewCount);
         }

@@ -140,7 +140,7 @@ public class QuestionRepositoryExtensionImpl extends QuerydslRepositorySupport i
                 .fetchCount();
     }
 
-    private JPQLQuery<Integer> viewCountSubQuery() {
+    private JPQLQuery<Long> viewCountSubQuery() {
         return JPAExpressions.select(questionViewEntity.viewCount)
                 .from(questionViewEntity)
                 .where(questionViewEntity.questionEntity.id.eq(questionEntity.id));
@@ -167,7 +167,7 @@ public class QuestionRepositoryExtensionImpl extends QuerydslRepositorySupport i
                         Optional.ofNullable(tuple.get(3, Long.class)).orElse(0L)))
                 .toList();
     }
-    
+
     private long countQuestions(QuestionStatus status, QuestionType type) {
         JPAQueryFactory queryFactory = new JPAQueryFactory(getEntityManager());
         BooleanBuilder conditions = baseConditions(status, type);
