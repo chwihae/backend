@@ -22,6 +22,7 @@ import java.util.Optional;
 import static com.chwihae.domain.bookmark.QBookmarkEntity.bookmarkEntity;
 import static com.chwihae.domain.comment.QCommentEntity.commentEntity;
 import static com.chwihae.domain.question.QQuestionEntity.questionEntity;
+import static com.chwihae.domain.question.QQuestionViewEntity.questionViewEntity;
 import static com.chwihae.domain.user.QUserEntity.userEntity;
 import static com.chwihae.domain.vote.QVoteEntity.voteEntity;
 
@@ -63,10 +64,23 @@ public class QuestionRepositoryExtensionImpl extends QuerydslRepositorySupport i
         return new PageImpl<>(questionListResponses, pageable, totalCount);
     }
 
+    private List<Tuple> fetchTuplesByTypeAndStatus(QuestionStatus status, QuestionType type, Pageable pageable) {
+        JPAQueryFactory queryFactory = new JPAQueryFactory(getEntityManager());
+        BooleanBuilder conditions = baseConditions(status, type);
+        return queryFactory
+                .select(questionEntity, viewCountSubQuery(), commentCountSubQuery(), voteCountSubQuery())
+                .from(questionEntity)
+                .where(conditions)
+                .orderBy(getOrderSpecifiers(pageable.getSort()))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+    }
+
     private List<Tuple> fetchMyTuplesByUserId(Long userId, Pageable pageable) {
         JPAQueryFactory queryFactory = new JPAQueryFactory(getEntityManager());
         return queryFactory
-                .select(questionEntity, commentCountSubQuery(), voteCountSubQuery())
+                .select(questionEntity, viewCountSubQuery(), commentCountSubQuery(), voteCountSubQuery())
                 .from(questionEntity)
                 .join(questionEntity.userEntity, userEntity)
                 .where(questionEntity.userEntity.id.eq(userId))
@@ -79,10 +93,23 @@ public class QuestionRepositoryExtensionImpl extends QuerydslRepositorySupport i
     private List<Tuple> fetchVotedTuplesByUserId(Long userId, Pageable pageable) {
         JPAQueryFactory queryFactory = new JPAQueryFactory(getEntityManager());
         return queryFactory
-                .select(questionEntity, commentCountSubQuery(), voteCountSubQuery())
+                .select(questionEntity, viewCountSubQuery(), commentCountSubQuery(), voteCountSubQuery())
                 .from(questionEntity)
                 .join(voteEntity).on(voteEntity.questionEntity.id.eq(questionEntity.id))
                 .where(voteEntity.userEntity.id.eq(userId))
+                .orderBy(getOrderSpecifiers(pageable.getSort()))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+    }
+
+    private List<Tuple> fetchBookmarkedTuplesByUserId(Long userId, Pageable pageable) {
+        JPAQueryFactory queryFactory = new JPAQueryFactory(getEntityManager());
+        return queryFactory
+                .select(questionEntity, viewCountSubQuery(), commentCountSubQuery(), voteCountSubQuery())
+                .from(questionEntity)
+                .join(bookmarkEntity).on(bookmarkEntity.questionEntity.id.eq(questionEntity.id))
+                .where(bookmarkEntity.userEntity.id.eq(userId))
                 .orderBy(getOrderSpecifiers(pageable.getSort()))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -97,19 +124,6 @@ public class QuestionRepositoryExtensionImpl extends QuerydslRepositorySupport i
                 .fetchCount();
     }
 
-    private List<Tuple> fetchBookmarkedTuplesByUserId(Long userId, Pageable pageable) {
-        JPAQueryFactory queryFactory = new JPAQueryFactory(getEntityManager());
-        return queryFactory
-                .select(questionEntity, commentCountSubQuery(), voteCountSubQuery())
-                .from(questionEntity)
-                .join(bookmarkEntity).on(bookmarkEntity.questionEntity.id.eq(questionEntity.id))
-                .where(bookmarkEntity.userEntity.id.eq(userId))
-                .orderBy(getOrderSpecifiers(pageable.getSort()))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
-    }
-
     private long countBookmarkedQuestionsByUserId(Long userId) {
         JPAQueryFactory queryFactory = new JPAQueryFactory(getEntityManager());
         return queryFactory.selectFrom(questionEntity)
@@ -120,25 +134,16 @@ public class QuestionRepositoryExtensionImpl extends QuerydslRepositorySupport i
 
     private long countQuestionsByUserId(Long userId) {
         JPAQueryFactory queryFactory = new JPAQueryFactory(getEntityManager());
-
         return queryFactory.selectFrom(questionEntity)
                 .join(questionEntity.userEntity, userEntity)
                 .where(userEntity.id.eq(userId))
                 .fetchCount();
     }
 
-    private List<Tuple> fetchTuplesByTypeAndStatus(QuestionStatus status, QuestionType type, Pageable pageable) {
-        JPAQueryFactory queryFactory = new JPAQueryFactory(getEntityManager());
-        BooleanBuilder conditions = baseConditions(status, type);
-
-        return queryFactory
-                .select(questionEntity, commentCountSubQuery(), voteCountSubQuery())
-                .from(questionEntity)
-                .where(conditions)
-                .orderBy(getOrderSpecifiers(pageable.getSort()))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
+    private JPQLQuery<Long> viewCountSubQuery() {
+        return JPAExpressions.select(questionViewEntity.count())
+                .from(questionViewEntity)
+                .where(questionViewEntity.questionEntity.id.eq(questionEntity.id));
     }
 
     private JPQLQuery<Long> commentCountSubQuery() {
@@ -155,7 +160,10 @@ public class QuestionRepositoryExtensionImpl extends QuerydslRepositorySupport i
 
     private List<QuestionListResponse> transformTuplesToDTOs(List<Tuple> results) {
         return results.stream()
-                .map(tuple -> QuestionListResponse.of(tuple.get(questionEntity), tuple.get(1, Long.class), tuple.get(2, Long.class)))
+                .map(tuple -> QuestionListResponse.of(tuple.get(questionEntity),
+                        tuple.get(1, Integer.class),
+                        tuple.get(2, Integer.class),
+                        tuple.get(3, Integer.class)))
                 .toList();
     }
 

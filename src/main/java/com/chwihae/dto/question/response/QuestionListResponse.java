@@ -17,18 +17,20 @@ public class QuestionListResponse {
     private String title;
     private QuestionType type;
     private QuestionStatus status;
-    private long viewCount;
-    private long commentCount;
-    private long bookmarkCount;
+    private int viewCount;
+    private int commentCount;
+    private int bookmarkCount;
 
     public static QuestionListResponse of(QuestionEntity questionEntity,
-                                          long commentCount,
-                                          long bookmarkCount) {
+                                          int voteCount,
+                                          int commentCount,
+                                          int bookmarkCount) {
         return QuestionListResponse.builder()
                 .id(questionEntity.getId())
                 .title(questionEntity.getTitle())
                 .status(questionEntity.getStatus())
                 .type(questionEntity.getType())
+                .voteCount(voteCount)
                 .commentCount(commentCount)
                 .bookmarkCount(bookmarkCount)
                 .build();
@@ -39,12 +41,14 @@ public class QuestionListResponse {
                                  String title,
                                  QuestionType type,
                                  QuestionStatus status,
-                                 long commentCount,
-                                 long bookmarkCount) {
+                                 int voteCount,
+                                 int commentCount,
+                                 int bookmarkCount) {
         this.id = id;
         this.title = title;
         this.type = type;
         this.status = status;
+        this.viewCount = voteCount;
         this.commentCount = commentCount;
         this.bookmarkCount = bookmarkCount;
     }
