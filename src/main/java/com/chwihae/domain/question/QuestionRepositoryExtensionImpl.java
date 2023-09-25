@@ -96,7 +96,7 @@ public class QuestionRepositoryExtensionImpl extends QuerydslRepositorySupport i
                 .select(questionEntity, viewCountSubQuery(), commentCountSubQuery(), voteCountSubQuery())
                 .from(questionEntity)
                 .join(voteEntity).on(voteEntity.questionEntity.id.eq(questionEntity.id))
-                .where(voteEntity.userEntity.id.eq(userId))
+                .where(voteEntity.valid.eq(true).and(voteEntity.userEntity.id.eq(userId)))
                 .orderBy(getOrderSpecifiers(pageable.getSort()))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
