@@ -185,6 +185,20 @@ class CommentServiceTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @DisplayName("존재하지 않는 댓글을 수정하려고 하면 예외가 발생한다")
+    void modifyComment_whenCommentNotExists_throwException() throws Exception {
+        //given
+        long notExistingCommentId = 0L;
+        long notExistingUserId = 0L;
+
+        //when//then
+        Assertions.assertThatThrownBy(() -> commentService.modifyComment(notExistingCommentId, notExistingUserId, "content"))
+                .isInstanceOf(CustomException.class)
+                .extracting("error")
+                .isEqualTo(CustomExceptionError.COMMENT_NOT_FOUND);
+    }
+
+    @Test
     @DisplayName("댓글 작성자가 아닌 사용자가 댓글 내용을 수정하면 예외가 발생한다")
     void modifyComment_byOther_throwsException() throws Exception {
         //given
@@ -219,6 +233,20 @@ class CommentServiceTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @DisplayName("존재하지 않는 댓글을 삭제하려고 하면 예외가 발생한다")
+    void deleteComment_whenCommentNotExists_throwException() throws Exception {
+        //given
+        long notExistingCommentId = 0L;
+        long notExistingUserId = 0L;
+
+        //when//then
+        Assertions.assertThatThrownBy(() -> commentService.deleteComment(notExistingCommentId, notExistingUserId))
+                .isInstanceOf(CustomException.class)
+                .extracting("error")
+                .isEqualTo(CustomExceptionError.COMMENT_NOT_FOUND);
+    }
+
+    @Test
     @DisplayName("댓글 작성자가 아닌 사용자가 댓글 내용을 삭제하려고 하면 예외가 발생한다")
     void deleteComment_byOther_throwsException() throws Exception {
         //given
@@ -234,7 +262,7 @@ class CommentServiceTest extends AbstractIntegrationTest {
                 .extracting("error")
                 .isEqualTo(CustomExceptionError.FORBIDDEN);
     }
-    
+
     public CommenterSequenceEntity createCommenterSequence(QuestionEntity questionEntity) {
         return CommenterSequenceEntity.builder()
                 .questionEntity(questionEntity)

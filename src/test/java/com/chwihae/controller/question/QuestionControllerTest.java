@@ -15,6 +15,8 @@ import com.chwihae.domain.vote.VoteEntity;
 import com.chwihae.dto.comment.request.QuestionCommentRequest;
 import com.chwihae.dto.option.request.OptionCreateRequest;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
+import com.chwihae.infra.fixture.CommentEntityFixture;
+import com.chwihae.infra.fixture.QuestionEntityFixture;
 import com.chwihae.infra.fixture.QuestionViewFixture;
 import com.chwihae.infra.fixture.UserEntityFixture;
 import com.chwihae.infra.support.WithTestUser;
@@ -37,8 +39,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -917,6 +918,153 @@ class QuestionControllerTest extends AbstractMockMvcTest {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    @DisplayName("PUT /api/v1/questions/{questionId}/comments/{commentId} - 성공 (댓글 작성자는 댓글을 수정할 수 있다)")
+    @WithTestUser("commenter@email.com")
+    void modifyComment_returnSuccessCode() throws Exception {
+        //given
+        UserEntity user = userRepository.findByEmail("commenter@email.com").get();
+        QuestionEntity question = questionRepository.save(QuestionEntityFixture.of(user));
+        CommenterAliasEntity commenterAlias = commenterAliasRepository.save(createAlias("alias", question, user));
+        CommentEntity comment = commentRepository.save(CommentEntityFixture.of(user, question, commenterAlias));
+
+        String modifiedContent = "modified content";
+        QuestionCommentRequest request = QuestionCommentRequest.builder()
+                .content(modifiedContent)
+                .build();
+
+        //when //then
+        mockMvc.perform(
+                        put("/api/v1/questions/{questionId}/comments/{commentId}", question.getId(), comment.getId())
+                                .contentType(APPLICATION_JSON)
+                                .content(body(request))
+                )
+                .andExpect(status().isOk());
+        Assertions.assertThat(commentRepository.findById(comment.getId()).get().getContent()).isEqualTo(modifiedContent);
+    }
+
+    @Test
+    @DisplayName("PUT /api/v1/questions/{questionId}/comments/{commentId} - 실패 (댓글 작성자가 아니면 댓글을 수정할 수 없다)")
+    @WithTestUser
+    void modifyComment_returnForbiddenCode() throws Exception {
+        //given
+        UserEntity user = userRepository.save(UserEntityFixture.of());
+        QuestionEntity question = questionRepository.save(QuestionEntityFixture.of(user));
+        CommenterAliasEntity commenterAlias = commenterAliasRepository.save(createAlias("alias", question, user));
+        CommentEntity comment = commentRepository.save(CommentEntityFixture.of(user, question, commenterAlias));
+
+        String modifiedContent = "modified content";
+        QuestionCommentRequest request = QuestionCommentRequest.builder()
+                .content(modifiedContent)
+                .build();
+
+        //when //then
+        mockMvc.perform(
+                        put("/api/v1/questions/{questionId}/comments/{commentId}", question.getId(), comment.getId())
+                                .contentType(APPLICATION_JSON)
+                                .content(body(request))
+                )
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.code").value(FORBIDDEN.code()));
+    }
+
+    @Test
+    @DisplayName("PUT /api/v1/questions/{questionId}/comments/{commentId} - 실패 (댓글 수정 파라미터가 올바르지 않은 경우)")
+    @WithTestUser
+    void modifyComment_withInvalidParameter_returnBadRequestCode() throws Exception {
+        //given
+        UserEntity user = userRepository.save(UserEntityFixture.of());
+        QuestionEntity question = questionRepository.save(QuestionEntityFixture.of(user));
+        CommenterAliasEntity commenterAlias = commenterAliasRepository.save(createAlias("alias", question, user));
+        CommentEntity comment = commentRepository.save(CommentEntityFixture.of(user, question, commenterAlias));
+
+        QuestionCommentRequest request = QuestionCommentRequest.builder()
+                .content("")
+                .build();
+
+        //when //then
+        mockMvc.perform(
+                        put("/api/v1/questions/{questionId}/comments/{commentId}", question.getId(), comment.getId())
+                                .contentType(APPLICATION_JSON)
+                                .content(body(request))
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value(INVALID_ARGUMENT.code()));
+    }
+
+    @Test
+    @DisplayName("PUT /api/v1/questions/{questionId}/comments/{commentId} - 실패 (댓글이 존재하지 않는 경우)")
+    @WithTestUser
+    void modifyComment_whenCommentNotExists_returnBadRequestCode() throws Exception {
+        //given
+        long notExistingQuestionId = 0L;
+        long notExistingCommentId = 0L;
+
+        QuestionCommentRequest request = QuestionCommentRequest.builder()
+                .content("content")
+                .build();
+
+        //when //then
+        mockMvc.perform(
+                        put("/api/v1/questions/{questionId}/comments/{commentId}", notExistingQuestionId, notExistingCommentId)
+                                .contentType(APPLICATION_JSON)
+                                .content(body(request))
+                )
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value(COMMENT_NOT_FOUND.code()));
+    }
+
+    @Test
+    @DisplayName("DELETE /api/v1/questions/{questionId}/comments/{commentId} - 성공 (댓글 작성자는 댓글을 삭제할 수 있다)")
+    @WithTestUser("commenter@email.com")
+    void deleteComment_returnSuccessCode() throws Exception {
+        //given
+        UserEntity user = userRepository.findByEmail("commenter@email.com").get();
+        QuestionEntity question = questionRepository.save(QuestionEntityFixture.of(user));
+        CommenterAliasEntity commenterAlias = commenterAliasRepository.save(createAlias("alias", question, user));
+        CommentEntity comment = commentRepository.save(CommentEntityFixture.of(user, question, commenterAlias));
+
+        //when //then
+        mockMvc.perform(
+                        delete("/api/v1/questions/{questionId}/comments/{commentId}", question.getId(), comment.getId())
+                )
+                .andExpect(status().isOk());
+        Assertions.assertThat(commentRepository.findAll()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("DELETE /api/v1/questions/{questionId}/comments/{commentId} - 실패 (댓글 작성자가 아니면 댓글을 삭제할 수 없다)")
+    @WithTestUser
+    void deleteComment_returnForbiddenCode() throws Exception {
+        //given
+        UserEntity user = userRepository.save(UserEntityFixture.of());
+        QuestionEntity question = questionRepository.save(QuestionEntityFixture.of(user));
+        CommenterAliasEntity commenterAlias = commenterAliasRepository.save(createAlias("alias", question, user));
+        CommentEntity comment = commentRepository.save(CommentEntityFixture.of(user, question, commenterAlias));
+
+        //when //then
+        mockMvc.perform(
+                        delete("/api/v1/questions/{questionId}/comments/{commentId}", question.getId(), comment.getId())
+                )
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.code").value(FORBIDDEN.code()));
+    }
+
+    @Test
+    @DisplayName("DELETE /api/v1/questions/{questionId}/comments/{commentId} - 실패 (댓글이 존재하지 않는 경우)")
+    @WithTestUser
+    void deleteComment_whenCommentNotExists_returnBadRequestCode() throws Exception {
+        //given
+        long notExistingQuestionId = 0L;
+        long notExistingCommentId = 0L;
+
+        //when //then
+        mockMvc.perform(
+                        delete("/api/v1/questions/{questionId}/comments/{commentId}", notExistingQuestionId, notExistingCommentId)
+                )
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value(COMMENT_NOT_FOUND.code()));
+    }
 
     @Test
     @DisplayName("GET /api/v1/questions/{questionId}/comments - 실패 (존재하지 않는 질문 아이디)")

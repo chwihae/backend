@@ -45,7 +45,7 @@ public class CommentService {
     @Transactional
     public void modifyComment(Long commentId, Long userId, String content) {
         CommentEntity comment = findCommentEntityOrException(commentId);
-        ensureUserIsCommentOwner(comment, userId);
+        ensureUserIsCommenter(comment, userId);
         comment.update(content);
         commentRepository.saveAndFlush(comment);
     }
@@ -53,7 +53,7 @@ public class CommentService {
     @Transactional
     public void deleteComment(Long commentId, Long userId) {
         CommentEntity comment = findCommentEntityOrException(commentId);
-        ensureUserIsCommentOwner(comment, userId);
+        ensureUserIsCommenter(comment, userId);
         commentRepository.delete(comment);
     }
 
@@ -106,13 +106,13 @@ public class CommentService {
         return questionRepository.findById(questionId).orElseThrow(() -> new CustomException(QUESTION_NOT_FOUND));
     }
 
-    private void ensureUserIsCommentOwner(CommentEntity comment, Long userId) {
+    private void ensureUserIsCommenter(CommentEntity comment, Long userId) {
         if (!comment.isCreatedBy(userId)) {
             throw new CustomException(FORBIDDEN, "댓글 작성자가 아닙니다");
         }
     }
 
     private CommentEntity findCommentEntityOrException(Long commentId) {
-        return commentRepository.findById(commentId).orElseThrow(() -> new CustomException(QUESTION_NOT_FOUND));
+        return commentRepository.findById(commentId).orElseThrow(() -> new CustomException(COMMENT_NOT_FOUND));
     }
 }
