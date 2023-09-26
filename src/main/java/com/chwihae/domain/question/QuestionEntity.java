@@ -15,7 +15,7 @@ import java.util.Objects;
 
 import static com.chwihae.domain.question.QuestionStatus.COMPLETED;
 import static com.chwihae.domain.question.QuestionStatus.IN_PROGRESS;
-import static com.chwihae.utils.TimeZone.KST;
+import static com.chwihae.utils.TimeUtils.KST;
 import static jakarta.persistence.EnumType.STRING;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
-import static com.chwihae.utils.TimeZone.KST;
+import static com.chwihae.utils.TimeUtils.KST;
 
 @Slf4j
 @RequiredArgsConstructor

@@ -46,8 +46,7 @@ public class QuestionService {
     private final BookmarkService bookmarkService;
     private final QuestionViewService questionViewService;
     private final ApplicationEventPublisher eventPublisher;
-
-    // TODO test
+    
     public Page<QuestionListResponse> getQuestionsByTypeAndStatus(QuestionType type, QuestionStatus status, Pageable pageable) {
         Page<QuestionListResponse> page = questionRepository.findByTypeAndStatusWithCounts(status, type, pageable); // 1. Find page from DB
         List<QuestionViewResponse> allViewCounts = findAllQuestionViewCounts(page.getContent()); // 2. Get question view from cache and DB

@@ -17,9 +17,8 @@ public interface QuestionViewRepository extends JpaRepository<QuestionViewEntity
             "WHERE qve.questionEntity.id = :questionId")
     Optional<Long> findViewCountByQuestionEntityId(@Param("questionId") Long questionId);
 
-    // TODO test
     @Query("SELECT qve " +
             "FROM QuestionViewEntity qve " +
             "WHERE qve.questionEntity.id IN :questionIds")
-    List<QuestionViewEntity> findViewCountsByQuestionEntityIds(@Param("questionIds") List<Long> questionIds);
+    List<QuestionViewEntity> findByQuestionEntityIds(@Param("questionIds") List<Long> questionIds);
 }

@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.chwihae.exception.CustomExceptionError.*;
-import static com.chwihae.utils.TimeZone.KST;
+import static com.chwihae.utils.TimeUtils.KST;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor

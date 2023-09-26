@@ -1,15 +1,19 @@
 package com.chwihae.controller.user;
 
+import com.chwihae.domain.bookmark.BookmarkEntity;
+import com.chwihae.domain.option.OptionEntity;
 import com.chwihae.domain.question.QuestionEntity;
 import com.chwihae.domain.question.QuestionType;
 import com.chwihae.domain.question.QuestionViewEntity;
 import com.chwihae.domain.user.UserEntity;
-import com.chwihae.infra.fixture.QuestionEntityFixture;
-import com.chwihae.infra.fixture.QuestionViewFixture;
+import com.chwihae.dto.user.UserQuestionFilterType;
+import com.chwihae.infra.fixture.*;
 import com.chwihae.infra.support.WithTestUser;
 import com.chwihae.infra.test.AbstractMockMvcTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +21,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 
-import static com.chwihae.dto.user.UserQuestionFilterType.ME;
 import static com.chwihae.exception.CustomExceptionError.INVALID_ARGUMENT;
 import static com.chwihae.exception.CustomExceptionError.INVALID_TOKEN;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
@@ -52,10 +55,11 @@ class UserControllerTest extends AbstractMockMvcTest {
                 .andExpect(jsonPath("$.code").value(INVALID_TOKEN.code()));
     }
 
-    @Test
-    @DisplayName("GET /api/v1/users/questions?type={type} - 성공(type = ME)")
+    @CsvSource({"ME,4", "VOTED,1", "BOOKMARKED,2"})
+    @ParameterizedTest
+    @DisplayName("GET /api/v1/users/questions?type={type} - 성공")
     @WithTestUser("questioner@email.com")
-    void getUserQuestions_returnsSuccessCode() throws Exception {
+    void getUserQuestions_returnsSuccessCode(UserQuestionFilterType type, int expected) throws Exception {
         //given
         final int PAGE_SIZE = 5;
         final int PAGE_NUMBER = 0;
@@ -74,16 +78,23 @@ class UserControllerTest extends AbstractMockMvcTest {
         QuestionViewEntity view4 = QuestionViewFixture.of(question4);
         questionViewRepository.saveAll(List.of(view1, view2, view3, view4));
 
+        OptionEntity option = optionRepository.save(OptionEntityFixture.of(question1));
+        voteRepository.save(VoteEntityFixture.of(option, userEntity));
+
+        BookmarkEntity bookmark1 = BookmarkFixture.of(question1, userEntity);
+        BookmarkEntity bookmark2 = BookmarkFixture.of(question1, userEntity);
+        bookmarkRepository.saveAll(List.of(bookmark1, bookmark2));
+
         //when //then
         mockMvc.perform(
                         get("/api/v1/users/questions")
-                                .queryParam("type", ME.name())
+                                .queryParam("type", type.name())
                                 .queryParam("page", String.valueOf(PAGE_NUMBER))
                                 .queryParam("size", String.valueOf(PAGE_SIZE))
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.content.size()").value(4));
+                .andExpect(jsonPath("$.data.content.size()").value(expected));
     }
 
     @Test

@@ -3,7 +3,6 @@ package com.chwihae.service.user.question;
 import com.chwihae.domain.question.QuestionRepository;
 import com.chwihae.dto.question.response.QuestionListResponse;
 import com.chwihae.infra.test.AbstractMockTest;
-import com.chwihae.service.question.QuestionViewService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,7 +16,6 @@ import org.springframework.data.domain.Pageable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 class UserQuestionsFilterStrategyTest extends AbstractMockTest {
@@ -34,17 +32,12 @@ class UserQuestionsFilterStrategyTest extends AbstractMockTest {
     @Mock
     QuestionRepository questionRepository;
 
-    @Mock
-    QuestionViewService questionViewService;
-
     @Test
     @DisplayName("사용자가 북마크한 질문 리스트를 페이지네이션으로 조회한다")
     void bookmarkedQuestionsFilter_filter() throws Exception {
         // given
         Long userId = 1L;
         Pageable pageable = PageRequest.of(0, 10);
-
-        when(questionViewService.getViewCount(any())).thenReturn(10L);
 
         List<QuestionListResponse> bookmarkedQuestions = new ArrayList<>();
         for (int i = 1; i <= 10; i++) {
@@ -72,8 +65,6 @@ class UserQuestionsFilterStrategyTest extends AbstractMockTest {
         Long userId = 1L;
         Pageable pageable = PageRequest.of(0, 10);
 
-        when(questionViewService.getViewCount(any())).thenReturn(10L);
-
         List<QuestionListResponse> userQuestions = new ArrayList<>();
         for (int i = 1; i <= 10; i++) {
             QuestionListResponse question = new QuestionListResponse();
@@ -98,8 +89,6 @@ class UserQuestionsFilterStrategyTest extends AbstractMockTest {
         // given
         Long userId = 1L;
         Pageable pageable = PageRequest.of(0, 10);
-
-        when(questionViewService.getViewCount(any())).thenReturn(10L);
 
         List<QuestionListResponse> votedQuestions = new ArrayList<>();
         for (int i = 1; i <= 10; i++) {
