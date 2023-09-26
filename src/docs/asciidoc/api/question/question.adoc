@@ -20,3 +20,8 @@ include::question-get.adoc[]
 ==== 질문 옵션 조회
 
 include::question-options.adoc[]
+
+[[question-delete]]
+==== 질문 삭제
+
+include::question-delete.adoc[]
