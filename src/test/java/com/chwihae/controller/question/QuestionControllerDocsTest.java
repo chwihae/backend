@@ -444,7 +444,72 @@ class QuestionControllerDocsTest extends AbstractRestDocsTest {
                                 parameterWithName("questionId").description("[Required] 질문 아이디 (타입: 숫자)")
                         ),
                         requestFields(
-                                fieldWithPath("content").type(JsonFieldType.STRING).description("답변 내용(빈 문자열 불가능)")
+                                fieldWithPath("content").type(JsonFieldType.STRING).description("댓글 내용(빈 문자열 불가능)")
+                        ),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.NUMBER).description("코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("메시지"),
+                                fieldWithPath("data").type(JsonFieldType.NULL).description("응답 데이터")
+                        )
+                ));
+    }
+
+    @Test
+    @DisplayName("댓글 수정 API")
+    void modifyComment_restDocs() throws Exception {
+        //given
+        String modifiedContent = "modified content";
+        QuestionCommentRequest request = QuestionCommentRequest.builder()
+                .content(modifiedContent)
+                .build();
+
+        //when //then
+        mockMvc.perform(
+                        put("/api/v1/questions/{questionId}/comments/{commentId}", 53L, 100L)
+                                .header(AUTHORIZATION, token(1L))
+                                .contentType(APPLICATION_JSON)
+                                .content(body(request))
+                )
+                .andExpect(status().isOk())
+                .andDo(document("comment-modify",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestHeaders(
+                                headerWithName(AUTHORIZATION).description("[Required] 인증 토큰 (타입: 문자열)")
+                        ),
+                        pathParameters(
+                                parameterWithName("questionId").description("[Required] 질문 아이디 (타입: 숫자)"),
+                                parameterWithName("commentId").description("[Required] 댓글 아이디 (타입: 숫자)")
+                        ),
+                        requestFields(
+                                fieldWithPath("content").type(JsonFieldType.STRING).description("댓글 내용(빈 문자열 불가능)")
+                        ),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.NUMBER).description("코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("메시지"),
+                                fieldWithPath("data").type(JsonFieldType.NULL).description("응답 데이터")
+                        )
+                ));
+    }
+
+    @Test
+    @DisplayName("댓글 삭제 API")
+    void deleteComment_restDocs() throws Exception {
+        //when //then
+        mockMvc.perform(
+                        delete("/api/v1/questions/{questionId}/comments/{commentId}", 53L, 100L)
+                                .header(AUTHORIZATION, token(1L))
+                )
+                .andExpect(status().isOk())
+                .andDo(document("comment-delete",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestHeaders(
+                                headerWithName(AUTHORIZATION).description("[Required] 인증 토큰 (타입: 문자열)")
+                        ),
+                        pathParameters(
+                                parameterWithName("questionId").description("[Required] 질문 아이디 (타입: 숫자)"),
+                                parameterWithName("commentId").description("[Required] 댓글 아이디 (타입: 숫자)")
                         ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER).description("코드"),
