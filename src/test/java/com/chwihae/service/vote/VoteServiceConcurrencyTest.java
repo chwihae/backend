@@ -2,19 +2,19 @@ package com.chwihae.service.vote;
 
 import com.chwihae.domain.option.OptionEntity;
 import com.chwihae.domain.question.QuestionEntity;
-import com.chwihae.domain.question.QuestionType;
 import com.chwihae.domain.user.UserEntity;
-import com.chwihae.domain.vote.VoteEntity;
 import com.chwihae.exception.CustomException;
-import com.chwihae.infra.test.AbstractConcurrencyTest;
+import com.chwihae.infra.fixture.OptionEntityFixture;
+import com.chwihae.infra.fixture.QuestionEntityFixture;
 import com.chwihae.infra.fixture.UserEntityFixture;
+import com.chwihae.infra.fixture.VoteEntityFixture;
+import com.chwihae.infra.test.AbstractConcurrencyTest;
 import com.chwihae.utils.ClassUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -30,41 +30,37 @@ class VoteServiceConcurrencyTest extends AbstractConcurrencyTest {
 
     @AfterEach
     void tearDown() {
+        executorService.shutdown();
         voteRepository.physicallyDeleteAll();
         optionRepository.physicallyDeleteAll();
         questionRepository.physicallyDeleteAll();
         userRepository.physicallyDeleteAll();
-        executorService.shutdown();
     }
 
     @Test
-    @DisplayName("투표를 동시에 요청해도 투표는 하나만 된다")
+    @DisplayName("사용자가 같은 질문에 대해서 여러 옵션에 동시에  투표를 요청해도 투표는 하나만 생성하고, 나머지 요청은 예외를 던진다")
     void createVote_concurrency() throws Exception {
         //given
-        final int REQUEST_COUNT = 10;
-        final int OPTION_SIZE = 5;
-        List<Callable<Void>> createVoteTasks = new ArrayList<>();
+        final int TOTAL_REQUEST_COUNT = 10;
+        final int TOTAL_OPTION_SIZE = 5;
 
         UserEntity questioner = UserEntityFixture.of();
         UserEntity voter = UserEntityFixture.of();
         userRepository.saveAll(List.of(questioner, voter));
-        QuestionEntity questionEntity = questionRepository.save(createQuestion(questioner));
+        QuestionEntity questionEntity = questionRepository.save(QuestionEntityFixture.of(questioner));
 
         List<OptionEntity> optionEntities = new ArrayList<>();
-        IntStream.of(0, OPTION_SIZE).forEach(optionNumber -> {
-            optionEntities.add(createOption(questionEntity));
+        IntStream.of(0, TOTAL_OPTION_SIZE).forEach(optionNumber -> {
+            optionEntities.add(OptionEntityFixture.of(questionEntity));
         });
         optionRepository.saveAll(optionEntities);
 
-        IntStream.rangeClosed(1, REQUEST_COUNT).forEach(req -> {
-            int optionId = new Random().nextInt(optionEntities.size());
-            OptionEntity optionEntity = optionEntities.get(optionId);
-            createVoteTasks.add(() -> {
-                voteService.createVote(questionEntity.getId(), optionEntity.getId(), voter.getId());
-                return null;
-            });
+        List<Callable<Void>> createVoteTasks = generateConcurrentTasks(TOTAL_REQUEST_COUNT, () -> {
+            int randomOptionId = new Random().nextInt(optionEntities.size());
+            OptionEntity optionEntity = optionEntities.get(randomOptionId);
+            voteService.createVote(questionEntity.getId(), optionEntity.getId(), voter.getId());
+            return null;
         });
-
 
         //when
         List<Future<Void>> createVoteFutures = executorService.invokeAll(createVoteTasks);
@@ -84,28 +80,25 @@ class VoteServiceConcurrencyTest extends AbstractConcurrencyTest {
         }
 
         Assertions.assertThat(voteRepository.findAll()).hasSize(1);
-        Assertions.assertThat(exceptionCount).isEqualTo(REQUEST_COUNT - 1);
+        Assertions.assertThat(exceptionCount).isEqualTo(TOTAL_REQUEST_COUNT - 1);
     }
 
     @Test
-    @DisplayName("투표를 동시에 취소 요청해도 한 번 삭제 처리된다")
+    @DisplayName("사용자가 투표했던 옵션을 동시에 취소 요청해도 한 번 처리되고, 나머지 요청은 예외를 던진다")
     void deleteVote_concurrency() throws Exception {
         //given
-        final int REQUEST_COUNT = 10;
-        List<Callable<Void>> deleteVoteTasks = new ArrayList<>();
+        final int TOTAL_REQUEST_COUNT = 10;
 
         UserEntity questioner = UserEntityFixture.of();
         UserEntity voter = UserEntityFixture.of();
         userRepository.saveAll(List.of(questioner, voter));
-        QuestionEntity question = questionRepository.save(createQuestion(questioner));
-        OptionEntity option = optionRepository.save(createOption(question));
-        voteRepository.save(createVote(option, voter));
+        QuestionEntity question = questionRepository.save(QuestionEntityFixture.of(questioner));
+        OptionEntity option = optionRepository.save(OptionEntityFixture.of(question));
+        voteRepository.save(VoteEntityFixture.of(option, voter));
 
-        IntStream.rangeClosed(1, REQUEST_COUNT).forEach(req -> {
-            deleteVoteTasks.add(() -> {
-                voteService.deleteVote(question.getId(), option.getId(), voter.getId());
-                return null;
-            });
+        List<Callable<Void>> deleteVoteTasks = generateConcurrentTasks(TOTAL_REQUEST_COUNT, () -> {
+            voteService.deleteVote(question.getId(), option.getId(), voter.getId());
+            return null;
         });
 
         //when
@@ -125,32 +118,7 @@ class VoteServiceConcurrencyTest extends AbstractConcurrencyTest {
             }
         }
 
-        Assertions.assertThat(exceptionCount).isEqualTo(REQUEST_COUNT - 1);
+        Assertions.assertThat(exceptionCount).isEqualTo(TOTAL_REQUEST_COUNT - 1);
         Assertions.assertThat(voteRepository.findAll()).isEmpty();
-    }
-
-    public QuestionEntity createQuestion(UserEntity userEntity) {
-        return QuestionEntity.builder()
-                .userEntity(userEntity)
-                .title("title")
-                .content("content")
-                .closeAt(LocalDateTime.of(2023, 11, 11, 0, 0))
-                .type(QuestionType.SPEC)
-                .build();
-    }
-
-    public OptionEntity createOption(QuestionEntity questionEntity) {
-        return OptionEntity.builder()
-                .questionEntity(questionEntity)
-                .name("name")
-                .build();
-    }
-
-    public VoteEntity createVote(OptionEntity optionEntity, UserEntity userEntity) {
-        return VoteEntity.builder()
-                .questionEntity(optionEntity.getQuestionEntity())
-                .optionEntity(optionEntity)
-                .userEntity(userEntity)
-                .build();
     }
 }
