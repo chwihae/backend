@@ -93,11 +93,11 @@ tasks.named('test') {
 
 jar.enabled = false
 
-// asciidoctor start
 test {
     outputs.dir snippetsDir
 }
 
+// asciidoctor start
 asciidoctor {
     inputs.dir snippetsDir
     configurations 'asciidoctorExt'
@@ -111,7 +111,9 @@ asciidoctor {
 asciidoctor.doFirst {
     delete file("src/main/resources/static/docs")
 }
+// asciidoctor end
 
+// bootJar start
 bootJar {
     dependsOn asciidoctor
     copy {
@@ -119,7 +121,7 @@ bootJar {
         into "src/main/resources/static/docs"
     }
 }
-// asciidoctor end
+// bootJar end
 
 // querydsl start
 clean {
