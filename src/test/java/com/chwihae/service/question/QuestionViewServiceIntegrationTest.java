@@ -1,32 +1,33 @@
 package com.chwihae.service.question;
 
 import com.chwihae.domain.question.QuestionEntity;
-import com.chwihae.domain.question.QuestionType;
+import com.chwihae.domain.question.QuestionViewEntity;
 import com.chwihae.domain.user.UserEntity;
+import com.chwihae.dto.question.response.QuestionViewResponse;
 import com.chwihae.exception.CustomException;
+import com.chwihae.infra.fixture.QuestionEntityFixture;
+import com.chwihae.infra.fixture.QuestionViewFixture;
 import com.chwihae.infra.fixture.UserEntityFixture;
 import com.chwihae.infra.test.AbstractIntegrationTest;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 
 import static com.chwihae.exception.CustomExceptionError.QUESTION_NOT_FOUND;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.groups.Tuple.tuple;
 
 @Transactional
 class QuestionViewServiceIntegrationTest extends AbstractIntegrationTest {
 
     @AfterEach
     void tearDown() {
-        Set<String> keys = userContextRedisTemplate.keys("*");
-        if (keys != null && !keys.isEmpty()) {
-            userContextRedisTemplate.delete(keys);
-        }
+        questionViewCacheRepository.clear();
     }
 
     @Test
@@ -34,7 +35,7 @@ class QuestionViewServiceIntegrationTest extends AbstractIntegrationTest {
     void createQuestionView() {
         //given
         UserEntity user = userRepository.save(UserEntityFixture.of());
-        QuestionEntity question = questionRepository.save(createQuestion(user));
+        QuestionEntity question = questionRepository.save(QuestionEntityFixture.of(user));
 
         //when
         questionViewService.createQuestionView(question);
@@ -50,7 +51,7 @@ class QuestionViewServiceIntegrationTest extends AbstractIntegrationTest {
         Long questionId = 1L;
         Long expectedViewCount = 100L;
 
-        questionViewCacheRepository.setQuestionView(questionId, expectedViewCount);
+        questionViewCacheRepository.setViewCount(questionId, expectedViewCount);
 
         //when
         Long viewCount = questionViewService.getViewCount(questionId);
@@ -76,15 +77,15 @@ class QuestionViewServiceIntegrationTest extends AbstractIntegrationTest {
     void incrementViewCount() {
         //given
         UserEntity user = userRepository.save(UserEntityFixture.of());
-        QuestionEntity question = questionRepository.save(createQuestion(user));
+        QuestionEntity question = questionRepository.save(QuestionEntityFixture.of(user));
         questionViewService.createQuestionView(question);
-        questionViewCacheRepository.setQuestionView(question.getId(), 0L);
+        questionViewCacheRepository.setViewCount(question.getId(), 0L);
 
         //when
         questionViewService.incrementViewCount(question.getId());
 
         //then
-        assertThat(questionViewCacheRepository.getQuestionView(question.getId()))
+        assertThat(questionViewCacheRepository.getViewCount(question.getId()))
                 .isPresent()
                 .hasValueSatisfying(it -> {
                     assertThat(it).isOne();
@@ -96,14 +97,14 @@ class QuestionViewServiceIntegrationTest extends AbstractIntegrationTest {
     void incrementViewCount_whenQuestionIdNotCached() {
         //given
         UserEntity user = userRepository.save(UserEntityFixture.of());
-        QuestionEntity question = questionRepository.save(createQuestion(user));
+        QuestionEntity question = questionRepository.save(QuestionEntityFixture.of(user));
         questionViewService.createQuestionView(question);
 
         //when
         questionViewService.incrementViewCount(question.getId());
 
         //then
-        assertThat(questionViewCacheRepository.getQuestionView(question.getId()))
+        assertThat(questionViewCacheRepository.getViewCount(question.getId()))
                 .isPresent()
                 .hasValueSatisfying(it -> {
                     assertThat(it).isOne();
@@ -117,25 +118,54 @@ class QuestionViewServiceIntegrationTest extends AbstractIntegrationTest {
         Long cachedViewCount = 100L;
 
         UserEntity user = userRepository.save(UserEntityFixture.of());
-        QuestionEntity question = questionRepository.save(createQuestion(user));
+        QuestionEntity question = questionRepository.save(QuestionEntityFixture.of(user));
         questionViewService.createQuestionView(question);
-        questionViewCacheRepository.setQuestionView(question.getId(), cachedViewCount);
+        questionViewCacheRepository.setViewCount(question.getId(), cachedViewCount);
 
         //when
         questionViewService.syncQuestionViewCount();
 
         //then
         assertThat(questionViewRepository.findByQuestionEntityId(question.getId()).get().getViewCount()).isEqualTo(cachedViewCount);
-        assertThat(questionViewCacheRepository.getQuestionView(question.getId())).isEmpty();
+        assertThat(questionViewCacheRepository.getViewCount(question.getId())).isEmpty();
     }
 
-    public QuestionEntity createQuestion(UserEntity userEntity) {
-        return QuestionEntity.builder()
-                .userEntity(userEntity)
-                .title("title")
-                .content("content")
-                .closeAt(LocalDateTime.of(2023, 11, 11, 0, 0))
-                .type(QuestionType.ETC)
-                .build();
+    @Test
+    @DisplayName("캐싱 되어있는 질문 아이디 리스트가 없으면 질문 조회 엔티티 리스트를 반환받는다")
+    void findViewCountsByQuestionEntityIds_returnList() throws Exception {
+        //given
+        UserEntity user = userRepository.save(UserEntityFixture.of());
+        QuestionEntity question1 = QuestionEntityFixture.of(user);
+        QuestionEntity question2 = QuestionEntityFixture.of(user);
+        questionRepository.saveAll(List.of(question1, question2));
+        QuestionViewEntity view1 = QuestionViewFixture.of(question1);
+        QuestionViewEntity view2 = QuestionViewFixture.of(question2);
+        long viewCount1 = 100L;
+        view1.setViewCount(viewCount1);
+        long viewCount2 = 100L;
+        view2.setViewCount(viewCount2);
+        questionViewRepository.saveAll(List.of(view1, view2));
+
+        //when
+        List<QuestionViewResponse> response = questionViewService.getViewCounts(List.of(question1.getId(), question2.getId()));
+
+        //then
+        Assertions.assertThat(response)
+                .hasSize(2)
+                .extracting("questionId", "viewCount")
+                .containsOnly(
+                        tuple(question1.getId(), viewCount1),
+                        tuple(question2.getId(), viewCount2)
+                );
+    }
+
+    @Test
+    @DisplayName("질문 아이디에 해당되는 질문 조회 엔티티가 없으면 빈배열을 반환한다")
+    void findViewCountsByQuestionEntityIds_returnEmpty() throws Exception {
+        //when
+        List<QuestionViewResponse> response = questionViewService.getViewCounts(List.of());
+
+        //then
+        Assertions.assertThat(response).isEmpty();
     }
 }

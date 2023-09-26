@@ -11,6 +11,7 @@ import com.chwihae.dto.question.response.QuestionDetailResponse;
 import com.chwihae.dto.question.response.QuestionListResponse;
 import com.chwihae.exception.CustomException;
 import com.chwihae.exception.CustomExceptionError;
+import com.chwihae.infra.fixture.QuestionViewFixture;
 import com.chwihae.infra.fixture.UserEntityFixture;
 import com.chwihae.infra.test.AbstractIntegrationTest;
 import org.assertj.core.api.Assertions;
@@ -180,12 +181,19 @@ class QuestionServiceTest extends AbstractIntegrationTest {
         final int PAGE_NUMBER = 0;
 
         UserEntity userEntity = userRepository.save(UserEntityFixture.of("test@email.com"));
-        QuestionEntity questionEntity1 = createQuestion(userEntity, SPEC);
-        QuestionEntity questionEntity2 = createQuestion(userEntity, COMPANY);
-        QuestionEntity questionEntity3 = createQuestion(userEntity, ETC);
-        QuestionEntity questionEntity4 = createQuestion(userEntity, SPEC);
-        QuestionEntity questionEntity5 = createQuestion(userEntity, SPEC);
-        questionRepository.saveAll(List.of(questionEntity1, questionEntity2, questionEntity3, questionEntity4, questionEntity5));
+        QuestionEntity question1 = createQuestion(userEntity, SPEC);
+        QuestionEntity question2 = createQuestion(userEntity, COMPANY);
+        QuestionEntity question3 = createQuestion(userEntity, ETC);
+        QuestionEntity question4 = createQuestion(userEntity, SPEC);
+        QuestionEntity question5 = createQuestion(userEntity, SPEC);
+        questionRepository.saveAll(List.of(question1, question2, question3, question4, question5));
+
+        QuestionViewEntity view1 = QuestionViewFixture.of(question1);
+        QuestionViewEntity view2 = QuestionViewFixture.of(question2);
+        QuestionViewEntity view3 = QuestionViewFixture.of(question3);
+        QuestionViewEntity view4 = QuestionViewFixture.of(question4);
+        QuestionViewEntity view5 = QuestionViewFixture.of(question5);
+        questionViewRepository.saveAll(List.of(view1, view2, view3, view4, view5));
 
 
         PageRequest pageRequest = PageRequest.of(PAGE_NUMBER, PAGE_SIZE);
@@ -198,6 +206,9 @@ class QuestionServiceTest extends AbstractIntegrationTest {
         Assertions.assertThat(response.getContent()).hasSize(PAGE_SIZE);
         Assertions.assertThat(response.getTotalPages()).isEqualTo(2);
     }
+
+    // TODO - 캐싱되어 있는거
+    // TODO - DB에만 있는거
     
     public QuestionEntity createQuestion(UserEntity userEntity, QuestionType type) {
         return QuestionEntity.builder()

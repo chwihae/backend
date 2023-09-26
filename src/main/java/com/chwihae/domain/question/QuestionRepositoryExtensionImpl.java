@@ -22,7 +22,6 @@ import java.util.Optional;
 import static com.chwihae.domain.bookmark.QBookmarkEntity.bookmarkEntity;
 import static com.chwihae.domain.comment.QCommentEntity.commentEntity;
 import static com.chwihae.domain.question.QQuestionEntity.questionEntity;
-import static com.chwihae.domain.question.QQuestionViewEntity.questionViewEntity;
 import static com.chwihae.domain.user.QUserEntity.userEntity;
 import static com.chwihae.domain.vote.QVoteEntity.voteEntity;
 
@@ -68,7 +67,7 @@ public class QuestionRepositoryExtensionImpl extends QuerydslRepositorySupport i
         JPAQueryFactory queryFactory = new JPAQueryFactory(getEntityManager());
         BooleanBuilder conditions = baseConditions(status, type);
         return queryFactory
-                .select(questionEntity, viewCountSubQuery(), commentCountSubQuery(), voteCountSubQuery())
+                .select(questionEntity, commentCountSubQuery(), voteCountSubQuery())
                 .from(questionEntity)
                 .where(conditions)
                 .orderBy(getOrderSpecifiers(pageable.getSort()))
@@ -80,7 +79,7 @@ public class QuestionRepositoryExtensionImpl extends QuerydslRepositorySupport i
     private List<Tuple> fetchMyTuplesByUserId(Long userId, Pageable pageable) {
         JPAQueryFactory queryFactory = new JPAQueryFactory(getEntityManager());
         return queryFactory
-                .select(questionEntity, viewCountSubQuery(), commentCountSubQuery(), voteCountSubQuery())
+                .select(questionEntity, commentCountSubQuery(), voteCountSubQuery())
                 .from(questionEntity)
                 .join(questionEntity.userEntity, userEntity)
                 .where(questionEntity.userEntity.id.eq(userId))
@@ -93,7 +92,7 @@ public class QuestionRepositoryExtensionImpl extends QuerydslRepositorySupport i
     private List<Tuple> fetchVotedTuplesByUserId(Long userId, Pageable pageable) {
         JPAQueryFactory queryFactory = new JPAQueryFactory(getEntityManager());
         return queryFactory
-                .select(questionEntity, viewCountSubQuery(), commentCountSubQuery(), voteCountSubQuery())
+                .select(questionEntity, commentCountSubQuery(), voteCountSubQuery())
                 .from(questionEntity)
                 .join(voteEntity).on(voteEntity.questionEntity.id.eq(questionEntity.id))
                 .where(voteEntity.valid.eq(true).and(voteEntity.userEntity.id.eq(userId)))
@@ -106,7 +105,7 @@ public class QuestionRepositoryExtensionImpl extends QuerydslRepositorySupport i
     private List<Tuple> fetchBookmarkedTuplesByUserId(Long userId, Pageable pageable) {
         JPAQueryFactory queryFactory = new JPAQueryFactory(getEntityManager());
         return queryFactory
-                .select(questionEntity, viewCountSubQuery(), commentCountSubQuery(), voteCountSubQuery())
+                .select(questionEntity, commentCountSubQuery(), voteCountSubQuery())
                 .from(questionEntity)
                 .join(bookmarkEntity).on(bookmarkEntity.questionEntity.id.eq(questionEntity.id))
                 .where(bookmarkEntity.userEntity.id.eq(userId))
@@ -140,11 +139,11 @@ public class QuestionRepositoryExtensionImpl extends QuerydslRepositorySupport i
                 .fetchCount();
     }
 
-    private JPQLQuery<Long> viewCountSubQuery() {
-        return JPAExpressions.select(questionViewEntity.viewCount)
-                .from(questionViewEntity)
-                .where(questionViewEntity.questionEntity.id.eq(questionEntity.id));
-    }
+//    private JPQLQuery<Long> viewCountSubQuery() {
+//        return JPAExpressions.select(questionViewEntity.viewCount)
+//                .from(questionViewEntity)
+//                .where(questionViewEntity.questionEntity.id.eq(questionEntity.id));
+//    }
 
     private JPQLQuery<Long> commentCountSubQuery() {
         return JPAExpressions.select(commentEntity.count())
@@ -163,15 +162,13 @@ public class QuestionRepositoryExtensionImpl extends QuerydslRepositorySupport i
                 .map(tuple -> QuestionListResponse.of(
                         tuple.get(questionEntity),
                         Optional.ofNullable(tuple.get(1, Long.class)).orElse(0L),
-                        Optional.ofNullable(tuple.get(2, Long.class)).orElse(0L),
-                        Optional.ofNullable(tuple.get(3, Long.class)).orElse(0L)))
+                        Optional.ofNullable(tuple.get(2, Long.class)).orElse(0L)))
                 .toList();
     }
 
     private long countQuestions(QuestionStatus status, QuestionType type) {
         JPAQueryFactory queryFactory = new JPAQueryFactory(getEntityManager());
         BooleanBuilder conditions = baseConditions(status, type);
-
         return queryFactory.selectFrom(questionEntity)
                 .where(conditions)
                 .fetchCount();

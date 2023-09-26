@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 public abstract class QuestionEntityFixture {
-
     public static QuestionEntity of(UserEntity userEntity) {
         return QuestionEntity.builder()
                 .userEntity(userEntity)

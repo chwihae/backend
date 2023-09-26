@@ -4,7 +4,9 @@ import com.chwihae.config.redis.QuestionViewCacheRepository;
 import com.chwihae.domain.question.QuestionEntity;
 import com.chwihae.domain.question.QuestionViewEntity;
 import com.chwihae.domain.question.QuestionViewRepository;
+import com.chwihae.dto.question.response.QuestionViewResponse;
 import com.chwihae.exception.CustomException;
+import com.chwihae.infra.fixture.QuestionViewFixture;
 import com.chwihae.infra.test.AbstractMockTest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -12,15 +14,13 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static com.chwihae.exception.CustomExceptionError.QUESTION_NOT_FOUND;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-class QuestionViewServiceTest extends AbstractMockTest {
+class QuestionViewServiceMockTest extends AbstractMockTest {
 
     @InjectMocks
     private QuestionViewService questionViewService;
@@ -54,7 +54,7 @@ class QuestionViewServiceTest extends AbstractMockTest {
         Long givenQuestionId = 1L;
         Long givenViewCount = 100L;
 
-        when(questionViewCacheRepository.getQuestionView(givenQuestionId)).thenReturn(Optional.empty());
+        when(questionViewCacheRepository.getViewCount(givenQuestionId)).thenReturn(Optional.empty());
         when(questionViewRepository.findViewCountByQuestionEntityId(givenQuestionId)).thenReturn(Optional.of(givenViewCount));
 
         // when
@@ -62,7 +62,7 @@ class QuestionViewServiceTest extends AbstractMockTest {
 
         // then
         Assertions.assertThat(givenViewCount).isEqualTo(viewCount);
-        verify(questionViewCacheRepository).setQuestionView(givenQuestionId, givenViewCount);
+        verify(questionViewCacheRepository).setViewCount(givenQuestionId, givenViewCount);
     }
 
     @Test
@@ -71,7 +71,7 @@ class QuestionViewServiceTest extends AbstractMockTest {
         // given
         Long givenQuestionId = 1L;
 
-        when(questionViewCacheRepository.getQuestionView(givenQuestionId)).thenReturn(Optional.empty());
+        when(questionViewCacheRepository.getViewCount(givenQuestionId)).thenReturn(Optional.empty());
         when(questionViewRepository.findViewCountByQuestionEntityId(givenQuestionId)).thenReturn(Optional.empty());
 
         // then
@@ -87,7 +87,7 @@ class QuestionViewServiceTest extends AbstractMockTest {
         // given
         Long givenQuestionId = 1L;
 
-        when(questionViewCacheRepository.existsByKey(givenQuestionId)).thenReturn(true);
+        when(questionViewCacheRepository.existsByQuestionId(givenQuestionId)).thenReturn(true);
 
         // when
         questionViewService.incrementViewCount(givenQuestionId);
@@ -103,14 +103,14 @@ class QuestionViewServiceTest extends AbstractMockTest {
         Long givenQuestionId = 1L;
         Long givenViewCount = 100L;
 
-        when(questionViewCacheRepository.existsByKey(givenQuestionId)).thenReturn(false);
+        when(questionViewCacheRepository.existsByQuestionId(givenQuestionId)).thenReturn(false);
         when(questionViewRepository.findViewCountByQuestionEntityId(givenQuestionId)).thenReturn(Optional.of(givenViewCount));
 
         // when
         questionViewService.incrementViewCount(givenQuestionId);
 
         // then
-        verify(questionViewCacheRepository).setQuestionView(givenQuestionId, givenViewCount);
+        verify(questionViewCacheRepository).setViewCount(givenQuestionId, givenViewCount);
         verify(questionViewCacheRepository).incrementViewCount(givenQuestionId);
     }
 
@@ -127,8 +127,9 @@ class QuestionViewServiceTest extends AbstractMockTest {
 
         QuestionViewEntity givenEntity = mock(QuestionViewEntity.class);
 
-        when(questionViewCacheRepository.findAllQuestionViewKeys()).thenReturn(keys);
-        when(questionViewCacheRepository.getQuestionView(givenQuestionId)).thenReturn(Optional.of(cachedViewCount));
+        when(questionViewCacheRepository.findAllKeys()).thenReturn(keys);
+        when(questionViewCacheRepository.extractQuestionIdFromKey(any())).thenReturn(Optional.of(givenQuestionId));
+        when(questionViewCacheRepository.getViewCount(givenQuestionId)).thenReturn(Optional.of(cachedViewCount));
         when(questionViewRepository.findByQuestionEntityId(givenQuestionId)).thenReturn(Optional.of(givenEntity));
 
         // when
@@ -144,13 +145,13 @@ class QuestionViewServiceTest extends AbstractMockTest {
     @DisplayName("캐시에서 키 목록을 가져오지 못하면 DB와 동기화가 되지 않는다")
     void syncQuestionViewCount_noKeysFromCache() {
         // given
-        when(questionViewCacheRepository.findAllQuestionViewKeys()).thenReturn(null);
+        when(questionViewCacheRepository.findAllKeys()).thenReturn(null);
 
         // when
         questionViewService.syncQuestionViewCount();
 
         // then
-        verify(questionViewCacheRepository, never()).getQuestionView(anyLong());
+        verify(questionViewCacheRepository, never()).getViewCount(anyLong());
         verify(questionViewRepository, never()).findByQuestionEntityId(anyLong());
     }
 
@@ -164,8 +165,9 @@ class QuestionViewServiceTest extends AbstractMockTest {
         Set<String> keys = new HashSet<>();
         keys.add(givenKey);
 
-        when(questionViewCacheRepository.findAllQuestionViewKeys()).thenReturn(keys);
-        when(questionViewCacheRepository.getQuestionView(givenQuestionId)).thenReturn(Optional.empty());
+        when(questionViewCacheRepository.findAllKeys()).thenReturn(keys);
+        when(questionViewCacheRepository.extractQuestionIdFromKey(any())).thenReturn(Optional.of(givenQuestionId));
+        when(questionViewCacheRepository.getViewCount(givenQuestionId)).thenReturn(Optional.empty());
 
         // when
         questionViewService.syncQuestionViewCount();
@@ -187,8 +189,9 @@ class QuestionViewServiceTest extends AbstractMockTest {
         keys.add(givenKey);
         QuestionViewEntity givenEntity = mock(QuestionViewEntity.class);
 
-        when(questionViewCacheRepository.findAllQuestionViewKeys()).thenReturn(keys);
-        when(questionViewCacheRepository.getQuestionView(givenQuestionId)).thenReturn(Optional.of(cachedViewCount));
+        when(questionViewCacheRepository.findAllKeys()).thenReturn(keys);
+        when(questionViewCacheRepository.extractQuestionIdFromKey(any())).thenReturn(Optional.of(givenQuestionId));
+        when(questionViewCacheRepository.getViewCount(givenQuestionId)).thenReturn(Optional.of(cachedViewCount));
         when(questionViewRepository.findByQuestionEntityId(givenQuestionId)).thenReturn(Optional.of(givenEntity));
         doThrow(new RuntimeException()).when(questionViewRepository).save(givenEntity);
 
@@ -209,8 +212,9 @@ class QuestionViewServiceTest extends AbstractMockTest {
         Set<String> keys = new HashSet<>();
         keys.add(givenKey);
 
-        when(questionViewCacheRepository.findAllQuestionViewKeys()).thenReturn(keys);
-        when(questionViewCacheRepository.getQuestionView(givenQuestionId)).thenReturn(Optional.empty());
+        when(questionViewCacheRepository.findAllKeys()).thenReturn(keys);
+        when(questionViewCacheRepository.extractQuestionIdFromKey(any())).thenReturn(Optional.of(givenQuestionId));
+        when(questionViewCacheRepository.getViewCount(givenQuestionId)).thenReturn(Optional.empty());
 
         // when
         questionViewService.syncQuestionViewCount();
@@ -218,4 +222,42 @@ class QuestionViewServiceTest extends AbstractMockTest {
         // then
         verify(questionViewCacheRepository).deleteKey(givenKey);
     }
+
+    @Test
+    @DisplayName("캐싱 되어 있는 질문 조회 수가 없으면 DB에서 조회하여 가져온다")
+    void getViewCounts_returnList() throws Exception {
+        //given
+        QuestionEntity questionEntity = mock(QuestionEntity.class);
+        QuestionViewEntity questionViewEntity = QuestionViewFixture.of(questionEntity);
+        long expectedViewCount = 100L;
+        questionViewEntity.setViewCount(expectedViewCount);
+
+        when(questionViewCacheRepository.getViewCounts(any())).thenReturn(new ArrayList<>());
+        when(questionViewRepository.findByQuestionEntityIds(any())).thenReturn(List.of(questionViewEntity));
+
+        //when
+        List<QuestionViewResponse> response = questionViewService.getViewCounts(List.of(1L));
+
+        //then
+        verify(questionViewRepository, times(1)).findByQuestionEntityIds(any());
+    }
+
+    @Test
+    @DisplayName("질문 아이디가 모두 캐싱되어 있으면 DB에서 조회하지 않는다")
+    void getViewCounts_doNotQueryDb() throws Exception {
+        //given
+        QuestionEntity questionEntity = mock(QuestionEntity.class);
+        QuestionViewEntity questionViewEntity = QuestionViewFixture.of(questionEntity);
+        long expectedViewCount = 100L;
+        questionViewEntity.setViewCount(expectedViewCount);
+        when(questionViewCacheRepository.getViewCounts(any())).thenReturn(new ArrayList<>());
+
+        //when
+        List<QuestionViewResponse> response = questionViewService.getViewCounts(List.of());
+
+        //then
+        verify(questionViewRepository, never()).findByQuestionEntityIds(any());
+    }
+
+    // TODO test - redis와 DB에 view를 합쳐서 리턴
 }

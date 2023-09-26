@@ -22,7 +22,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import java.time.LocalDateTime;
 import java.util.Collections;
 
-import static com.chwihae.utils.TimeZone.KST;
+import static com.chwihae.utils.TimeUtils.KST;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -42,6 +42,7 @@ public class CloseExpiredQuestionJobConfig {
                 .build();
     }
 
+    // TODO 재시도 테스트
     @Bean
     public Step closeQuestionStep() {
         return new StepBuilder("closeQuestionStep", jobRepository)
@@ -54,7 +55,7 @@ public class CloseExpiredQuestionJobConfig {
                 .retry(Exception.class)
                 .skipLimit(10)
                 .skip(Exception.class)
-                .listener(new SkipListener<QuestionEntity, QuestionEntity>() {
+                .listener(new SkipListener<>() {
                     @Override
                     public void onSkipInRead(Throwable t) {
                         log.error("Skip during READ", t);

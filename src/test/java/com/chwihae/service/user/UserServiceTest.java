@@ -4,12 +4,14 @@ import com.chwihae.domain.bookmark.BookmarkEntity;
 import com.chwihae.domain.option.OptionEntity;
 import com.chwihae.domain.question.QuestionEntity;
 import com.chwihae.domain.question.QuestionType;
+import com.chwihae.domain.question.QuestionViewEntity;
 import com.chwihae.domain.user.UserEntity;
 import com.chwihae.domain.vote.VoteEntity;
 import com.chwihae.dto.question.response.QuestionListResponse;
 import com.chwihae.dto.user.UserContext;
 import com.chwihae.dto.user.UserQuestionFilterType;
 import com.chwihae.exception.CustomException;
+import com.chwihae.infra.fixture.QuestionViewFixture;
 import com.chwihae.infra.fixture.UserEntityFixture;
 import com.chwihae.infra.test.AbstractIntegrationTest;
 import org.assertj.core.api.Assertions;
@@ -88,6 +90,13 @@ class UserServiceTest extends AbstractIntegrationTest {
         QuestionEntity question5 = createQuestion(userEntity, CAREER);
         questionRepository.saveAll(List.of(question1, question2, question3, question4, question5));
 
+        QuestionViewEntity view1 = QuestionViewFixture.of(question1);
+        QuestionViewEntity view2 = QuestionViewFixture.of(question2);
+        QuestionViewEntity view3 = QuestionViewFixture.of(question3);
+        QuestionViewEntity view4 = QuestionViewFixture.of(question4);
+        QuestionViewEntity view5 = QuestionViewFixture.of(question5);
+        questionViewRepository.saveAll(List.of(view1, view2, view3, view4, view5));
+
         UserQuestionFilterType filterType = UserQuestionFilterType.ME;
         PageRequest pageRequest = PageRequest.of(0, 2);
 
@@ -113,6 +122,13 @@ class UserServiceTest extends AbstractIntegrationTest {
         QuestionEntity question4 = createQuestion(userEntity, SPEC);
         QuestionEntity question5 = createQuestion(userEntity, CAREER);
         questionRepository.saveAll(List.of(question1, question2, question3, question4, question5));
+
+        QuestionViewEntity view1 = QuestionViewFixture.of(question1);
+        QuestionViewEntity view2 = QuestionViewFixture.of(question2);
+        QuestionViewEntity view3 = QuestionViewFixture.of(question3);
+        QuestionViewEntity view4 = QuestionViewFixture.of(question4);
+        QuestionViewEntity view5 = QuestionViewFixture.of(question5);
+        questionViewRepository.saveAll(List.of(view1, view2, view3, view4, view5));
 
         BookmarkEntity bookmark1 = createBookmark(userEntity, question1);
         BookmarkEntity bookmark2 = createBookmark(userEntity, question2);
@@ -145,6 +161,13 @@ class UserServiceTest extends AbstractIntegrationTest {
         QuestionEntity question4 = createQuestion(userEntity, ETC);
         QuestionEntity question5 = createQuestion(userEntity, ETC);
         questionRepository.saveAll(List.of(question1, question2, question3, question4, question5));
+
+        QuestionViewEntity view1 = QuestionViewFixture.of(question1);
+        QuestionViewEntity view2 = QuestionViewFixture.of(question2);
+        QuestionViewEntity view3 = QuestionViewFixture.of(question3);
+        QuestionViewEntity view4 = QuestionViewFixture.of(question4);
+        QuestionViewEntity view5 = QuestionViewFixture.of(question5);
+        questionViewRepository.saveAll(List.of(view1, view2, view3, view4, view5));
 
         OptionEntity option1 = createOption(question1);
         OptionEntity option2 = createOption(question2);

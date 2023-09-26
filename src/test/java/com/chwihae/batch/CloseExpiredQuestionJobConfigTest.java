@@ -13,10 +13,10 @@ import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.JobExecution;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
+
+import static com.chwihae.infra.utils.TimeUtils.KST;
 
 class CloseExpiredQuestionJobConfigTest extends AbstractBatchTest {
 
@@ -31,13 +31,14 @@ class CloseExpiredQuestionJobConfigTest extends AbstractBatchTest {
     void closeQuestionStep() throws Exception {
         //given
         final int CHUNK_SIZE = 100;
-        LocalDateTime closeAt = LocalDateTime.now(ZoneId.of("Asia/Seoul")).minusDays(1);
         UserEntity userEntity = userRepository.save(UserEntityFixture.of());
 
-        List<QuestionEntity> questionEntityList = new ArrayList<>();
-        IntStream.range(0, CHUNK_SIZE).forEach(question -> {
-            questionEntityList.add(createQuestion(userEntity, closeAt));
-        });
+        LocalDateTime closeAt = LocalDateTime.now(KST).minusDays(1);
+        List<QuestionEntity> questionEntityList =
+                IntStream.range(0, CHUNK_SIZE)
+                        .mapToObj(question -> createQuestion(userEntity, closeAt))
+                        .toList();
+
         questionRepository.saveAll(questionEntityList);
 
         //when

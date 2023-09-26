@@ -7,7 +7,7 @@ import org.springframework.validation.FieldError;
 
 import java.time.LocalDateTime;
 
-import static com.chwihae.utils.TimeZone.KST;
+import static com.chwihae.utils.TimeUtils.KST;
 
 @Component
 public class QuestionValidator {

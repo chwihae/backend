@@ -15,6 +15,7 @@ import com.chwihae.domain.vote.VoteEntity;
 import com.chwihae.dto.comment.request.QuestionCommentCreateRequest;
 import com.chwihae.dto.option.request.OptionCreateRequest;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
+import com.chwihae.infra.fixture.QuestionViewFixture;
 import com.chwihae.infra.fixture.UserEntityFixture;
 import com.chwihae.infra.support.WithTestUser;
 import com.chwihae.infra.test.AbstractMockMvcTest;
@@ -509,8 +510,14 @@ class QuestionControllerTest extends AbstractMockMvcTest {
         QuestionEntity question4 = createQuestion(userEntity, closeAt);
         questionRepository.saveAll(List.of(question1, question2, question3, question4));
 
+        QuestionViewEntity view1 = questionViewRepository.save(QuestionViewFixture.of(question1));
+        QuestionViewEntity view2 = questionViewRepository.save(QuestionViewFixture.of(question2));
+        QuestionViewEntity view3 = questionViewRepository.save(QuestionViewFixture.of(question3));
+        QuestionViewEntity view4 = questionViewRepository.save(QuestionViewFixture.of(question4));
+        questionViewRepository.saveAll(List.of(view1, view2, view3, view4));
+
         final int pageNumber = 0;
-        final int pageSize = 2;
+        final int pageSize = 4;
 
         //when //then
         mockMvc.perform(
@@ -535,6 +542,12 @@ class QuestionControllerTest extends AbstractMockMvcTest {
         QuestionEntity question3 = createQuestion(userEntity, closeAt);
         QuestionEntity question4 = createQuestion(userEntity, closeAt);
         questionRepository.saveAll(List.of(question1, question2, question3, question4));
+
+        QuestionViewEntity view1 = QuestionViewFixture.of(question1);
+        QuestionViewEntity view2 = QuestionViewFixture.of(question2);
+        QuestionViewEntity view3 = QuestionViewFixture.of(question3);
+        QuestionViewEntity view4 = QuestionViewFixture.of(question4);
+        questionViewRepository.saveAll(List.of(view1, view2, view3, view4));
 
         QuestionStatus status = IN_PROGRESS;
         final int pageNumber = 0;

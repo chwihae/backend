@@ -22,7 +22,6 @@ public class QuestionListResponse {
     private long bookmarkCount;
 
     public static QuestionListResponse of(QuestionEntity questionEntity,
-                                          long voteCount,
                                           long commentCount,
                                           long bookmarkCount) {
         return QuestionListResponse.builder()
@@ -30,7 +29,6 @@ public class QuestionListResponse {
                 .title(questionEntity.getTitle())
                 .status(questionEntity.getStatus())
                 .type(questionEntity.getType())
-                .voteCount(voteCount)
                 .commentCount(commentCount)
                 .bookmarkCount(bookmarkCount)
                 .build();
@@ -41,14 +39,12 @@ public class QuestionListResponse {
                                  String title,
                                  QuestionType type,
                                  QuestionStatus status,
-                                 long voteCount,
                                  long commentCount,
                                  long bookmarkCount) {
         this.id = id;
         this.title = title;
         this.type = type;
         this.status = status;
-        this.viewCount = voteCount;
         this.commentCount = commentCount;
         this.bookmarkCount = bookmarkCount;
     }

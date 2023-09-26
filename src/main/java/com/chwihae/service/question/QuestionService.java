@@ -12,6 +12,7 @@ import com.chwihae.dto.option.request.OptionCreateRequest;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
 import com.chwihae.dto.question.response.QuestionDetailResponse;
 import com.chwihae.dto.question.response.QuestionListResponse;
+import com.chwihae.dto.question.response.QuestionViewResponse;
 import com.chwihae.event.question.QuestionViewEvent;
 import com.chwihae.exception.CustomException;
 import com.chwihae.service.bookmark.BookmarkService;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.chwihae.exception.CustomExceptionError.QUESTION_NOT_FOUND;
 import static com.chwihae.exception.CustomExceptionError.USER_NOT_FOUND;
@@ -44,9 +46,28 @@ public class QuestionService {
     private final BookmarkService bookmarkService;
     private final QuestionViewService questionViewService;
     private final ApplicationEventPublisher eventPublisher;
-
+    
     public Page<QuestionListResponse> getQuestionsByTypeAndStatus(QuestionType type, QuestionStatus status, Pageable pageable) {
-        return questionRepository.findByTypeAndStatusWithCounts(status, type, pageable);
+        Page<QuestionListResponse> page = questionRepository.findByTypeAndStatusWithCounts(status, type, pageable); // 1. Find page from DB
+        List<QuestionViewResponse> allViewCounts = findAllQuestionViewCounts(page.getContent()); // 2. Get question view from cache and DB
+        setPageViewCounts(page.getContent(), allViewCounts); // 3. Set question views for each page element
+        return page;
+    }
+
+    private List<QuestionViewResponse> findAllQuestionViewCounts(List<QuestionListResponse> content) {
+        List<Long> questionIds = content.stream()
+                .map(QuestionListResponse::getId)
+                .distinct().toList();
+        return questionViewService.getViewCounts(questionIds);
+    }
+
+    private void setPageViewCounts(List<QuestionListResponse> content, List<QuestionViewResponse> allViewCounts) {
+        content.forEach(it ->
+                allViewCounts.stream()
+                        .filter(view -> Objects.equals(view.getQuestionId(), it.getId()))
+                        .findFirst()
+                        .ifPresent(view -> it.setViewCount(view.getViewCount()))
+        );
     }
 
     @Transactional
