@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.Duration;
 import java.util.Optional;
+import java.util.Set;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -29,6 +30,14 @@ public class UserContextCacheRepository {
         UserContext userContext = userContextRedisTemplate.opsForValue().get(key);
         log.info("Get UserContext from Redis {}", userContext);
         return Optional.ofNullable(userContext);
+    }
+
+    public void clear() {
+        Set<String> keys = userContextRedisTemplate.keys("UID:*");
+        if (keys != null && !keys.isEmpty()) {
+            log.info("Clearing UserContext cache for keys: {}", keys);
+            userContextRedisTemplate.delete(keys);
+        }
     }
 
     private String getKey(Long userId) {

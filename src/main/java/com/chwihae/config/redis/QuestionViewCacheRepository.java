@@ -37,6 +37,13 @@ public class QuestionViewCacheRepository {
         return questionViewRedisTemplate.hasKey(key);
     }
 
+    public void clear() {
+        Set<String> keys = questionViewRedisTemplate.keys("question:*:views");
+        if (keys != null && !keys.isEmpty()) {
+            questionViewRedisTemplate.delete(keys);
+        }
+    }
+
     public String getKey(Long questionId) {
         return "question:" + questionId + ":views";
     }

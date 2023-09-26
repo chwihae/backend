@@ -2,6 +2,7 @@ package com.chwihae.config.redis;
 
 import com.chwihae.infra.test.AbstractIntegrationTest;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -11,6 +12,11 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class QuestionViewCacheRepositoryTest extends AbstractIntegrationTest {
+
+    @AfterEach
+    void tearDown() {
+        questionViewCacheRepository.clear();
+    }
 
     @Test
     @DisplayName("질문 조회 수를 캐시에 저장하고 가져올 수 있다")

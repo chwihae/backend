@@ -46,7 +46,9 @@ public class QuestionService {
     private final ApplicationEventPublisher eventPublisher;
 
     public Page<QuestionListResponse> getQuestionsByTypeAndStatus(QuestionType type, QuestionStatus status, Pageable pageable) {
-        return questionRepository.findByTypeAndStatusWithCounts(status, type, pageable);
+        Page<QuestionListResponse> page = questionRepository.findByTypeAndStatusWithCounts(status, type, pageable);
+        page.getContent().forEach(it -> it.setViewCount(questionViewService.getViewCount(it.getId())));
+        return page;
     }
 
     @Transactional

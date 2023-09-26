@@ -2,7 +2,10 @@ package com.chwihae.controller.user;
 
 import com.chwihae.domain.question.QuestionEntity;
 import com.chwihae.domain.question.QuestionType;
+import com.chwihae.domain.question.QuestionViewEntity;
 import com.chwihae.domain.user.UserEntity;
+import com.chwihae.infra.fixture.QuestionEntityFixture;
+import com.chwihae.infra.fixture.QuestionViewFixture;
 import com.chwihae.infra.support.WithTestUser;
 import com.chwihae.infra.test.AbstractMockMvcTest;
 import org.junit.jupiter.api.DisplayName;
@@ -12,9 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
 
 import static com.chwihae.dto.user.UserQuestionFilterType.ME;
 import static com.chwihae.exception.CustomExceptionError.INVALID_ARGUMENT;
@@ -56,16 +57,22 @@ class UserControllerTest extends AbstractMockMvcTest {
     @WithTestUser("questioner@email.com")
     void getUserQuestions_returnsSuccessCode() throws Exception {
         //given
-        final int QUESTION_COUNT = 10;
         final int PAGE_SIZE = 5;
         final int PAGE_NUMBER = 0;
 
         UserEntity userEntity = userRepository.findByEmail("questioner@email.com").get();
-        List<QuestionEntity> questionEntityList = new ArrayList<>();
-        IntStream.range(0, QUESTION_COUNT).forEach(question -> {
-            questionEntityList.add(createQuestion(userEntity));
-        });
-        questionRepository.saveAll(questionEntityList);
+
+        QuestionEntity question1 = QuestionEntityFixture.of(userEntity);
+        QuestionEntity question2 = QuestionEntityFixture.of(userEntity);
+        QuestionEntity question3 = QuestionEntityFixture.of(userEntity);
+        QuestionEntity question4 = QuestionEntityFixture.of(userEntity);
+        questionRepository.saveAll(List.of(question1, question2, question3, question4));
+
+        QuestionViewEntity view1 = QuestionViewFixture.of(question1);
+        QuestionViewEntity view2 = QuestionViewFixture.of(question2);
+        QuestionViewEntity view3 = QuestionViewFixture.of(question3);
+        QuestionViewEntity view4 = QuestionViewFixture.of(question4);
+        questionViewRepository.saveAll(List.of(view1, view2, view3, view4));
 
         //when //then
         mockMvc.perform(
@@ -76,7 +83,7 @@ class UserControllerTest extends AbstractMockMvcTest {
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.content.size()").value(PAGE_SIZE));
+                .andExpect(jsonPath("$.data.content.size()").value(4));
     }
 
     @Test
@@ -98,7 +105,7 @@ class UserControllerTest extends AbstractMockMvcTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value(INVALID_ARGUMENT.code()));
     }
-    
+
     @Test
     @DisplayName("GET /api/v1/users/questions?type={type} - 실패 (미인증 사용자)")
     @WithAnonymousUser

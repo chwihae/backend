@@ -3,12 +3,18 @@ package com.chwihae.config.redis;
 import com.chwihae.dto.user.UserContext;
 import com.chwihae.infra.test.AbstractIntegrationTest;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
 class UserContextCacheRepositoryTest extends AbstractIntegrationTest {
+
+    @AfterEach
+    void tearDown() {
+        userContextCacheRepository.clear();
+    }
 
     @Test
     @DisplayName("사용자 컨텍스트를 캐시에 저장하고 가져올 수 있다")

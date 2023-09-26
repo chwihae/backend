@@ -3,6 +3,7 @@ package com.chwihae.service.user.question;
 import com.chwihae.domain.question.QuestionRepository;
 import com.chwihae.dto.user.UserQuestionFilterType;
 import com.chwihae.infra.test.AbstractMockTest;
+import com.chwihae.service.question.QuestionViewService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,14 +14,17 @@ class UserQuestionsFilterStrategyProviderTest extends AbstractMockTest {
     @Mock
     QuestionRepository questionRepository;
 
+    @Mock
+    QuestionViewService questionViewService;
+
     @Test
     @DisplayName("유효한 유저 질문 필터 타입으로 요청하면 적절한 필터를 반환한다")
     void getFilter_returnFilter() {
         //given
         UserQuestionsFilterStrategyProvider provider = new UserQuestionsFilterStrategyProvider(
-                new MyQuestionsFilter(questionRepository),
-                new BookmarkedQuestionsFilter(questionRepository),
-                new VotedQuestionsFilter(questionRepository)
+                new MyQuestionsFilter(questionRepository, questionViewService),
+                new BookmarkedQuestionsFilter(questionRepository, questionViewService),
+                new VotedQuestionsFilter(questionRepository, questionViewService)
         );
 
         //when //then
@@ -34,9 +38,9 @@ class UserQuestionsFilterStrategyProviderTest extends AbstractMockTest {
     void getFilter_withInvalidType_throwsException() {
         //given
         UserQuestionsFilterStrategyProvider provider = new UserQuestionsFilterStrategyProvider(
-                new MyQuestionsFilter(questionRepository),
-                new BookmarkedQuestionsFilter(questionRepository),
-                new VotedQuestionsFilter(questionRepository)
+                new MyQuestionsFilter(questionRepository, questionViewService),
+                new BookmarkedQuestionsFilter(questionRepository, questionViewService),
+                new VotedQuestionsFilter(questionRepository, questionViewService)
         );
 
         //when //then
