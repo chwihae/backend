@@ -50,7 +50,7 @@ class QuestionViewServiceIntegrationTest extends AbstractIntegrationTest {
         Long questionId = 1L;
         Long expectedViewCount = 100L;
 
-        questionViewCacheRepository.setQuestionView(questionId, expectedViewCount);
+        questionViewCacheRepository.setViewCount(questionId, expectedViewCount);
 
         //when
         Long viewCount = questionViewService.getViewCount(questionId);
@@ -78,13 +78,13 @@ class QuestionViewServiceIntegrationTest extends AbstractIntegrationTest {
         UserEntity user = userRepository.save(UserEntityFixture.of());
         QuestionEntity question = questionRepository.save(createQuestion(user));
         questionViewService.createQuestionView(question);
-        questionViewCacheRepository.setQuestionView(question.getId(), 0L);
+        questionViewCacheRepository.setViewCount(question.getId(), 0L);
 
         //when
         questionViewService.incrementViewCount(question.getId());
 
         //then
-        assertThat(questionViewCacheRepository.getQuestionView(question.getId()))
+        assertThat(questionViewCacheRepository.getViewCount(question.getId()))
                 .isPresent()
                 .hasValueSatisfying(it -> {
                     assertThat(it).isOne();
@@ -103,7 +103,7 @@ class QuestionViewServiceIntegrationTest extends AbstractIntegrationTest {
         questionViewService.incrementViewCount(question.getId());
 
         //then
-        assertThat(questionViewCacheRepository.getQuestionView(question.getId()))
+        assertThat(questionViewCacheRepository.getViewCount(question.getId()))
                 .isPresent()
                 .hasValueSatisfying(it -> {
                     assertThat(it).isOne();
@@ -119,14 +119,14 @@ class QuestionViewServiceIntegrationTest extends AbstractIntegrationTest {
         UserEntity user = userRepository.save(UserEntityFixture.of());
         QuestionEntity question = questionRepository.save(createQuestion(user));
         questionViewService.createQuestionView(question);
-        questionViewCacheRepository.setQuestionView(question.getId(), cachedViewCount);
+        questionViewCacheRepository.setViewCount(question.getId(), cachedViewCount);
 
         //when
         questionViewService.syncQuestionViewCount();
 
         //then
         assertThat(questionViewRepository.findByQuestionEntityId(question.getId()).get().getViewCount()).isEqualTo(cachedViewCount);
-        assertThat(questionViewCacheRepository.getQuestionView(question.getId())).isEmpty();
+        assertThat(questionViewCacheRepository.getViewCount(question.getId())).isEmpty();
     }
 
     public QuestionEntity createQuestion(UserEntity userEntity) {

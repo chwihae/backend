@@ -36,6 +36,10 @@ public class QuestionViewEntity extends BaseEntity {
         this.questionEntity = questionEntity;
     }
 
+    public QuestionViewEntity(Long viewCount) {
+        this.viewCount = viewCount;
+    }
+
     public void setViewCount(Long viewCount) {
         this.viewCount = viewCount;
     }
