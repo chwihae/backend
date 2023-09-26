@@ -5,7 +5,7 @@ import com.chwihae.controller.ApiResponse;
 import com.chwihae.domain.question.QuestionStatus;
 import com.chwihae.domain.question.QuestionType;
 import com.chwihae.dto.comment.Comment;
-import com.chwihae.dto.comment.request.QuestionCommentCreateRequest;
+import com.chwihae.dto.comment.request.QuestionCommentRequest;
 import com.chwihae.dto.common.response.BooleanResponse;
 import com.chwihae.dto.common.response.IdResponse;
 import com.chwihae.dto.option.response.VoteOptionResponse;
@@ -79,10 +79,27 @@ public class QuestionController {
 
     @PostMapping("/{questionId}/comments")
     public ApiResponse<VoteOptionResponse> createComment(@PathVariable Long questionId,
-                                                         @RequestBody @Validated QuestionCommentCreateRequest request,
+                                                         @RequestBody @Validated QuestionCommentRequest request,
                                                          @CurrentUser UserContext userContext) {
         commentService.createComment(questionId, userContext.getId(), request.getContent());
         return ApiResponse.created();
+    }
+
+    @PutMapping("/{questionId}/comments/{commentId}")
+    public ApiResponse<Void> modifyComment(@PathVariable Long questionId,
+                                           @PathVariable Long commentId,
+                                           @RequestBody @Validated QuestionCommentRequest request,
+                                           @CurrentUser UserContext userContext) {
+        commentService.modifyComment(commentId, userContext.getId(), request.getContent());
+        return ApiResponse.ok();
+    }
+
+    @DeleteMapping("/{questionId}/comments/{commentId}")
+    public ApiResponse<Void> deleteComment(@PathVariable Long questionId,
+                                           @PathVariable Long commentId,
+                                           @CurrentUser UserContext userContext) {
+        commentService.deleteComment(commentId, userContext.getId());
+        return ApiResponse.ok();
     }
 
     @PostMapping("/{questionId}/options/{optionId}")

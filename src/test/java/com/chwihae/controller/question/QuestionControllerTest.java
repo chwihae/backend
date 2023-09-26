@@ -12,7 +12,7 @@ import com.chwihae.domain.question.QuestionType;
 import com.chwihae.domain.question.QuestionViewEntity;
 import com.chwihae.domain.user.UserEntity;
 import com.chwihae.domain.vote.VoteEntity;
-import com.chwihae.dto.comment.request.QuestionCommentCreateRequest;
+import com.chwihae.dto.comment.request.QuestionCommentRequest;
 import com.chwihae.dto.option.request.OptionCreateRequest;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
 import com.chwihae.infra.fixture.QuestionViewFixture;
@@ -803,7 +803,7 @@ class QuestionControllerTest extends AbstractMockMvcTest {
         QuestionEntity questionEntity = questionRepository.save(createQuestion(questioner, closeAt));
         commenterSequenceRepository.save(createSequence(questionEntity));
 
-        QuestionCommentCreateRequest request = QuestionCommentCreateRequest.builder()
+        QuestionCommentRequest request = QuestionCommentRequest.builder()
                 .content("content")
                 .build();
 
@@ -825,7 +825,7 @@ class QuestionControllerTest extends AbstractMockMvcTest {
     void createComment_withInvalidParameter_returnInvalidArgumentCode() throws Exception {
         //given
         long notExistingQuestionId = 0L;
-        QuestionCommentCreateRequest request = QuestionCommentCreateRequest.builder()
+        QuestionCommentRequest request = QuestionCommentRequest.builder()
                 .content("")
                 .build();
 
@@ -845,7 +845,7 @@ class QuestionControllerTest extends AbstractMockMvcTest {
     void createComment_withNotExistingQuestionId_returnNotFoundCode() throws Exception {
         //given
         long notExistingQuestionId = 0L;
-        QuestionCommentCreateRequest request = QuestionCommentCreateRequest.builder()
+        QuestionCommentRequest request = QuestionCommentRequest.builder()
                 .content("content")
                 .build();
 
@@ -865,7 +865,7 @@ class QuestionControllerTest extends AbstractMockMvcTest {
     void createComment_byWhoNotAuthenticated_returnNotFoundCode() throws Exception {
         //given
         long notExistingQuestionId = 0L;
-        QuestionCommentCreateRequest request = QuestionCommentCreateRequest.builder()
+        QuestionCommentRequest request = QuestionCommentRequest.builder()
                 .content("content")
                 .build();
 

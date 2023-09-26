@@ -21,7 +21,6 @@ public interface CommentRepository extends JpaRepository<CommentEntity, Long> {
     @EntityGraph(attributePaths = "commenterAliasEntity")
     Optional<CommentEntity> findFirstByQuestionEntityIdAndUserEntityId(Long questionId, Long userId);
 
-
     @EntityGraph(attributePaths = "commenterAliasEntity")
     Page<CommentEntity> findWithAliasByQuestionEntityId(Long questionId, Pageable pageable);
 

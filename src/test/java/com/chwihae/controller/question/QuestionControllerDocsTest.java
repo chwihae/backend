@@ -3,7 +3,7 @@ package com.chwihae.controller.question;
 import com.chwihae.domain.commenter.CommenterAliasPrefix;
 import com.chwihae.domain.question.QuestionType;
 import com.chwihae.dto.comment.Comment;
-import com.chwihae.dto.comment.request.QuestionCommentCreateRequest;
+import com.chwihae.dto.comment.request.QuestionCommentRequest;
 import com.chwihae.dto.option.request.OptionCreateRequest;
 import com.chwihae.dto.option.response.Option;
 import com.chwihae.dto.option.response.VoteOptionResponse;
@@ -422,7 +422,7 @@ class QuestionControllerDocsTest extends AbstractRestDocsTest {
     @DisplayName("댓글 등록 API")
     void createComment_restDocs() throws Exception {
         //given
-        QuestionCommentCreateRequest request = QuestionCommentCreateRequest.builder()
+        QuestionCommentRequest request = QuestionCommentRequest.builder()
                 .content("content")
                 .build();
 
