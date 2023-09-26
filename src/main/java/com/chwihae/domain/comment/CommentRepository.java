@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,4 +29,11 @@ public interface CommentRepository extends JpaRepository<CommentEntity, Long> {
     @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query(value = "DELETE FROM comment", nativeQuery = true)
     void physicallyDeleteAll();
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE CommentEntity ce " +
+            "SET ce.deletedAt = NOW() " +
+            "WHERE ce.questionEntity.id = :questionId")
+    void deleteAllByQuestionId(@Param("questionId") Long questionId);
 }

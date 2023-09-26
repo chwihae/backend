@@ -77,6 +77,11 @@ public class VoteService {
         return voteRepository.countByUserEntityId(userId);
     }
 
+    @Transactional
+    public void deleteAllByQuestionId(Long questionId) {
+        voteRepository.deleteAllByQuestionId(questionId);
+    }
+
     private Long getVotedOptionId(Long questionId, Long userId) {
         return voteRepository.findByQuestionEntityIdAndUserEntityId(questionId, userId)
                 .map(VoteEntity::getOptionId)

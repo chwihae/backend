@@ -1,5 +1,6 @@
 package com.chwihae.service.question;
 
+import com.chwihae.domain.commenter.CommenterAliasRepository;
 import com.chwihae.domain.option.OptionEntity;
 import com.chwihae.domain.option.OptionRepository;
 import com.chwihae.domain.question.QuestionEntity;
@@ -29,8 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Objects;
 
-import static com.chwihae.exception.CustomExceptionError.QUESTION_NOT_FOUND;
-import static com.chwihae.exception.CustomExceptionError.USER_NOT_FOUND;
+import static com.chwihae.exception.CustomExceptionError.*;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -46,7 +46,8 @@ public class QuestionService {
     private final BookmarkService bookmarkService;
     private final QuestionViewService questionViewService;
     private final ApplicationEventPublisher eventPublisher;
-    
+    private final CommenterAliasRepository commenterAliasRepository;
+
     public Page<QuestionListResponse> getQuestionsByTypeAndStatus(QuestionType type, QuestionStatus status, Pageable pageable) {
         Page<QuestionListResponse> page = questionRepository.findByTypeAndStatusWithCounts(status, type, pageable); // 1. Find page from DB
         List<QuestionViewResponse> allViewCounts = findAllQuestionViewCounts(page.getContent()); // 2. Get question view from cache and DB
@@ -80,10 +81,29 @@ public class QuestionService {
         return questionEntity.getId();
     }
 
+    @Transactional
+    public void deleteQuestion(Long questionId, Long userId) {
+        QuestionEntity questionEntity = findQuestionOrException(questionId);
+        ensureQuestionIsClosed(questionEntity);
+        ensureUserIsQuestioner(questionEntity, userId);
+        deleteQuestion(questionId, questionEntity);
+    }
+
     public QuestionDetailResponse getQuestion(Long questionId, Long userId) {
         QuestionEntity questionEntity = findQuestionOrException(questionId);
         eventPublisher.publishEvent(new QuestionViewEvent(questionId));
         return buildQuestionDetailResponse(questionId, userId, questionEntity);
+    }
+
+    private void deleteQuestion(Long questionId, QuestionEntity questionEntity) {
+        voteService.deleteAllByQuestionId(questionId); // vote
+        optionRepository.deleteAllByQuestionId(questionId); // option
+        bookmarkService.deleteAllByQuestionId(questionId); // bookmark
+        commenterSequenceService.deleteAllByQuestionId(questionId); // commenter sequence
+        questionViewService.deleteAllByQuestionId(questionId); // question view
+        commenterAliasRepository.deleteAllByQuestionId(questionId); // commenter alias
+        commentService.deleteAllByQuestionId(questionId); // comment
+        questionRepository.delete(questionEntity);
     }
 
     private QuestionDetailResponse buildQuestionDetailResponse(Long questionId, Long userId, QuestionEntity questionEntity) {
@@ -120,5 +140,17 @@ public class QuestionService {
 
     private QuestionEntity findQuestionOrException(Long questionId) {
         return questionRepository.findById(questionId).orElseThrow(() -> new CustomException(QUESTION_NOT_FOUND));
+    }
+
+    private void ensureUserIsQuestioner(QuestionEntity questionEntity, Long userId) {
+        if (!questionEntity.isCreatedBy(userId)) {
+            throw new CustomException(FORBIDDEN, "질문 작성자가 아니면 질문을 삭제할 수 없습니다");
+        }
+    }
+
+    private void ensureQuestionIsClosed(QuestionEntity questionEntity) {
+        if (!questionEntity.isClosed()) {
+            throw new CustomException(FORBIDDEN, "마감되지 않은 질문은 삭제할 수 없습니다");
+        }
     }
 }

@@ -117,6 +117,14 @@ class QuestionControllerDocsTest extends AbstractRestDocsTest {
     }
 
     @Test
+    @DisplayName("질문 삭제 API")
+    void deleteQuestion_restDocs() throws Exception {
+        //given
+
+        //when //then
+    }
+
+    @Test
     @DisplayName("질문 리스트 조회 API")
     void getQuestions_restDocs() throws Exception {
         //given

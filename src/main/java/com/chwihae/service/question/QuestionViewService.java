@@ -60,6 +60,11 @@ public class QuestionViewService {
         return viewsFromCache;
     }
 
+    @Transactional
+    public void deleteAllByQuestionId(Long questionId) {
+        questionViewRepository.deleteAllByQuestionId(questionId);
+    }
+
     private List<QuestionViewResponse> getViewsFromDb(List<Long> idsNotInCache) {
         List<QuestionViewEntity> viewsEntities = questionViewRepository.findByQuestionEntityIds(idsNotInCache);
         return viewsEntities.stream()

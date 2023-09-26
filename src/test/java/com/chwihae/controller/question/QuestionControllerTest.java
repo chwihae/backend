@@ -169,6 +169,61 @@ class QuestionControllerTest extends AbstractMockMvcTest {
     }
 
     @Test
+    @DisplayName("DELETE /api/v1/questions/{questionId} - 성공 (질문이 마감되었을때 질문 작성자는 질문을 삭제할 수 있다)")
+    @WithTestUser
+    void deleteQuestion_byQuestioner_returnSuccessCode() throws Exception {
+        //given
+
+        //when
+
+        //then
+    }
+
+    @Test
+    @DisplayName("DELETE /api/v1/questions/{questionId} - 실패 (마감 시간 전인 질문에 대해서 질문 작성자는 질문을 삭제할 수 없다)")
+    @WithTestUser
+    void deleteQuestion_byQuestioner_whenQuestionNotClosed_returnForbiddenCode() throws Exception {
+        //given
+
+        //when
+
+        //then
+    }
+
+    @Test
+    @DisplayName("DELETE /api/v1/questions/{questionId} - 실패 (존재하지 않은 질문은 삭제할 수 없다)")
+    @WithTestUser
+    void deleteQuestion_withNotExistingQuestion_returnNotfoundCode() throws Exception {
+        //given
+
+        //when
+
+        //then
+    }
+
+    @Test
+    @DisplayName("DELETE /api/v1/questions/{questionId} - 실패 (질문 작성자가 아니면 질문을 삭제할 수 없다)")
+    @WithTestUser
+    void deleteQuestion_byOther_whenQuestionNotClosed_returnForbiddenCode() throws Exception {
+        //given
+
+        //when
+
+        //then
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/questions/{questionId} - 성공 (질문 작성자)")
+    @WithTestUser
+    void deleteQuestion_byOther_returnSuccessCode() throws Exception {
+        //given
+
+        //when
+
+        //then
+    }
+
+    @Test
     @DisplayName("GET /api/v1/questions/{questionId} - 성공 (질문 작성자)")
     @WithTestUser("questioner@email.com")
     void getQuestion_byQuestioner_returnsSuccessCode() throws Exception {
