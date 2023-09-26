@@ -1,0 +1,35 @@
+[[question-delete]]
+===== HTTP Request
+
+include::{snippets}/question-delete/http-request.adoc[]
+
+===== Notes
+
+* 이 API는 사용자가 질문을 삭제할 때 사용합니다.
+* 경로 변수에는 조회하려는 질문의 고유 아이디를 포함해야 합니다.
+* 마감된 질문에 대해서 질문 작성자만이 삭제할 수 있습니다
+* 요청 헤더에는 유효한 토큰이 포함되어 있어야 합니다.
+
+include::{snippets}/question-delete/path-parameters.adoc[]
+
+===== Request Header
+
+include::{snippets}/question-delete/request-headers.adoc[]
+
+===== HTTP Response
+
+include::{snippets}/question-delete/http-response.adoc[]
+
+===== Notes
+
+* 질문이 데이터베이스에 존재하지 않을 경우 `QUESTION_NOT_FOUND` 오류가 반환됩니다.
+* 질문이 마감되지 않았으면 질문을 삭제할 수 없습니다.
+* 질문을 작성한 사용자만이 질문을 삭제할 수 있습니다.
+
+===== Potential Errors
+
+* `INVALID_TOKEN`: 토큰없이 요청하거나, 만료된 토큰을 사용했을 때
+* `QUESTION_NOT_FOUND`: 존재하지 않는 질문 아이디로 요청할 때
+* `FORBIDDEN`: 질문 작성자가 아니거나, 질문 마감 시간이 종료되지 않았을 떄
+
+include::{snippets}/question-delete/response-fields.adoc[]

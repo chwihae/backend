@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @Repository
 public interface CommenterSequenceRepository extends JpaRepository<CommenterSequenceEntity, Long> {
-    
+
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<CommenterSequenceEntity> findForUpdateByQuestionEntityId(Long questionId);
 
@@ -27,4 +27,11 @@ public interface CommenterSequenceRepository extends JpaRepository<CommenterSequ
     @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query(value = "DELETE FROM commenter_sequence", nativeQuery = true)
     void physicallyDeleteAll();
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE CommenterSequenceEntity cse " +
+            "SET cse.deletedAt = NOW() " +
+            "WHERE cse.questionEntity.id = :questionId")
+    void deleteAllByQuestionId(@Param("questionId") Long questionId);
 }

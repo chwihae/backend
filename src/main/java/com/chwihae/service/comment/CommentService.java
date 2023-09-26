@@ -65,6 +65,11 @@ public class CommentService {
         return commentRepository.countByUserEntityId(userId);
     }
 
+    @Transactional
+    public void deleteAllByQuestionId(Long questionId) {
+        commentRepository.deleteAllByQuestionId(questionId);
+    }
+
     private CommenterAliasEntity getOrCreateCommenterAlias(UserEntity userEntity, QuestionEntity questionEntity) {
         return commentRepository.findFirstByQuestionEntityIdAndUserEntityId(questionEntity.getId(), userEntity.getId())
                 .map(CommentEntity::getCommenterAliasEntity)

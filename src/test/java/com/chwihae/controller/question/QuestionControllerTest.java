@@ -15,10 +15,7 @@ import com.chwihae.domain.vote.VoteEntity;
 import com.chwihae.dto.comment.request.QuestionCommentRequest;
 import com.chwihae.dto.option.request.OptionCreateRequest;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
-import com.chwihae.infra.fixture.CommentEntityFixture;
-import com.chwihae.infra.fixture.QuestionEntityFixture;
-import com.chwihae.infra.fixture.QuestionViewFixture;
-import com.chwihae.infra.fixture.UserEntityFixture;
+import com.chwihae.infra.fixture.*;
 import com.chwihae.infra.support.WithTestUser;
 import com.chwihae.infra.test.AbstractMockMvcTest;
 import org.assertj.core.api.Assertions;
@@ -35,6 +32,7 @@ import java.util.stream.IntStream;
 
 import static com.chwihae.domain.question.QuestionStatus.IN_PROGRESS;
 import static com.chwihae.exception.CustomExceptionError.*;
+import static com.chwihae.infra.utils.TimeUtils.KST;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -166,6 +164,103 @@ class QuestionControllerTest extends AbstractMockMvcTest {
                 .andDo(print())
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.code").value(INVALID_TOKEN.code()));
+    }
+
+    @Test
+    @DisplayName("DELETE /api/v1/questions/{questionId} - 성공 (질문이 마감되었을때 질문 작성자는 질문을 삭제할 수 있다)")
+    @WithTestUser("questioner@email.com")
+    void deleteQuestion_byQuestioner_returnSuccessCode() throws Exception {
+        //given
+        UserEntity questioner = userRepository.findByEmail("questioner@email.com").get();
+        UserEntity other = userRepository.save(UserEntityFixture.of());
+
+        LocalDateTime closeAt = LocalDateTime.now(KST).minusDays(1);
+        QuestionEntity question = questionRepository.save(QuestionEntityFixture.of(questioner, closeAt));
+
+        OptionEntity option1 = OptionEntityFixture.of(question);
+        OptionEntity option2 = OptionEntityFixture.of(question);
+        optionRepository.saveAll(List.of(option1, option2));
+
+        VoteEntity vote1 = VoteEntityFixture.of(option1, questioner);
+        VoteEntity vote2 = VoteEntityFixture.of(option1, other);
+        voteRepository.saveAll(List.of(vote1, vote2));
+
+        BookmarkEntity bookmark1 = BookmarkFixture.of(question, questioner);
+        BookmarkEntity bookmark2 = BookmarkFixture.of(question, other);
+        bookmarkRepository.saveAll(List.of(bookmark1, bookmark2));
+
+        commenterSequenceRepository.save(CommenterSequenceFixture.of(question));
+        questionViewRepository.save(createQuestionView(question));
+
+        CommenterAliasEntity alias1 = CommenterAliasFixture.of(questioner, question);
+        CommenterAliasEntity alias2 = CommenterAliasFixture.of(other, question);
+        commenterAliasRepository.saveAll(List.of(alias1, alias2));
+
+        CommentEntity comment1 = CommentEntityFixture.of(questioner, question, alias1);
+        CommentEntity comment2 = CommentEntityFixture.of(other, question, alias2);
+        commentRepository.saveAll(List.of(comment1, comment2));
+
+        //when //then
+        mockMvc.perform(
+                        delete("/api/v1/questions/{questionId}", question.getId())
+                )
+                .andExpect(status().isOk());
+
+        Assertions.assertThat(questionRepository.findAll()).isEmpty();
+        Assertions.assertThat(commentRepository.findAll()).isEmpty();
+        Assertions.assertThat(commenterAliasRepository.findAll()).isEmpty();
+        Assertions.assertThat(questionViewRepository.findAll()).isEmpty();
+        Assertions.assertThat(commenterSequenceRepository.findAll()).isEmpty();
+        Assertions.assertThat(bookmarkRepository.findAll()).isEmpty();
+        Assertions.assertThat(voteRepository.findAll()).isEmpty();
+        Assertions.assertThat(optionRepository.findAll()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("DELETE /api/v1/questions/{questionId} - 실패 (마감 시간 전인 질문에 대해서 질문 작성자는 질문을 삭제할 수 없다)")
+    @WithTestUser("questioner@email.com")
+    void deleteQuestion_byQuestioner_whenQuestionNotClosed_returnForbiddenCode() throws Exception {
+        //given
+        UserEntity questioner = userRepository.findByEmail("questioner@email.com").get();
+        QuestionEntity question = questionRepository.save(QuestionEntityFixture.of(questioner));
+
+        //when //then
+        mockMvc.perform(
+                        delete("/api/v1/questions/{questionId}", question.getId())
+                )
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.code").value(FORBIDDEN.code()));
+    }
+
+    @Test
+    @DisplayName("DELETE /api/v1/questions/{questionId} - 실패 (존재하지 않은 질문은 삭제할 수 없다)")
+    @WithTestUser
+    void deleteQuestion_withNotExistingQuestion_returnNotfoundCode() throws Exception {
+        //given
+        long notExistingQuestionId = 0L;
+
+        //when //then
+        mockMvc.perform(
+                        delete("/api/v1/questions/{questionId}", notExistingQuestionId)
+                )
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value(QUESTION_NOT_FOUND.code()));
+    }
+
+    @Test
+    @DisplayName("DELETE /api/v1/questions/{questionId} - 실패 (질문 작성자가 아니면 질문을 삭제할 수 없다)")
+    @WithTestUser
+    void deleteQuestion_byOther_whenQuestionNotClosed_returnForbiddenCode() throws Exception {
+        //given
+        UserEntity questioner = userRepository.save(UserEntityFixture.of());
+        QuestionEntity question = questionRepository.save(QuestionEntityFixture.of(questioner));
+
+        //when //then
+        mockMvc.perform(
+                        delete("/api/v1/questions/{questionId}", question.getId())
+                )
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.code").value(FORBIDDEN.code()));
     }
 
     @Test

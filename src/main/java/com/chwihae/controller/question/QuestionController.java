@@ -58,6 +58,13 @@ public class QuestionController {
         return ApiResponse.ok(questionService.getQuestion(questionId, userContext.getId()));
     }
 
+    @DeleteMapping("/{questionId}")
+    public ApiResponse<QuestionDetailResponse> deleteQuestion(@PathVariable Long questionId,
+                                                              @CurrentUser UserContext userContext) {
+        questionService.deleteQuestion(questionId, userContext.getId());
+        return ApiResponse.ok();
+    }
+
     @GetMapping("/{questionId}/options")
     public ApiResponse<VoteOptionResponse> getOptions(@PathVariable Long questionId,
                                                       @CurrentUser UserContext userContext) {

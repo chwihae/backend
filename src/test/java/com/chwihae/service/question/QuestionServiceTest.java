@@ -1,18 +1,22 @@
 package com.chwihae.service.question;
 
+import com.chwihae.domain.bookmark.BookmarkEntity;
+import com.chwihae.domain.comment.CommentEntity;
+import com.chwihae.domain.commenter.CommenterAliasEntity;
+import com.chwihae.domain.option.OptionEntity;
 import com.chwihae.domain.question.QuestionEntity;
 import com.chwihae.domain.question.QuestionStatus;
 import com.chwihae.domain.question.QuestionType;
 import com.chwihae.domain.question.QuestionViewEntity;
 import com.chwihae.domain.user.UserEntity;
+import com.chwihae.domain.vote.VoteEntity;
 import com.chwihae.dto.option.request.OptionCreateRequest;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
 import com.chwihae.dto.question.response.QuestionDetailResponse;
 import com.chwihae.dto.question.response.QuestionListResponse;
 import com.chwihae.exception.CustomException;
 import com.chwihae.exception.CustomExceptionError;
-import com.chwihae.infra.fixture.QuestionViewFixture;
-import com.chwihae.infra.fixture.UserEntityFixture;
+import com.chwihae.infra.fixture.*;
 import com.chwihae.infra.test.AbstractIntegrationTest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -30,7 +34,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static com.chwihae.domain.question.QuestionType.*;
-import static com.chwihae.exception.CustomExceptionError.USER_NOT_FOUND;
+import static com.chwihae.exception.CustomExceptionError.*;
+import static com.chwihae.infra.utils.TimeUtils.KST;
 
 @Transactional
 class QuestionServiceTest extends AbstractIntegrationTest {
@@ -174,6 +179,98 @@ class QuestionServiceTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @DisplayName("질문 작성자는 질문이 마감 되었을 때 질문을 삭제할 수 있다")
+    void deleteQuestion_pass() throws Exception {
+        //given
+        UserEntity userEntity1 = UserEntityFixture.of();
+        UserEntity userEntity2 = UserEntityFixture.of();
+        userRepository.saveAll(List.of(userEntity1, userEntity2));
+        LocalDateTime closeAt = LocalDateTime.now(KST).minusDays(1);
+        QuestionEntity question = questionRepository.save(QuestionEntityFixture.of(userEntity1, closeAt));
+
+        OptionEntity option1 = OptionEntityFixture.of(question);
+        OptionEntity option2 = OptionEntityFixture.of(question);
+        optionRepository.saveAll(List.of(option1, option2));
+
+        VoteEntity vote1 = VoteEntityFixture.of(option1, userEntity1);
+        VoteEntity vote2 = VoteEntityFixture.of(option1, userEntity2);
+        voteRepository.saveAll(List.of(vote1, vote2));
+
+        BookmarkEntity bookmark1 = BookmarkFixture.of(question, userEntity1);
+        BookmarkEntity bookmark2 = BookmarkFixture.of(question, userEntity2);
+        bookmarkRepository.saveAll(List.of(bookmark1, bookmark2));
+
+        commenterSequenceRepository.save(CommenterSequenceFixture.of(question));
+        questionViewRepository.save(createQuestionView(question));
+
+        CommenterAliasEntity alias1 = CommenterAliasFixture.of(userEntity1, question);
+        CommenterAliasEntity alias2 = CommenterAliasFixture.of(userEntity2, question);
+        commenterAliasRepository.saveAll(List.of(alias1, alias2));
+
+        CommentEntity comment1 = CommentEntityFixture.of(userEntity1, question, alias1);
+        CommentEntity comment2 = CommentEntityFixture.of(userEntity2, question, alias2);
+        commentRepository.saveAll(List.of(comment1, comment2));
+
+        //when
+        questionService.deleteQuestion(question.getId(), userEntity1.getId());
+
+        //then
+        Assertions.assertThat(questionRepository.findAll()).isEmpty();
+        Assertions.assertThat(commentRepository.findAll()).isEmpty();
+        Assertions.assertThat(commenterAliasRepository.findAll()).isEmpty();
+        Assertions.assertThat(questionViewRepository.findAll()).isEmpty();
+        Assertions.assertThat(commenterSequenceRepository.findAll()).isEmpty();
+        Assertions.assertThat(bookmarkRepository.findAll()).isEmpty();
+        Assertions.assertThat(voteRepository.findAll()).isEmpty();
+        Assertions.assertThat(optionRepository.findAll()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("마감되지 않은 질문을 질문 작성자가 삭제하려고 하면 예외가 발생한다")
+    void deleteQuestion_whenQuestionNotClosed_throwException() throws Exception {
+        //given
+        UserEntity userEntity = userRepository.save(UserEntityFixture.of());
+        QuestionEntity question = questionRepository.save(QuestionEntityFixture.of(userEntity));
+
+        //when //then
+        Assertions.assertThatThrownBy(() -> questionService.deleteQuestion(question.getId(), userEntity.getId()))
+                .isInstanceOf(CustomException.class)
+                .extracting("error")
+                .isEqualTo(FORBIDDEN);
+    }
+
+    @Test
+    @DisplayName("존재하지 않은 질문을 삭제하려고 하면 예외가 발생한다")
+    void deleteQuestion_withNotExistingQuestion_throwException() throws Exception {
+        //given
+        UserEntity userEntity = userRepository.save(UserEntityFixture.of());
+        long notExistingQuestionId = 0L;
+
+        //when //then
+        Assertions.assertThatThrownBy(() -> questionService.deleteQuestion(notExistingQuestionId, userEntity.getId()))
+                .isInstanceOf(CustomException.class)
+                .extracting("error")
+                .isEqualTo(QUESTION_NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("질문 작성자가 아닌 사용자가 질문을 삭제하려고 하면 예외가 발생한다")
+    void deleteQuestion_byOther_throwException() throws Exception {
+        //given
+        UserEntity userEntity1 = UserEntityFixture.of();
+        UserEntity userEntity2 = UserEntityFixture.of();
+        userRepository.saveAll(List.of(userEntity1, userEntity2));
+        LocalDateTime closeAt = LocalDateTime.now(KST).minusDays(1);
+        QuestionEntity question = questionRepository.save(QuestionEntityFixture.of(userEntity1, closeAt));
+
+        //when //then
+        Assertions.assertThatThrownBy(() -> questionService.deleteQuestion(question.getId(), userEntity2.getId()))
+                .isInstanceOf(CustomException.class)
+                .extracting("error")
+                .isEqualTo(FORBIDDEN);
+    }
+
+    @Test
     @DisplayName("질문 전체를 질문 타입,질문 상태 조건으로 페이지네이션으로 조회한다")
     void getQuestions_byTypeAndStatus_returnsPageResponse() throws Exception {
         //given
@@ -209,13 +306,13 @@ class QuestionServiceTest extends AbstractIntegrationTest {
 
     // TODO - 캐싱되어 있는거
     // TODO - DB에만 있는거
-    
+
     public QuestionEntity createQuestion(UserEntity userEntity, QuestionType type) {
         return QuestionEntity.builder()
                 .userEntity(userEntity)
                 .title("title")
                 .content("content")
-                .closeAt(LocalDateTime.of(2023, 11, 11, 0, 0))
+                .closeAt(LocalDateTime.now(KST).plusHours(1))
                 .type(type)
                 .build();
     }

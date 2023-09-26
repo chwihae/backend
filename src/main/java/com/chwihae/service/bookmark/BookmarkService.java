@@ -35,6 +35,11 @@ public class BookmarkService {
                 .orElseGet(() -> saveBookmark(userEntity, questionEntity));
     }
 
+    @Transactional
+    public void deleteAllByQuestionId(Long questionId) {
+        bookmarkRepository.deleteAllByQuestionId(questionId);
+    }
+
     public int getBookmarkCount(Long questionId) {
         return bookmarkRepository.countByQuestionEntityId(questionId);
     }

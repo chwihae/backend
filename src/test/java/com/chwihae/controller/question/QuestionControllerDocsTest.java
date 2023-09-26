@@ -117,6 +117,33 @@ class QuestionControllerDocsTest extends AbstractRestDocsTest {
     }
 
     @Test
+    @DisplayName("질문 삭제 API")
+    void deleteQuestion_restDocs() throws Exception {
+        //when //then
+        mockMvc.perform(
+                        delete("/api/v1/questions/{questionId}", 715L)
+                                .header(AUTHORIZATION, token(1L))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("question-delete",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestHeaders(
+                                headerWithName(AUTHORIZATION).description("[Required] 인증 토큰 (타입: 문자열)")
+                        ),
+                        pathParameters(
+                                parameterWithName("questionId").description("[Required] 질문 아이디 (타입: 숫자)")
+                        ),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.NUMBER).description("코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("메시지"),
+                                fieldWithPath("data").type(JsonFieldType.NULL).description("응답 데이터")
+                        )
+                ));
+    }
+
+    @Test
     @DisplayName("질문 리스트 조회 API")
     void getQuestions_restDocs() throws Exception {
         //given
