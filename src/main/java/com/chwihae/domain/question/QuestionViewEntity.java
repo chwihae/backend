@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import java.util.Objects;
+
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Table(name = "question_view")
@@ -36,5 +38,9 @@ public class QuestionViewEntity extends BaseEntity {
 
     public void setViewCount(Long viewCount) {
         this.viewCount = viewCount;
+    }
+
+    public Long getQuestionId() {
+        return Objects.nonNull(this.questionEntity) ? this.questionEntity.getId() : null;
     }
 }

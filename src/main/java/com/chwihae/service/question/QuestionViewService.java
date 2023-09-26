@@ -4,17 +4,17 @@ import com.chwihae.config.redis.QuestionViewCacheRepository;
 import com.chwihae.domain.question.QuestionEntity;
 import com.chwihae.domain.question.QuestionViewEntity;
 import com.chwihae.domain.question.QuestionViewRepository;
+import com.chwihae.dto.question.response.QuestionViewResponse;
 import com.chwihae.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static com.chwihae.exception.CustomExceptionError.QUESTION_NOT_FOUND;
 
@@ -43,6 +43,32 @@ public class QuestionViewService {
                         })
                         .orElseThrow(() -> new CustomException(QUESTION_NOT_FOUND))
                 );
+    }
+
+    // TODO test - redis에 저장된 view가 없을경우
+    // TODO test - redisd와 DB에 view를 합쳐서 리턴
+    public List<QuestionViewResponse> getViewCounts(List<Long> questionIds) {
+        List<QuestionViewResponse> viewsFromCache = questionViewCacheRepository.getQuestionViews(questionIds); // 1. Get view count from cache
+
+        List<Long> idsNotInCache = questionIds.stream() // 2. Find question id not in cache
+                .filter(it -> viewsFromCache.stream().noneMatch(view -> Objects.equals(view.getQuestionId(), it)))
+                .toList();
+
+        List<QuestionViewResponse> viewsFromDb = getViewsFromDb(idsNotInCache); // 3. Get view count that not exists in cache from DB
+        viewsFromDb.forEach(it -> questionViewCacheRepository.setQuestionView(it.getQuestionId(), it.getViewCount())); // 4. Save view count in cache
+        viewsFromCache.addAll(viewsFromDb); // 5. Cache + DB
+
+        return viewsFromCache;
+    }
+
+    private List<QuestionViewResponse> getViewsFromDb(List<Long> idsNotInCache) {
+        if (Objects.isNull(idsNotInCache) || idsNotInCache.isEmpty()) {
+            return new ArrayList<>();
+        }
+        List<QuestionViewEntity> viewsEntities = questionViewRepository.findViewCountsByQuestionEntityIds(idsNotInCache);
+        return viewsEntities.stream()
+                .map(it -> new QuestionViewResponse(it.getQuestionId(), it.getViewCount()))
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     /**

@@ -22,7 +22,6 @@ import java.util.Optional;
 import static com.chwihae.domain.bookmark.QBookmarkEntity.bookmarkEntity;
 import static com.chwihae.domain.comment.QCommentEntity.commentEntity;
 import static com.chwihae.domain.question.QQuestionEntity.questionEntity;
-import static com.chwihae.domain.question.QQuestionViewEntity.questionViewEntity;
 import static com.chwihae.domain.user.QUserEntity.userEntity;
 import static com.chwihae.domain.vote.QVoteEntity.voteEntity;
 
@@ -140,11 +139,11 @@ public class QuestionRepositoryExtensionImpl extends QuerydslRepositorySupport i
                 .fetchCount();
     }
 
-    private JPQLQuery<Long> viewCountSubQuery() {
-        return JPAExpressions.select(questionViewEntity.viewCount)
-                .from(questionViewEntity)
-                .where(questionViewEntity.questionEntity.id.eq(questionEntity.id));
-    }
+//    private JPQLQuery<Long> viewCountSubQuery() {
+//        return JPAExpressions.select(questionViewEntity.viewCount)
+//                .from(questionViewEntity)
+//                .where(questionViewEntity.questionEntity.id.eq(questionEntity.id));
+//    }
 
     private JPQLQuery<Long> commentCountSubQuery() {
         return JPAExpressions.select(commentEntity.count())
