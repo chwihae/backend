@@ -8,13 +8,13 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class QuestionCommentCreateRequest {
+public class QuestionCommentRequest {
     @Size(max = 1000)
     @NotBlank
     private String content;
 
     @Builder
-    private QuestionCommentCreateRequest(String content) {
+    private QuestionCommentRequest(String content) {
         this.content = content;
     }
 }

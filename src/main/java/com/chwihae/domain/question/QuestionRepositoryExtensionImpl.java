@@ -67,7 +67,7 @@ public class QuestionRepositoryExtensionImpl extends QuerydslRepositorySupport i
         JPAQueryFactory queryFactory = new JPAQueryFactory(getEntityManager());
         BooleanBuilder conditions = baseConditions(status, type);
         return queryFactory
-                .select(questionEntity, commentCountSubQuery(), voteCountSubQuery())
+                .select(questionEntity, commentCountSubQuery(), bookmarkCountSubQuery())
                 .from(questionEntity)
                 .where(conditions)
                 .orderBy(getOrderSpecifiers(pageable.getSort()))
@@ -79,7 +79,7 @@ public class QuestionRepositoryExtensionImpl extends QuerydslRepositorySupport i
     private List<Tuple> fetchMyTuplesByUserId(Long userId, Pageable pageable) {
         JPAQueryFactory queryFactory = new JPAQueryFactory(getEntityManager());
         return queryFactory
-                .select(questionEntity, commentCountSubQuery(), voteCountSubQuery())
+                .select(questionEntity, commentCountSubQuery(), bookmarkCountSubQuery())
                 .from(questionEntity)
                 .join(questionEntity.userEntity, userEntity)
                 .where(questionEntity.userEntity.id.eq(userId))
@@ -92,7 +92,7 @@ public class QuestionRepositoryExtensionImpl extends QuerydslRepositorySupport i
     private List<Tuple> fetchVotedTuplesByUserId(Long userId, Pageable pageable) {
         JPAQueryFactory queryFactory = new JPAQueryFactory(getEntityManager());
         return queryFactory
-                .select(questionEntity, commentCountSubQuery(), voteCountSubQuery())
+                .select(questionEntity, commentCountSubQuery(), bookmarkCountSubQuery())
                 .from(questionEntity)
                 .join(voteEntity).on(voteEntity.questionEntity.id.eq(questionEntity.id))
                 .where(voteEntity.valid.eq(true).and(voteEntity.userEntity.id.eq(userId)))
@@ -105,7 +105,7 @@ public class QuestionRepositoryExtensionImpl extends QuerydslRepositorySupport i
     private List<Tuple> fetchBookmarkedTuplesByUserId(Long userId, Pageable pageable) {
         JPAQueryFactory queryFactory = new JPAQueryFactory(getEntityManager());
         return queryFactory
-                .select(questionEntity, commentCountSubQuery(), voteCountSubQuery())
+                .select(questionEntity, commentCountSubQuery(), bookmarkCountSubQuery())
                 .from(questionEntity)
                 .join(bookmarkEntity).on(bookmarkEntity.questionEntity.id.eq(questionEntity.id))
                 .where(bookmarkEntity.userEntity.id.eq(userId))
@@ -139,22 +139,16 @@ public class QuestionRepositoryExtensionImpl extends QuerydslRepositorySupport i
                 .fetchCount();
     }
 
-//    private JPQLQuery<Long> viewCountSubQuery() {
-//        return JPAExpressions.select(questionViewEntity.viewCount)
-//                .from(questionViewEntity)
-//                .where(questionViewEntity.questionEntity.id.eq(questionEntity.id));
-//    }
-
     private JPQLQuery<Long> commentCountSubQuery() {
         return JPAExpressions.select(commentEntity.count())
                 .from(commentEntity)
                 .where(commentEntity.questionEntity.id.eq(questionEntity.id));
     }
 
-    private JPQLQuery<Long> voteCountSubQuery() {
-        return JPAExpressions.select(voteEntity.count())
-                .from(voteEntity)
-                .where(voteEntity.questionEntity.id.eq(questionEntity.id));
+    private JPQLQuery<Long> bookmarkCountSubQuery() {
+        return JPAExpressions.select(bookmarkEntity.count())
+                .from(bookmarkEntity)
+                .where(bookmarkEntity.questionEntity.id.eq(questionEntity.id));
     }
 
     private List<QuestionListResponse> transformTuplesToDTOs(List<Tuple> results) {

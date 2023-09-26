@@ -47,6 +47,7 @@ public class UserService {
                 .build());
     }
 
+    // TODO test
     public Page<QuestionListResponse> getUserQuestions(Long userId, UserQuestionFilterType type, Pageable pageable) {
         Page<QuestionListResponse> page = questionsFilterStrategyProvider.getFilter(type).filter(userId, pageable); // 1. Find page from DB
         List<QuestionViewResponse> allViewCounts = findAllQuestionViewCounts(page.getContent()); // 2. Get question view from cache and DB

@@ -41,6 +41,7 @@ https://api.chwihae.dragonappear.online
 | `1200-1299` | 질문과 관련된 에러
 | `1300-1399` | 옵션과 관련된 에러
 | `1400-1499` | 투표와 관련된 에러
+| `1500-1599` | 댓글과 관련된 에러
 |===
 
 === 예외 응답 설명
@@ -61,4 +62,5 @@ https://api.chwihae.dragonappear.online
 | `404 NOT_FOUND` | OPTION_NOT_FOUND | 1300 | 존재하지 않는 옵션입니다 | Null
 | `404 NOT_FOUND` | VOTE_NOT_FOUND | 1400 | 투표 기록이 존재하지 않습니다 | Null
 | `409 CONFLICT` | DUPLICATE_VOTE | 1401 | 이미 투표하였습니다 | Null
+| `404 NOT_FOUND` | COMMENT_NOT_FOUND | 1500 | 존재하지 않는 댓글입니다 | Null
 |===

@@ -29,7 +29,10 @@ public enum CustomExceptionError {
 
     // 1400~1499: 투표와 관련된 에러
     VOTE_NOT_FOUND(HttpStatus.NOT_FOUND, 1400, "투표 기록이 존재하지 않습니다"),
-    DUPLICATE_VOTE(HttpStatus.CONFLICT, 1401, "이미 투표하였습니다");
+    DUPLICATE_VOTE(HttpStatus.CONFLICT, 1401, "이미 투표하였습니다"),
+
+    // 1500~1599: 댓글과 관련된 에러
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, 1400, "존재하지 않는 댓글입니다");
 
     private final HttpStatus httpStatus;
     private final int errorCode;

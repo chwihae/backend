@@ -61,4 +61,12 @@ public class CommentEntity extends BaseEntity {
     public boolean isCreatedBy(Long userId) {
         return Objects.equals(this.userEntity.getId(), userId);
     }
+
+    public void update(String content) {
+        this.content = content;
+    }
+
+    public String getAlias() {
+        return Objects.nonNull(this.commenterAliasEntity) ? this.commenterAliasEntity.getAlias() : null;
+    }
 }

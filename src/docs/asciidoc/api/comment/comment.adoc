@@ -10,3 +10,13 @@ include::comment-list.adoc[]
 ==== 댓글 등록
 
 include::comment-create.adoc[]
+
+[[question-comment-modify]]
+==== 댓글 수정
+
+include::comment-modify.adoc[]
+
+[[question-comment-delte]]
+==== 댓글 삭제
+
+include::comment-delete.adoc[]
