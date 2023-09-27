@@ -14,11 +14,13 @@ import com.chwihae.dto.question.request.QuestionCreateRequest;
 import com.chwihae.dto.question.response.QuestionDetailResponse;
 import com.chwihae.dto.question.response.QuestionListResponse;
 import com.chwihae.dto.question.response.QuestionViewResponse;
+import com.chwihae.dto.user.UserQuestionFilterType;
 import com.chwihae.event.question.QuestionViewEvent;
 import com.chwihae.exception.CustomException;
 import com.chwihae.service.bookmark.BookmarkService;
 import com.chwihae.service.comment.CommentService;
 import com.chwihae.service.commenter.CommenterSequenceService;
+import com.chwihae.service.user.question.UserQuestionsFilterStrategyProvider;
 import com.chwihae.service.vote.VoteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -45,8 +47,9 @@ public class QuestionService {
     private final VoteService voteService;
     private final BookmarkService bookmarkService;
     private final QuestionViewService questionViewService;
-    private final ApplicationEventPublisher eventPublisher;
     private final CommenterAliasRepository commenterAliasRepository;
+    private final UserQuestionsFilterStrategyProvider questionsFilterStrategyProvider;
+    private final ApplicationEventPublisher eventPublisher;
 
     public Page<QuestionListResponse> getQuestionsByTypeAndStatus(QuestionType type, QuestionStatus status, Pageable pageable) {
         Page<QuestionListResponse> page = questionRepository.findByTypeAndStatusWithCounts(status, type, pageable); // 1. Find page from DB
@@ -87,6 +90,14 @@ public class QuestionService {
         ensureQuestionIsClosed(questionEntity);
         ensureUserIsQuestioner(questionEntity, userId);
         deleteQuestion(questionId, questionEntity);
+    }
+
+
+    public Page<QuestionListResponse> getUserQuestions(Long userId, UserQuestionFilterType type, Pageable pageable) {
+        Page<QuestionListResponse> page = questionsFilterStrategyProvider.getFilter(type).filter(userId, pageable); // 1. Find page from DB
+        List<QuestionViewResponse> allViewCounts = findAllQuestionViewCounts(page.getContent()); // 2. Get question view from cache and DB
+        setPageViewCounts(page.getContent(), allViewCounts); // 3. Set question views for each page element
+        return page;
     }
 
     public QuestionDetailResponse getQuestion(Long questionId, Long userId) {

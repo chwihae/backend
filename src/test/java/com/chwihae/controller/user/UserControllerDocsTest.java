@@ -4,6 +4,7 @@ import com.chwihae.dto.question.response.QuestionListResponse;
 import com.chwihae.dto.user.UserQuestionFilterType;
 import com.chwihae.dto.user.UserStatisticsResponse;
 import com.chwihae.infra.test.AbstractRestDocsTest;
+import com.chwihae.service.question.QuestionService;
 import com.chwihae.service.user.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,10 +37,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class UserControllerDocsTest extends AbstractRestDocsTest {
 
     private final UserService userService = mock(UserService.class);
+    private final QuestionService questionService = mock(QuestionService.class);
 
     @Override
     protected Object initController() {
-        return new UserController(userService);
+        return new UserController(userService, questionService);
     }
 
     @Test
@@ -99,7 +101,7 @@ class UserControllerDocsTest extends AbstractRestDocsTest {
         PageRequest pageRequest = PageRequest.of(PAGE_NUMBER, PAGE_SIZE);
         Page<QuestionListResponse> mockPage = new PageImpl<>(content, pageRequest, CONTENT_SIZE);
 
-        given(userService.getUserQuestions(any(), any(), any()))
+        given(questionService.getUserQuestions(any(), any(), any()))
                 .willReturn(mockPage);
 
         //when //then
