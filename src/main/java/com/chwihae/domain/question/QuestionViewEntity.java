@@ -13,7 +13,11 @@ import java.util.Objects;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Table(name = "question_view")
+@Table(name = "question_view",
+        indexes = {
+                @Index(name = "idx_question_view_question", columnList = "id_question")
+        }
+)
 @SQLDelete(sql = "UPDATE question_view SET deleted_at = NOW() WHERE id_view = ?")
 @Where(clause = "deleted_at is NULL")
 @Entity
