@@ -35,7 +35,7 @@ public class CloseExpiredQuestionJobConfig {
     private final PlatformTransactionManager transactionManager;
     private final QuestionRepository questionRepository;
 
-    @Bean
+    @Bean(name = "closeQuestionJob")
     public Job closeQuestionJob() {
         return new JobBuilder("closeQuestionJob", jobRepository)
                 .start(closeQuestionStep())
@@ -43,7 +43,7 @@ public class CloseExpiredQuestionJobConfig {
     }
 
     // TODO 재시도 테스트
-    @Bean
+    @Bean(name = "closeQuestionStep")
     public Step closeQuestionStep() {
         return new StepBuilder("closeQuestionStep", jobRepository)
                 .repository(jobRepository)

@@ -17,10 +17,10 @@ import java.util.stream.IntStream;
 @Repository
 public class QuestionViewCacheRepository {
 
-    private static final Duration CACHE_TTL = Duration.ofDays(1);
-    private static final String KEY_FORMAT = "question:%d:views";
-    private static final String KEY_PATTERN = "question:*:views";
+    public static final String KEY_FORMAT = "question:%d:views";
+    public static final String KEY_PATTERN = "question:*:views";
     public static final String KEY_PATTERN_REGEX = "^question:(\\d+):views$";
+    private static final Duration CACHE_TTL = Duration.ofDays(1);
     private final RedisTemplate<String, Long> questionViewRedisTemplate;
 
     public Long setViewCount(Long questionId, Long viewCount) {
@@ -39,7 +39,7 @@ public class QuestionViewCacheRepository {
         if (CollectionUtils.isEmpty(questionIds)) {
             return new ArrayList<>();
         }
-        
+
         List<String> existingKeys = getExistingKeys(questionIds);
         List<Long> viewCounts = questionViewRedisTemplate.opsForValue().multiGet(existingKeys);
         if (CollectionUtils.isEmpty(viewCounts)) {
