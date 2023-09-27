@@ -34,7 +34,6 @@ public class VoteService {
     private final UserService userService;
     private final QuestionService questionService;
     private final OptionService optionService;
-
     private final VoteRepository voteRepository;
     private final PlatformTransactionManager transactionManager;
 

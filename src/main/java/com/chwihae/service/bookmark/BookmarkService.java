@@ -20,7 +20,6 @@ public class BookmarkService {
 
     private final UserService userService;
     private final QuestionService questionService;
-
     private final BookmarkRepository bookmarkRepository;
 
     @Transactional(isolation = Isolation.READ_COMMITTED)

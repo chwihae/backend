@@ -21,8 +21,8 @@ import com.chwihae.dto.question.response.QuestionViewResponse;
 import com.chwihae.dto.user.UserQuestionFilterType;
 import com.chwihae.event.question.QuestionViewEvent;
 import com.chwihae.exception.CustomException;
+import com.chwihae.service.question.filter.UserQuestionsFilterStrategyProvider;
 import com.chwihae.service.user.UserService;
-import com.chwihae.service.user.question.UserQuestionsFilterStrategyProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
@@ -43,7 +43,6 @@ public class QuestionService {
 
     private final UserService userService;
     private final QuestionViewService questionViewService;
-
     private final CommenterSequenceRepository commenterSequenceRepository;
     private final QuestionRepository questionRepository;
     private final OptionRepository optionRepository;
@@ -61,20 +60,21 @@ public class QuestionService {
         return page;
     }
 
-    private List<QuestionViewResponse> findAllQuestionViewCounts(List<QuestionListResponse> content) {
-        List<Long> questionIds = content.stream()
-                .map(QuestionListResponse::getId)
-                .distinct().toList();
-        return questionViewService.getViewCounts(questionIds);
+    public Page<QuestionListResponse> getUserQuestions(Long userId, UserQuestionFilterType type, Pageable pageable) {
+        Page<QuestionListResponse> page = questionsFilterStrategyProvider.getFilter(type).filter(userId, pageable); // 1. Find page from DB
+        List<QuestionViewResponse> allViewCounts = findAllQuestionViewCounts(page.getContent()); // 2. Get question view from cache and DB
+        setPageViewCounts(page.getContent(), allViewCounts); // 3. Set question views for each page element
+        return page;
     }
 
-    private void setPageViewCounts(List<QuestionListResponse> content, List<QuestionViewResponse> allViewCounts) {
-        content.forEach(it ->
-                allViewCounts.stream()
-                        .filter(view -> Objects.equals(view.getQuestionId(), it.getId()))
-                        .findFirst()
-                        .ifPresent(view -> it.setViewCount(view.getViewCount()))
-        );
+    public QuestionDetailResponse getQuestion(Long questionId, Long userId) {
+        QuestionEntity questionEntity = findQuestionOrException(questionId);
+        eventPublisher.publishEvent(new QuestionViewEvent(questionId));
+        return buildQuestionDetailResponse(questionId, userId, questionEntity);
+    }
+
+    public QuestionEntity findQuestionOrException(Long questionId) {
+        return questionRepository.findById(questionId).orElseThrow(() -> new CustomException(QUESTION_NOT_FOUND));
     }
 
     @Transactional
@@ -95,19 +95,22 @@ public class QuestionService {
         deleteQuestion(questionId, questionEntity);
     }
 
-
-    public Page<QuestionListResponse> getUserQuestions(Long userId, UserQuestionFilterType type, Pageable pageable) {
-        Page<QuestionListResponse> page = questionsFilterStrategyProvider.getFilter(type).filter(userId, pageable); // 1. Find page from DB
-        List<QuestionViewResponse> allViewCounts = findAllQuestionViewCounts(page.getContent()); // 2. Get question view from cache and DB
-        setPageViewCounts(page.getContent(), allViewCounts); // 3. Set question views for each page element
-        return page;
+    private List<QuestionViewResponse> findAllQuestionViewCounts(List<QuestionListResponse> content) {
+        List<Long> questionIds = content.stream()
+                .map(QuestionListResponse::getId)
+                .distinct().toList();
+        return questionViewService.getViewCounts(questionIds);
     }
 
-    public QuestionDetailResponse getQuestion(Long questionId, Long userId) {
-        QuestionEntity questionEntity = findQuestionOrException(questionId);
-        eventPublisher.publishEvent(new QuestionViewEvent(questionId));
-        return buildQuestionDetailResponse(questionId, userId, questionEntity);
+    private void setPageViewCounts(List<QuestionListResponse> content, List<QuestionViewResponse> allViewCounts) {
+        content.forEach(it ->
+                allViewCounts.stream()
+                        .filter(view -> Objects.equals(view.getQuestionId(), it.getId()))
+                        .findFirst()
+                        .ifPresent(view -> it.setViewCount(view.getViewCount()))
+        );
     }
+
 
     private void deleteQuestion(Long questionId, QuestionEntity questionEntity) {
         voteRepository.deleteAllByQuestionId(questionId); // vote
@@ -137,10 +140,6 @@ public class QuestionService {
                 bookmarked,
                 isEditable
         );
-    }
-
-    public QuestionEntity findQuestionOrException(Long questionId) {
-        return questionRepository.findById(questionId).orElseThrow(() -> new CustomException(QUESTION_NOT_FOUND));
     }
 
     private List<OptionEntity> buildOptionEntities(List<OptionCreateRequest> options, QuestionEntity questionEntity) {

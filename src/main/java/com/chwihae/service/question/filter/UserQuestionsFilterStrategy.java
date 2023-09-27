@@ -1,4 +1,4 @@
-package com.chwihae.service.user.question;
+package com.chwihae.service.question.filter;
 
 import com.chwihae.dto.question.response.QuestionListResponse;
 import org.springframework.data.domain.Page;

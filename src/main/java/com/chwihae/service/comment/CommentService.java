@@ -25,7 +25,6 @@ public class CommentService {
 
     private final UserService userService;
     private final QuestionService questionService;
-
     private final CommentRepository commentRepository;
     private final CommenterAliasRepository commenterAliasRepository;
     private final CommenterSequenceRepository commenterSequenceRepository;
