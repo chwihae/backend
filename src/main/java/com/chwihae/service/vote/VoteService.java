@@ -1,7 +1,6 @@
 package com.chwihae.service.vote;
 
 import com.chwihae.domain.option.OptionEntity;
-import com.chwihae.domain.option.OptionRepository;
 import com.chwihae.domain.question.QuestionEntity;
 import com.chwihae.domain.question.QuestionRepository;
 import com.chwihae.domain.user.UserEntity;
@@ -11,6 +10,7 @@ import com.chwihae.domain.vote.VoteRepository;
 import com.chwihae.dto.option.response.Option;
 import com.chwihae.dto.option.response.VoteOptionResponse;
 import com.chwihae.exception.CustomException;
+import com.chwihae.service.option.OptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -33,7 +33,7 @@ public class VoteService {
 
     private final UserRepository userRepository;
     private final QuestionRepository questionRepository;
-    private final OptionRepository optionRepository;
+    private final OptionService optionService;
     private final VoteRepository voteRepository;
     private final PlatformTransactionManager transactionManager;
 
@@ -41,7 +41,7 @@ public class VoteService {
         QuestionEntity questionEntity = findQuestionOrException(questionId);
         Long votedOptionId = getVotedOptionId(questionId, userId);
         boolean showVoteCount = canUserViewVoteResults(questionEntity, votedOptionId, userId);
-        List<Option> options = optionRepository.findOptionsWithResultsByQuestionId(questionId, showVoteCount);
+        List<Option> options = optionService.findOptionsWithResultsByQuestionId(questionId, showVoteCount);
         return VoteOptionResponse.of(votedOptionId, showVoteCount, options);
     }
 
@@ -51,9 +51,9 @@ public class VoteService {
         ensureQuestionIsNotClosed(questionEntity);
         ensureQuestionerCannotVote(questionEntity, userId);
         ensureUserHasNotVoted(questionId, userId);
-        OptionEntity optionEntity = findOptionOrException(optionId);
+        OptionEntity optionEntity = optionService.findOptionOrException(optionId);
         UserEntity userEntity = findUserOrException(userId);
-        
+
         saveVoteOrException(questionEntity, optionEntity, userEntity);
     }
 
@@ -119,10 +119,6 @@ public class VoteService {
 
     private QuestionEntity findQuestionOrException(Long questionId) {
         return questionRepository.findById(questionId).orElseThrow(() -> new CustomException(QUESTION_NOT_FOUND));
-    }
-
-    private OptionEntity findOptionOrException(Long optionId) {
-        return optionRepository.findById(optionId).orElseThrow(() -> new CustomException(OPTION_NOT_FOUND));
     }
 
     private UserEntity findUserOrException(Long userId) {
