@@ -1,4 +1,4 @@
-package com.chwihae.service.question;
+package com.chwihae.batch;
 
 import com.chwihae.domain.question.QuestionRepository;
 import com.chwihae.infra.test.AbstractMockTest;

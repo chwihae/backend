@@ -14,6 +14,7 @@ import com.chwihae.dto.option.request.OptionCreateRequest;
 import com.chwihae.dto.question.request.QuestionCreateRequest;
 import com.chwihae.dto.question.response.QuestionDetailResponse;
 import com.chwihae.dto.question.response.QuestionListResponse;
+import com.chwihae.dto.user.UserQuestionFilterType;
 import com.chwihae.exception.CustomException;
 import com.chwihae.exception.CustomExceptionError;
 import com.chwihae.infra.fixture.*;
@@ -302,6 +303,138 @@ class QuestionServiceTest extends AbstractIntegrationTest {
         //then
         Assertions.assertThat(response.getContent()).hasSize(PAGE_SIZE);
         Assertions.assertThat(response.getTotalPages()).isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("사용자가 작성한 질문 리스트를 페이지네이션으로 반환한다")
+    void getUserQuestions_withMyType_returnsPagination() throws Exception {
+        // Given
+        UserEntity userEntity = userRepository.save(UserEntityFixture.of());
+        QuestionEntity question1 = createQuestion(userEntity, SPEC);
+        QuestionEntity question2 = createQuestion(userEntity, COMPANY);
+        QuestionEntity question3 = createQuestion(userEntity, ETC);
+        QuestionEntity question4 = createQuestion(userEntity, SPEC);
+        QuestionEntity question5 = createQuestion(userEntity, CAREER);
+        questionRepository.saveAll(List.of(question1, question2, question3, question4, question5));
+
+        QuestionViewEntity view1 = QuestionViewFixture.of(question1);
+        QuestionViewEntity view2 = QuestionViewFixture.of(question2);
+        QuestionViewEntity view3 = QuestionViewFixture.of(question3);
+        QuestionViewEntity view4 = QuestionViewFixture.of(question4);
+        QuestionViewEntity view5 = QuestionViewFixture.of(question5);
+        questionViewRepository.saveAll(List.of(view1, view2, view3, view4, view5));
+
+        UserQuestionFilterType filterType = UserQuestionFilterType.ME;
+        PageRequest pageRequest = PageRequest.of(0, 2);
+
+        // When
+        Page<QuestionListResponse> response = questionService.getUserQuestions(userEntity.getId(), filterType, pageRequest);
+
+        // Then
+        Assertions.assertThat(response.getTotalElements()).isEqualTo(5);
+        Assertions.assertThat(response.getTotalPages()).isEqualTo(3);
+        Assertions.assertThat(response.getNumber()).isEqualTo(0);
+        Assertions.assertThat(response.getSize()).isEqualTo(2);
+        Assertions.assertThat(response.getContent()).hasSize(2);
+    }
+
+    @Test
+    @DisplayName("사용자가 북마크한 질문 리스트를 페이지네이션으로 반환한다")
+    void getUserQuestions_withBookmarkedType_returnsPagination() throws Exception {
+        // Given
+        UserEntity userEntity = userRepository.save(UserEntityFixture.of());
+        QuestionEntity question1 = createQuestion(userEntity, SPEC);
+        QuestionEntity question2 = createQuestion(userEntity, COMPANY);
+        QuestionEntity question3 = createQuestion(userEntity, ETC);
+        QuestionEntity question4 = createQuestion(userEntity, SPEC);
+        QuestionEntity question5 = createQuestion(userEntity, CAREER);
+        questionRepository.saveAll(List.of(question1, question2, question3, question4, question5));
+
+        QuestionViewEntity view1 = QuestionViewFixture.of(question1);
+        QuestionViewEntity view2 = QuestionViewFixture.of(question2);
+        QuestionViewEntity view3 = QuestionViewFixture.of(question3);
+        QuestionViewEntity view4 = QuestionViewFixture.of(question4);
+        QuestionViewEntity view5 = QuestionViewFixture.of(question5);
+        questionViewRepository.saveAll(List.of(view1, view2, view3, view4, view5));
+
+        BookmarkEntity bookmark1 = BookmarkFixture.of(question1, userEntity);
+        BookmarkEntity bookmark2 = BookmarkFixture.of(question2, userEntity);
+        BookmarkEntity bookmark3 = BookmarkFixture.of(question3, userEntity);
+        bookmarkRepository.saveAll(List.of(bookmark1, bookmark2, bookmark3));
+
+        UserQuestionFilterType filterType = UserQuestionFilterType.BOOKMARKED;
+        PageRequest pageRequest = PageRequest.of(0, 2);
+
+        // When
+        Page<QuestionListResponse> response = questionService.getUserQuestions(userEntity.getId(), filterType, pageRequest);
+
+        // Then
+        Assertions.assertThat(response.getTotalElements()).isEqualTo(3);
+        Assertions.assertThat(response.getTotalPages()).isEqualTo(2);
+        Assertions.assertThat(response.getNumber()).isEqualTo(0);
+        Assertions.assertThat(response.getSize()).isEqualTo(2);
+        Assertions.assertThat(response.getContent()).hasSize(2);
+    }
+
+    @Test
+    @DisplayName("사용자가 투표한 질문 리스트를 페이지네이션으로 반환한다")
+    void getUserQuestions_withVotedType_returnsPagination() throws Exception {
+
+        // Given
+        UserEntity userEntity = userRepository.save(UserEntityFixture.of());
+        QuestionEntity question1 = createQuestion(userEntity, ETC);
+        QuestionEntity question2 = createQuestion(userEntity, ETC);
+        QuestionEntity question3 = createQuestion(userEntity, ETC);
+        QuestionEntity question4 = createQuestion(userEntity, ETC);
+        QuestionEntity question5 = createQuestion(userEntity, ETC);
+        questionRepository.saveAll(List.of(question1, question2, question3, question4, question5));
+
+        QuestionViewEntity view1 = QuestionViewFixture.of(question1);
+        QuestionViewEntity view2 = QuestionViewFixture.of(question2);
+        QuestionViewEntity view3 = QuestionViewFixture.of(question3);
+        QuestionViewEntity view4 = QuestionViewFixture.of(question4);
+        QuestionViewEntity view5 = QuestionViewFixture.of(question5);
+        questionViewRepository.saveAll(List.of(view1, view2, view3, view4, view5));
+
+        OptionEntity option1 = OptionEntityFixture.of(question1);
+        OptionEntity option2 = OptionEntityFixture.of(question2);
+        OptionEntity option3 = OptionEntityFixture.of(question3);
+        OptionEntity option4 = OptionEntityFixture.of(question4);
+        OptionEntity option5 = OptionEntityFixture.of(question5);
+        optionRepository.saveAll(List.of(option1, option2, option3, option4, option5));
+
+        VoteEntity vote1 = VoteEntityFixture.of(option1, userEntity);
+        VoteEntity vote2 = VoteEntityFixture.of(option2, userEntity);
+        VoteEntity vote3 = VoteEntityFixture.of(option3, userEntity);
+        VoteEntity vote4 = VoteEntityFixture.of(option4, userEntity);
+        VoteEntity vote5 = VoteEntityFixture.of(option5, userEntity);
+        voteRepository.saveAll(List.of(vote1, vote2, vote3, vote4, vote5));
+
+        UserQuestionFilterType filterType = UserQuestionFilterType.VOTED;
+        PageRequest pageRequest = PageRequest.of(0, 3);
+
+        // When
+        Page<QuestionListResponse> response = questionService.getUserQuestions(userEntity.getId(), filterType, pageRequest);
+
+        // Then
+        Assertions.assertThat(response.getTotalElements()).isEqualTo(5);
+        Assertions.assertThat(response.getTotalPages()).isEqualTo(2);
+        Assertions.assertThat(response.getNumber()).isEqualTo(0);
+        Assertions.assertThat(response.getSize()).isEqualTo(3);
+        Assertions.assertThat(response.getContent()).hasSize(3);
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 타입으로 질문 리스트를 요청하면 예외가 발생한다")
+    void getUserQuestions_withNotExistingType_returnsPagination() throws Exception {
+        //given
+        long notExistingUserId = 0L;
+        UserQuestionFilterType type = null;
+        PageRequest pageRequest = PageRequest.of(0, 1);
+
+        //when //then
+        Assertions.assertThatThrownBy(() -> questionService.getUserQuestions(notExistingUserId, type, pageRequest))
+                .isInstanceOf(IllegalStateException.class);
     }
 
     // TODO - 캐싱되어 있는거

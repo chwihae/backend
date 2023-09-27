@@ -18,7 +18,7 @@ import java.util.stream.IntStream;
 
 import static com.chwihae.infra.utils.TimeUtils.KST;
 
-class CloseExpiredQuestionJobConfigTest extends AbstractBatchTest {
+class CloseQuestionJobConfigTest extends AbstractBatchTest {
 
     @AfterEach
     void tearDown() {
@@ -42,7 +42,7 @@ class CloseExpiredQuestionJobConfigTest extends AbstractBatchTest {
         questionRepository.saveAll(questionEntityList);
 
         //when
-        JobExecution jobExecution = jobLauncherTestUtils.launchStep("closeQuestionStep");
+        JobExecution jobExecution = jobLauncher.run(closeQuestionJob, getJobParameters());
 
         //then
         Assertions.assertThat(jobExecution.getExitStatus()).isEqualByComparingTo(ExitStatus.COMPLETED);

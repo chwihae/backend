@@ -55,7 +55,7 @@ class VoteServiceConcurrencyTest extends AbstractConcurrencyTest {
         });
         optionRepository.saveAll(optionEntities);
 
-        List<Callable<Void>> createVoteTasks = generateConcurrentTasks(TOTAL_REQUEST_COUNT, () -> {
+        List<Callable<Void>> createVoteTasks = doGenerateConcurrentTasks(TOTAL_REQUEST_COUNT, () -> {
             int randomOptionId = new Random().nextInt(optionEntities.size());
             OptionEntity optionEntity = optionEntities.get(randomOptionId);
             voteService.createVote(questionEntity.getId(), optionEntity.getId(), voter.getId());
@@ -96,7 +96,7 @@ class VoteServiceConcurrencyTest extends AbstractConcurrencyTest {
         OptionEntity option = optionRepository.save(OptionEntityFixture.of(question));
         voteRepository.save(VoteEntityFixture.of(option, voter));
 
-        List<Callable<Void>> deleteVoteTasks = generateConcurrentTasks(TOTAL_REQUEST_COUNT, () -> {
+        List<Callable<Void>> deleteVoteTasks = doGenerateConcurrentTasks(TOTAL_REQUEST_COUNT, () -> {
             voteService.deleteVote(question.getId(), option.getId(), voter.getId());
             return null;
         });

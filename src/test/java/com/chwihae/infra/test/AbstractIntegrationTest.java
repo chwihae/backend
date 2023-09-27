@@ -1,6 +1,6 @@
 package com.chwihae.infra.test;
 
-import com.chwihae.batch.CloseExpiredQuestionJobConfig;
+import com.chwihae.batch.CloseQuestionJobConfig;
 import com.chwihae.client.kakao.KakaoTokenFeignClient;
 import com.chwihae.client.kakao.KakaoUserInfoFeignClient;
 import com.chwihae.config.properties.JwtTokenProperties;
@@ -23,7 +23,8 @@ import com.chwihae.service.bookmark.BookmarkService;
 import com.chwihae.service.comment.CommentService;
 import com.chwihae.service.commenter.CommenterSequenceService;
 import com.chwihae.service.question.QuestionService;
-import com.chwihae.service.question.QuestionViewService;
+import com.chwihae.service.question.core.QuestionViewService;
+import com.chwihae.service.question.strategy.UserQuestionsFilterStrategyProvider;
 import com.chwihae.service.user.UserService;
 import com.chwihae.service.vote.VoteService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -114,5 +115,8 @@ public class AbstractIntegrationTest extends AbstractContainerBaseTest {
     protected RedisTemplate<String, UserContext> userContextRedisTemplate;
 
     @Autowired
-    protected CloseExpiredQuestionJobConfig closeExpiredQuestionJobConfig;
+    protected CloseQuestionJobConfig closeQuestionJobConfig;
+
+    @Autowired
+    protected UserQuestionsFilterStrategyProvider userQuestionsFilterStrategyProvider;
 }

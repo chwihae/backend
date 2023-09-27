@@ -18,7 +18,7 @@ public class WithTestUserSecurityContextFactory implements WithSecurityContextFa
     @Override
     public SecurityContext createSecurityContext(WithTestUser withTestUser) {
         String email = withTestUser.value();
-        UserEntity userEntity = userService.createUser(email);
+        UserEntity userEntity = userService.getOrCreateUser(email);
         UserContext userContext = userService.getUserContextOrException(userEntity.getId());
 
         SecurityContext securityContext = SecurityContextHolder.createEmptyContext();

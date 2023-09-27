@@ -1,4 +1,4 @@
-package com.chwihae.service.question;
+package com.chwihae.service.question.core;
 
 import com.chwihae.config.redis.QuestionViewCacheRepository;
 import com.chwihae.domain.question.QuestionEntity;

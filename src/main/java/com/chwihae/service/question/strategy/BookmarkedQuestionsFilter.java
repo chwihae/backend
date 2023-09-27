@@ -1,4 +1,4 @@
-package com.chwihae.service.user.question;
+package com.chwihae.service.question.strategy;
 
 import com.chwihae.domain.question.QuestionRepository;
 import com.chwihae.dto.question.response.QuestionListResponse;

@@ -1,4 +1,4 @@
-package com.chwihae.service.question;
+package com.chwihae.batch;
 
 import com.chwihae.domain.question.QuestionRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,12 +20,11 @@ import static com.chwihae.utils.TimeUtils.KST;
 @Component
 public class CloseQuestionScheduler {
 
-    private static final long ONE_MINUTE_IN_MILLISECONDS = 60 * 1000L;
     private final JobLauncher jobLauncher;
     private final Job closeQuestionJob;
     private final QuestionRepository questionRepository;
 
-    @Scheduled(fixedDelay = ONE_MINUTE_IN_MILLISECONDS)
+    @Scheduled(cron = "0 * * * * ?")
     public void closeQuestion() {
         if (questionRepository.existsByCloseAtBefore(LocalDateTime.now(KST))) {
             JobParameters jobParameters = new JobParametersBuilder()

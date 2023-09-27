@@ -48,7 +48,7 @@ class CommentServiceConcurrencyTest extends AbstractConcurrencyTest {
         });
         userRepository.saveAll(userEntities);
 
-        List<Callable<Void>> createCommentTasks = generateConcurrentTasks(TOTAL_REQUEST_COUNT, (userIndex) -> {
+        List<Callable<Void>> createCommentTasks = doGenerateConcurrentTasks(TOTAL_REQUEST_COUNT, (userIndex) -> {
             Long userId = userEntities.get(userIndex).getId();
             return () -> {
                 commentService.createComment(question.getId(), userId, "content");

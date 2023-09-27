@@ -1,6 +1,6 @@
 package com.chwihae.event.question;
 
-import com.chwihae.service.question.QuestionViewService;
+import com.chwihae.service.question.core.QuestionViewService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;

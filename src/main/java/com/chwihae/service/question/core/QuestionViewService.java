@@ -1,4 +1,4 @@
-package com.chwihae.service.question;
+package com.chwihae.service.question.core;
 
 import com.chwihae.config.redis.QuestionViewCacheRepository;
 import com.chwihae.domain.question.QuestionEntity;
@@ -7,7 +7,6 @@ import com.chwihae.domain.question.QuestionViewRepository;
 import com.chwihae.dto.question.response.QuestionViewResponse;
 import com.chwihae.exception.CustomException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -60,11 +59,6 @@ public class QuestionViewService {
         return viewsFromCache;
     }
 
-    @Transactional
-    public void deleteAllByQuestionId(Long questionId) {
-        questionViewRepository.deleteAllByQuestionId(questionId);
-    }
-
     private List<QuestionViewResponse> getViewsFromDb(List<Long> idsNotInCache) {
         List<QuestionViewEntity> viewsEntities = questionViewRepository.findByQuestionEntityIds(idsNotInCache);
         return viewsEntities.stream()
@@ -85,7 +79,6 @@ public class QuestionViewService {
     }
 
     @Transactional
-    @Scheduled(fixedDelay = TEN_MINUTES_IN_MILLISECONDS)
     public void syncQuestionViewCount() {
         Set<String> keys = Optional.ofNullable(questionViewCacheRepository.findAllKeys())
                 .orElse(Collections.emptySet());

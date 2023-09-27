@@ -23,10 +23,10 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
-class CloseExpiredQuestionJobConfigMockTest extends AbstractMockTest {
+class CloseQuestionJobConfigMockTest extends AbstractMockTest {
 
     @InjectMocks
-    CloseExpiredQuestionJobConfig closeExpiredQuestionJobConfig;
+    CloseQuestionJobConfig closeQuestionJobConfig;
 
     @Mock
     JobRepository jobRepository;
@@ -50,7 +50,7 @@ class CloseExpiredQuestionJobConfigMockTest extends AbstractMockTest {
 
         Chunk<QuestionEntity> chunk = new Chunk<>(questionEntities);
 
-        ItemWriter<QuestionEntity> writer = closeExpiredQuestionJobConfig.closeQuestionItemWriter();
+        ItemWriter<QuestionEntity> writer = closeQuestionJobConfig.closeQuestionItemWriter();
 
         // when
         writer.write(chunk);
@@ -82,7 +82,7 @@ class CloseExpiredQuestionJobConfigMockTest extends AbstractMockTest {
     @DisplayName("closeQuestionItemReader가 정상적으로 동작해야 한다")
     void testSuccessfulItemReader() {
         // given
-        JpaPagingItemReader<QuestionEntity> reader = closeExpiredQuestionJobConfig.closeQuestionItemReader();
+        JpaPagingItemReader<QuestionEntity> reader = closeQuestionJobConfig.closeQuestionItemReader();
 
         //when //then
         assertThat(reader).isNotNull();
@@ -92,7 +92,7 @@ class CloseExpiredQuestionJobConfigMockTest extends AbstractMockTest {
     @DisplayName("closeQuestionItemReader에서 EntityManager 생성 중 문제가 발생하면 예외가 발생한다")
     void testFailedItemReader() {
         // given
-        JpaPagingItemReader<QuestionEntity> reader = closeExpiredQuestionJobConfig.closeQuestionItemReader();
+        JpaPagingItemReader<QuestionEntity> reader = closeQuestionJobConfig.closeQuestionItemReader();
 
         //when //then
         assertThatThrownBy(reader::read)
@@ -103,7 +103,7 @@ class CloseExpiredQuestionJobConfigMockTest extends AbstractMockTest {
     @DisplayName("closeQuestionStep이 정상적으로 생성되어야 한다")
     void testSuccessfulStepCreation() {
         // when
-        Step result = closeExpiredQuestionJobConfig.closeQuestionStep();
+        Step result = closeQuestionJobConfig.closeQuestionStep();
 
         // then
         assertThat(result).isNotNull();
@@ -113,7 +113,7 @@ class CloseExpiredQuestionJobConfigMockTest extends AbstractMockTest {
     @DisplayName("closeQuestionJob이 정상적으로 생성되어야 한다")
     void testSuccessfulJobCreation() {
         // when
-        Job result = closeExpiredQuestionJobConfig.closeQuestionJob();
+        Job result = closeQuestionJobConfig.closeQuestionJob();
 
         // then
         assertThat(result).isNotNull();

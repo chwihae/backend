@@ -14,4 +14,8 @@ public class AbstractMockMvcTest extends AbstractIntegrationTest {
     protected String body(Object body) throws JsonProcessingException {
         return objectMapper.writeValueAsString(body);
     }
+
+    protected String token(Long userId) throws JsonProcessingException {
+        return jwtTokenHandler.generateToken(userId, jwtTokenProperties.getSecretKey(), jwtTokenProperties.getTokenExpiredTimeMs());
+    }
 }
