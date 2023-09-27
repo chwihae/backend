@@ -15,15 +15,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.springframework.test.util.ReflectionTestUtils;
-
-import java.util.Optional;
 
 import static com.chwihae.exception.CustomExceptionError.INVALID_KAKAO_AUTHORIZATION_CODE;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.mock;
 
 class AuthServiceTest extends AbstractMockTest {
 
@@ -56,11 +52,16 @@ class AuthServiceTest extends AbstractMockTest {
         Long userId = 1L;
         String token = "token";
 
-        UserEntity userEntity = UserEntity.builder()
-                .email(userEmail)
-                .build();
+        UserEntity userEntity = mock(UserEntity.class);
 
-        ReflectionTestUtils.setField(userEntity, "id", userId);
+        given(userEntity.getId())
+                .willReturn(userId);
+
+        given(kakaoAuthHandler.getUserEmail(anyString(), anyString()))
+                .willReturn(userEmail);
+
+        given(userService.getOrCreateUser(userEmail))
+                .willReturn(userEntity);
 
         given(jwtTokenProperties.getSecretKey())
                 .willReturn("secret key");
@@ -68,13 +69,7 @@ class AuthServiceTest extends AbstractMockTest {
         given(jwtTokenProperties.getTokenExpiredTimeMs())
                 .willReturn(87654321L);
 
-        given(kakaoAuthHandler.getUserEmail(anyString(), anyString()))
-                .willReturn(userEmail);
-
-        given(userRepository.findByEmail(userEmail))
-                .willReturn(Optional.of(userEntity));
-
-        given(jwtTokenHandler.generateToken(anyLong(), anyString(), anyLong()))
+        given(jwtTokenHandler.generateToken(eq(userId), anyString(), anyLong()))
                 .willReturn(token);
 
         //when
@@ -101,61 +96,29 @@ class AuthServiceTest extends AbstractMockTest {
     }
 
     @Test
-    @DisplayName("존재하지 않는 이메일로 로그인 시도 시 새로운 사용자를 생성한다")
-    void kakaoLogin_withNotExistingEmail() {
-        //given
-        String redirectionUri = "redirection uri";
-        String accessToken = "dummy access token";
-
-        given(jwtTokenProperties.getSecretKey())
-                .willReturn("secret key");
-
-        given(jwtTokenProperties.getTokenExpiredTimeMs())
-                .willReturn(87654321L);
-
-        given(kakaoAuthHandler.getUserEmail(anyString(), anyString()))
-                .willReturn("nonexisting@email.com");
-
-        given(userRepository.findByEmail(anyString()))
-                .willReturn(Optional.empty());
-
-        given(userService.createUser(anyString()))
-                .willReturn(UserEntity.builder()
-                        .email("nonexisting@email.com")
-                        .build());
-
-        //when
-        authService.kakaoLogin(accessToken, redirectionUri);
-
-        //then
-        Mockito.verify(userService, times(1)).createUser(anyString());
-    }
-
-    @Test
     @DisplayName("JWT 토큰 생성 실패 시 예외가 발생한다")
     void generateToken_whenJwtTokenGeneratedFailed_throwsJwtException() {
         //given
+        String userEmail = "test@email.com";
+        Long userId = 1L;
         String secretKey = "secret key";
+
+        UserEntity userEntity = mock(UserEntity.class);
+
+        given(userEntity.getId())
+                .willReturn(userId);
+
+        given(kakaoAuthHandler.getUserEmail(anyString(), anyString()))
+                .willReturn(userEmail);
+
+        given(userService.getOrCreateUser(userEmail))
+                .willReturn(userEntity);
+
         given(jwtTokenProperties.getSecretKey())
                 .willReturn(secretKey);
 
         given(jwtTokenProperties.getTokenExpiredTimeMs())
                 .willReturn(87654321L);
-
-        given(kakaoAuthHandler.getUserEmail(anyString(), anyString()))
-                .willReturn("nonexisting@email.com");
-
-        given(userRepository.findByEmail(anyString()))
-                .willReturn(Optional.empty());
-
-        UserEntity userEntity = UserEntity.builder()
-                .email("nonexisting@email.com")
-                .build();
-
-        ReflectionTestUtils.setField(userEntity, "id", 1L);
-
-        given(userService.createUser(anyString()))
-                .willReturn(userEntity);
 
         given(jwtTokenHandler.generateToken(eq(userEntity.getId()), anyString(), anyLong()))
                 .willThrow(new JwtException("Token generation failed"));

@@ -32,13 +32,13 @@ import static com.chwihae.exception.CustomExceptionError.USER_NOT_FOUND;
 class UserServiceTest extends AbstractIntegrationTest {
 
     @Test
-    @DisplayName("이메일로 사용자를 저장하여 반환한다")
+    @DisplayName("이메일로 사용자를 조회하여 존재하지 않으면 사용자를 저장한다")
     void createUser_returnsUserEntity() throws Exception {
         //given
         String email = "test@email.com";
 
         //when
-        userService.createUser(email);
+        userService.getOrCreateUser(email);
 
         //then
         Assertions.assertThat(userRepository.findAll()).hasSize(1);

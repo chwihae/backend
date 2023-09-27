@@ -48,13 +48,12 @@ public class VoteService {
     @Transactional
     public void createVote(Long questionId, Long optionId, Long userId) {
         QuestionEntity questionEntity = findQuestionOrException(questionId);
-
         ensureQuestionIsNotClosed(questionEntity);
         ensureQuestionerCannotVote(questionEntity, userId);
         ensureUserHasNotVoted(questionId, userId);
-
         OptionEntity optionEntity = findOptionOrException(optionId);
         UserEntity userEntity = findUserOrException(userId);
+        
         saveVoteOrException(questionEntity, optionEntity, userEntity);
     }
 

@@ -19,13 +19,13 @@ public abstract class AbstractConcurrencyTest extends AbstractIntegrationTest {
         executorService = Executors.newFixedThreadPool(NUMBER_OF_CORES);
     }
 
-    protected <T> List<Callable<T>> generateConcurrentTasks(int concurrentRequestCount, Callable<T> task) {
+    protected <T> List<Callable<T>> doGenerateConcurrentTasks(int concurrentRequestCount, Callable<T> task) {
         return IntStream.range(0, concurrentRequestCount)
                 .mapToObj(i -> task)
                 .toList();
     }
 
-    protected <T> List<Callable<T>> generateConcurrentTasks(int concurrentRequestCount, Function<Integer, Callable<T>> taskGenerator) {
+    protected <T> List<Callable<T>> doGenerateConcurrentTasks(int concurrentRequestCount, Function<Integer, Callable<T>> taskGenerator) {
         return IntStream.range(0, concurrentRequestCount)
                 .mapToObj(taskGenerator::apply)
                 .toList();

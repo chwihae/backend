@@ -42,25 +42,7 @@ class CommentRepositoryTest extends AbstractIntegrationTest {
                         }
                 );
     }
-
-    @Test
-    @DisplayName("")
-    void test() throws Exception {
-        //given
-        UserEntity user = userRepository.save(UserEntityFixture.of());
-        QuestionEntity question = questionRepository.save(createQuestion(user));
-        String alias = "test alias";
-        CommenterAliasEntity commenterAlias = commenterAliasRepository.save(createAlias(alias, question, user));
-        String content = "content";
-        commentRepository.save(createComment(question, user, commenterAlias, content));
-        commentRepository.save(createComment(question, user, commenterAlias, content));
-
-        //when
-        Optional<CommentEntity> optionalComment = commentRepository.findFirstByQuestionEntityIdAndUserEntityId(question.getId(), user.getId());
-
-        //then
-    }
-
+    
     @Test
     @DisplayName("질문 아이디로 댓글 수를 집계한다")
     void countByQuestionEntityId() throws Exception {

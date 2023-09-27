@@ -38,7 +38,7 @@ class BookmarkServiceConcurrencyTest extends AbstractConcurrencyTest {
         userRepository.saveAll(List.of(questioner, viewer));
         QuestionEntity question = questionRepository.save(createQuestion(questioner));
 
-        List<Callable<Boolean>> bookmarkTasks = generateConcurrentTasks(totalRequestCount, () ->
+        List<Callable<Boolean>> bookmarkTasks = doGenerateConcurrentTasks(totalRequestCount, () ->
                 bookmarkService.bookmark(question.getId(), viewer.getId())
         );
 

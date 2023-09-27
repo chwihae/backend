@@ -41,13 +41,10 @@ public class UserService {
     private final UserQuestionsFilterStrategyProvider questionsFilterStrategyProvider;
 
     @Transactional
-    public UserEntity createUser(String email) {
-        return userRepository.save(UserEntity.builder()
-                .email(email)
-                .build());
+    public UserEntity getOrCreateUser(String email) {
+        return userRepository.findByEmail(email).orElseGet(() -> saveUser(email));
     }
 
-    // TODO test
     public Page<QuestionListResponse> getUserQuestions(Long userId, UserQuestionFilterType type, Pageable pageable) {
         Page<QuestionListResponse> page = questionsFilterStrategyProvider.getFilter(type).filter(userId, pageable); // 1. Find page from DB
         List<QuestionViewResponse> allViewCounts = findAllQuestionViewCounts(page.getContent()); // 2. Get question view from cache and DB
@@ -73,6 +70,15 @@ public class UserService {
         return UserStatisticsResponse.of(userLevel, commentCount, voteCount);
     }
 
+    public void setUserContext(UserContext userContext) {
+        userContextCacheRepository.setUserContext(userContext);
+    }
+
+    private UserEntity saveUser(String email) {
+        return userRepository.save(UserEntity.builder()
+                .email(email)
+                .build());
+    }
 
     private List<QuestionViewResponse> findAllQuestionViewCounts(List<QuestionListResponse> content) {
         List<Long> questionIds = content.stream()
