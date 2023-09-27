@@ -4,40 +4,42 @@ import com.chwihae.domain.comment.CommentEntity;
 import com.chwihae.domain.comment.CommentRepository;
 import com.chwihae.domain.commenter.*;
 import com.chwihae.domain.question.QuestionEntity;
-import com.chwihae.domain.question.QuestionRepository;
 import com.chwihae.domain.user.UserEntity;
-import com.chwihae.domain.user.UserRepository;
 import com.chwihae.dto.comment.Comment;
 import com.chwihae.exception.CustomException;
+import com.chwihae.service.question.QuestionService;
+import com.chwihae.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.chwihae.exception.CustomExceptionError.*;
+import static com.chwihae.exception.CustomExceptionError.COMMENT_NOT_FOUND;
+import static com.chwihae.exception.CustomExceptionError.FORBIDDEN;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
 public class CommentService {
 
-    private final UserRepository userRepository;
-    private final QuestionRepository questionRepository;
+    private final UserService userService;
+    private final QuestionService questionService;
+
     private final CommentRepository commentRepository;
     private final CommenterAliasRepository commenterAliasRepository;
     private final CommenterSequenceRepository commenterSequenceRepository;
 
     public Page<Comment> getComments(Long questionId, Long userId, Pageable pageable) {
-        QuestionEntity questionEntity = findQuestionOrException(questionId);
+        QuestionEntity questionEntity = questionService.findQuestionOrException(questionId);
         return commentRepository.findWithAliasByQuestionEntityId(questionEntity.getId(), pageable)
                 .map(it -> Comment.of(it, it.isCreatedBy(userId), it.getAlias()));
     }
 
     @Transactional
     public void createComment(Long questionId, Long userId, String content) {
-        QuestionEntity questionEntity = findQuestionOrException(questionId);
-        UserEntity userEntity = findUserOrException(userId);
+        QuestionEntity questionEntity = questionService.findQuestionOrException(questionId);
+        UserEntity userEntity = userService.findUserOrException(userId);
         CommenterAliasEntity commenterAliasEntity = getOrCreateCommenterAlias(userEntity, questionEntity);
         commentRepository.save(buildCommentEntity(questionEntity, userEntity, commenterAliasEntity, content));
     }
@@ -55,14 +57,6 @@ public class CommentService {
         CommentEntity comment = findCommentEntityOrException(commentId);
         ensureUserIsCommenter(comment, userId);
         commentRepository.delete(comment);
-    }
-
-    public int getQuestionCommentCount(Long questionId) {
-        return commentRepository.countByQuestionEntityId(questionId);
-    }
-
-    public int getUserCommentCount(Long userId) {
-        return commentRepository.countByUserEntityId(userId);
     }
 
     @Transactional
@@ -101,14 +95,6 @@ public class CommentService {
                 .userEntity(userEntity)
                 .questionEntity(questionEntity)
                 .build();
-    }
-
-    private UserEntity findUserOrException(Long userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
-    }
-
-    private QuestionEntity findQuestionOrException(Long questionId) {
-        return questionRepository.findById(questionId).orElseThrow(() -> new CustomException(QUESTION_NOT_FOUND));
     }
 
     private void ensureUserIsCommenter(CommentEntity comment, Long userId) {

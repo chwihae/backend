@@ -20,9 +20,4 @@ public class CommenterSequenceService {
                 .questionEntity(questionEntity)
                 .build());
     }
-
-    @Transactional
-    public void deleteAllByQuestionId(Long questionId) {
-        commenterSequenceRepository.deleteAllByQuestionId(questionId);
-    }
 }

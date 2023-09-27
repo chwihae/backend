@@ -3,33 +3,31 @@ package com.chwihae.service.bookmark;
 import com.chwihae.domain.bookmark.BookmarkEntity;
 import com.chwihae.domain.bookmark.BookmarkRepository;
 import com.chwihae.domain.question.QuestionEntity;
-import com.chwihae.domain.question.QuestionRepository;
 import com.chwihae.domain.user.UserEntity;
-import com.chwihae.domain.user.UserRepository;
 import com.chwihae.exception.CustomException;
 import com.chwihae.exception.CustomExceptionError;
+import com.chwihae.service.question.QuestionService;
+import com.chwihae.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-
-import static com.chwihae.exception.CustomExceptionError.QUESTION_NOT_FOUND;
-import static com.chwihae.exception.CustomExceptionError.USER_NOT_FOUND;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
 public class BookmarkService {
 
-    private final QuestionRepository questionRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
+    private final QuestionService questionService;
+
     private final BookmarkRepository bookmarkRepository;
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public boolean bookmark(Long questionId, Long userId) {
-        QuestionEntity questionEntity = findQuestionOrException(questionId);
+        QuestionEntity questionEntity = questionService.findQuestionOrException(questionId);
         ensureUserIsNotQuestioner(userId, questionEntity);
-        UserEntity userEntity = findUserWithLockOrException(userId);
+        UserEntity userEntity = userService.findUserWithLockOrException(userId);
         return bookmarkRepository.findByQuestionEntityIdAndUserEntityId(questionEntity.getId(), userEntity.getId())
                 .map(this::deleteBookmark)
                 .orElseGet(() -> saveBookmark(userEntity, questionEntity));
@@ -38,14 +36,6 @@ public class BookmarkService {
     @Transactional
     public void deleteAllByQuestionId(Long questionId) {
         bookmarkRepository.deleteAllByQuestionId(questionId);
-    }
-
-    public int getBookmarkCount(Long questionId) {
-        return bookmarkRepository.countByQuestionEntityId(questionId);
-    }
-
-    public boolean isBookmarked(Long questionId, Long userId) {
-        return bookmarkRepository.existsByQuestionEntityIdAndUserEntityId(questionId, userId);
     }
 
     private boolean saveBookmark(UserEntity userEntity, QuestionEntity questionEntity) {
@@ -62,14 +52,6 @@ public class BookmarkService {
     private boolean deleteBookmark(BookmarkEntity it) {
         bookmarkRepository.delete(it);
         return false;
-    }
-
-    private UserEntity findUserWithLockOrException(Long userId) {
-        return userRepository.findWithLockById(userId).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
-    }
-
-    private QuestionEntity findQuestionOrException(Long questionId) {
-        return questionRepository.findById(questionId).orElseThrow(() -> new CustomException(QUESTION_NOT_FOUND));
     }
 
     private BookmarkEntity buildBookmark(UserEntity userEntity, QuestionEntity questionEntity) {

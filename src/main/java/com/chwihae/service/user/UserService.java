@@ -1,14 +1,14 @@
 package com.chwihae.service.user;
 
 import com.chwihae.config.redis.UserContextCacheRepository;
+import com.chwihae.domain.comment.CommentRepository;
 import com.chwihae.domain.user.UserEntity;
 import com.chwihae.domain.user.UserLevel;
 import com.chwihae.domain.user.UserRepository;
+import com.chwihae.domain.vote.VoteRepository;
 import com.chwihae.dto.user.UserContext;
 import com.chwihae.dto.user.UserStatisticsResponse;
 import com.chwihae.exception.CustomException;
-import com.chwihae.service.comment.CommentService;
-import com.chwihae.service.vote.VoteService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,10 +24,10 @@ import static com.chwihae.exception.CustomExceptionError.USER_NOT_FOUND;
 @Service
 public class UserService {
 
-    private final CommentService commentService;
-    private final VoteService voteService;
     private final UserRepository userRepository;
     private final UserContextCacheRepository userContextCacheRepository;
+    private final VoteRepository voteRepository;
+    private final CommentRepository commentRepository;
 
     @Transactional
     public UserEntity getOrCreateUser(String email) {
@@ -45,9 +45,17 @@ public class UserService {
                         }));
     }
 
+    public UserEntity findUserOrException(Long userId) {
+        return userRepository.findById(userId).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+    }
+
+    public UserEntity findUserWithLockOrException(Long userId) {
+        return userRepository.findWithLockById(userId).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+    }
+
     public UserStatisticsResponse getUserStatistics(Long userId) {
-        int commentCount = commentService.getUserCommentCount(userId);
-        int voteCount = voteService.getUserVoteCount(userId);
+        int commentCount = commentRepository.countByUserEntityId(userId);
+        int voteCount = voteRepository.countByUserEntityId(userId);
         UserLevel userLevel = UserLevel.getLevel(voteCount, commentCount);
         return UserStatisticsResponse.of(userLevel, commentCount, voteCount);
     }
