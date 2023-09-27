@@ -24,6 +24,7 @@ import com.chwihae.service.comment.CommentService;
 import com.chwihae.service.commenter.CommenterSequenceService;
 import com.chwihae.service.question.QuestionService;
 import com.chwihae.service.question.core.QuestionViewService;
+import com.chwihae.service.question.strategy.UserQuestionsFilterStrategyProvider;
 import com.chwihae.service.user.UserService;
 import com.chwihae.service.vote.VoteService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -115,4 +116,7 @@ public class AbstractIntegrationTest extends AbstractContainerBaseTest {
 
     @Autowired
     protected CloseQuestionJobConfig closeQuestionJobConfig;
+
+    @Autowired
+    protected UserQuestionsFilterStrategyProvider userQuestionsFilterStrategyProvider;
 }
