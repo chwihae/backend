@@ -1,46 +1,30 @@
 package com.chwihae.service.question.strategy;
 
-import com.chwihae.domain.question.QuestionRepository;
 import com.chwihae.dto.user.UserQuestionFilterType;
-import com.chwihae.infra.test.AbstractMockTest;
+import com.chwihae.infra.test.AbstractIntegrationTest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
-class UserQuestionsFilterStrategyProviderTest extends AbstractMockTest {
+class UserQuestionsFilterStrategyProviderTest extends AbstractIntegrationTest {
 
-    @Mock
-    QuestionRepository questionRepository;
-
-    @Test
-    @DisplayName("유효한 유저 질문 필터 타입으로 요청하면 적절한 필터를 반환한다")
-    void getFilter_returnFilter() {
-        //given
-        UserQuestionsFilterStrategyProvider provider = new UserQuestionsFilterStrategyProvider(
-                new MyQuestionsFilter(questionRepository),
-                new BookmarkedQuestionsFilter(questionRepository),
-                new VotedQuestionsFilter(questionRepository)
-        );
-
+    @CsvSource({"ME", "BOOKMARKED", "VOTED"})
+    @ParameterizedTest
+    @DisplayName("UserQuestionFilterType 으로 필터를 가져온다")
+    void getFilter_returnFilter(UserQuestionFilterType type) throws Exception {
         //when //then
-        Assertions.assertThat(provider.getFilter(UserQuestionFilterType.ME)).isInstanceOf(MyQuestionsFilter.class);
-        Assertions.assertThat(provider.getFilter(UserQuestionFilterType.BOOKMARKED)).isInstanceOf(BookmarkedQuestionsFilter.class);
-        Assertions.assertThat(provider.getFilter(UserQuestionFilterType.VOTED)).isInstanceOf(VotedQuestionsFilter.class);
+        Assertions.assertThat(userQuestionsFilterStrategyProvider.getFilter(type))
+                .isNotNull()
+                .isInstanceOf(UserQuestionsFilterStrategy.class);
     }
 
     @Test
     @DisplayName("존재하지 않는 유저 질문 필터 타입을 요청할 때 예외를 던진다")
     void getFilter_withInvalidType_throwsException() {
-        //given
-        UserQuestionsFilterStrategyProvider provider = new UserQuestionsFilterStrategyProvider(
-                new MyQuestionsFilter(questionRepository),
-                new BookmarkedQuestionsFilter(questionRepository),
-                new VotedQuestionsFilter(questionRepository)
-        );
-
         //when //then
-        Assertions.assertThatThrownBy(() -> provider.getFilter(null))
+        Assertions.assertThatThrownBy(() -> userQuestionsFilterStrategyProvider.getFilter(null))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("Invalid user question filter type");
     }

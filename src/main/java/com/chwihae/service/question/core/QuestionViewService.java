@@ -7,7 +7,6 @@ import com.chwihae.domain.question.QuestionViewRepository;
 import com.chwihae.dto.question.response.QuestionViewResponse;
 import com.chwihae.exception.CustomException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -80,7 +79,6 @@ public class QuestionViewService {
     }
 
     @Transactional
-    @Scheduled(fixedDelay = TEN_MINUTES_IN_MILLISECONDS)
     public void syncQuestionViewCount() {
         Set<String> keys = Optional.ofNullable(questionViewCacheRepository.findAllKeys())
                 .orElse(Collections.emptySet());
