@@ -27,7 +27,7 @@ import static com.chwihae.utils.TimeUtils.KST;
 @Slf4j
 @RequiredArgsConstructor
 @Configuration
-public class CloseExpiredQuestionJobConfig {
+public class CloseQuestionJobConfig {
 
     private final int CHUNK_SIZE = 50;
     private final JobRepository jobRepository;

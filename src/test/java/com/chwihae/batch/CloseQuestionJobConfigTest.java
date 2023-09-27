@@ -18,7 +18,7 @@ import java.util.stream.IntStream;
 
 import static com.chwihae.infra.utils.TimeUtils.KST;
 
-class CloseExpiredQuestionJobConfigTest extends AbstractBatchTest {
+class CloseQuestionJobConfigTest extends AbstractBatchTest {
 
     @AfterEach
     void tearDown() {

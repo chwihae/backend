@@ -2,6 +2,8 @@ package com.chwihae.service.option;
 
 import com.chwihae.domain.option.OptionEntity;
 import com.chwihae.domain.option.OptionRepository;
+import com.chwihae.domain.question.QuestionEntity;
+import com.chwihae.dto.option.request.OptionCreateRequest;
 import com.chwihae.dto.option.response.Option;
 import com.chwihae.exception.CustomException;
 import lombok.RequiredArgsConstructor;
@@ -25,5 +27,18 @@ public class OptionService {
 
     public List<Option> findOptionsWithResultsByQuestionId(Long questionId, boolean showVoteCount) {
         return optionRepository.findOptionsWithResultsByQuestionId(questionId, showVoteCount);
+    }
+
+    public void createOptions(List<OptionCreateRequest> options, QuestionEntity questionEntity) {
+        optionRepository.saveAll(buildOptionEntities(options, questionEntity));
+    }
+
+    private List<OptionEntity> buildOptionEntities(List<OptionCreateRequest> options, QuestionEntity questionEntity) {
+        return options.stream()
+                .map(option -> OptionEntity.builder()
+                        .questionEntity(questionEntity)
+                        .name(option.getName())
+                        .build())
+                .toList();
     }
 }

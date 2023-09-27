@@ -1,4 +1,4 @@
-package com.chwihae.service.question;
+package com.chwihae.service.question.core;
 
 import com.chwihae.config.redis.QuestionViewCacheRepository;
 import com.chwihae.domain.question.QuestionEntity;
@@ -58,11 +58,6 @@ public class QuestionViewService {
         viewsFromDb.forEach(it -> questionViewCacheRepository.setViewCount(it.getQuestionId(), it.getViewCount())); // 4. Save view count in cache
         viewsFromCache.addAll(viewsFromDb); // 5. Cache + DB
         return viewsFromCache;
-    }
-
-    @Transactional
-    public void deleteAllByQuestionId(Long questionId) {
-        questionViewRepository.deleteAllByQuestionId(questionId);
     }
 
     private List<QuestionViewResponse> getViewsFromDb(List<Long> idsNotInCache) {

@@ -7,7 +7,7 @@ import com.chwihae.domain.question.QuestionEntity;
 import com.chwihae.domain.user.UserEntity;
 import com.chwihae.dto.comment.Comment;
 import com.chwihae.exception.CustomException;
-import com.chwihae.service.question.QuestionService;
+import com.chwihae.service.question.query.QuestionQueryService;
 import com.chwihae.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,20 +24,20 @@ import static com.chwihae.exception.CustomExceptionError.FORBIDDEN;
 public class CommentService {
 
     private final UserService userService;
-    private final QuestionService questionService;
+    private final QuestionQueryService questionQueryService;
     private final CommentRepository commentRepository;
     private final CommenterAliasRepository commenterAliasRepository;
     private final CommenterSequenceRepository commenterSequenceRepository;
 
     public Page<Comment> getComments(Long questionId, Long userId, Pageable pageable) {
-        QuestionEntity questionEntity = questionService.findQuestionOrException(questionId);
+        QuestionEntity questionEntity = questionQueryService.findQuestionOrException(questionId);
         return commentRepository.findWithAliasByQuestionEntityId(questionEntity.getId(), pageable)
                 .map(it -> Comment.of(it, it.isCreatedBy(userId), it.getAlias()));
     }
 
     @Transactional
     public void createComment(Long questionId, Long userId, String content) {
-        QuestionEntity questionEntity = questionService.findQuestionOrException(questionId);
+        QuestionEntity questionEntity = questionQueryService.findQuestionOrException(questionId);
         UserEntity userEntity = userService.findUserOrException(userId);
         CommenterAliasEntity commenterAliasEntity = getOrCreateCommenterAlias(userEntity, questionEntity);
         commentRepository.save(buildCommentEntity(questionEntity, userEntity, commenterAliasEntity, content));

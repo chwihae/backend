@@ -6,7 +6,7 @@ import com.chwihae.domain.question.QuestionEntity;
 import com.chwihae.domain.user.UserEntity;
 import com.chwihae.exception.CustomException;
 import com.chwihae.exception.CustomExceptionError;
-import com.chwihae.service.question.QuestionService;
+import com.chwihae.service.question.query.QuestionQueryService;
 import com.chwihae.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,12 +19,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class BookmarkService {
 
     private final UserService userService;
-    private final QuestionService questionService;
+    private final QuestionQueryService questionQueryService;
     private final BookmarkRepository bookmarkRepository;
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public boolean bookmark(Long questionId, Long userId) {
-        QuestionEntity questionEntity = questionService.findQuestionOrException(questionId);
+        QuestionEntity questionEntity = questionQueryService.findQuestionOrException(questionId);
         ensureUserIsNotQuestioner(userId, questionEntity);
         UserEntity userEntity = userService.findUserWithLockOrException(userId);
         return bookmarkRepository.findByQuestionEntityIdAndUserEntityId(questionEntity.getId(), userEntity.getId())

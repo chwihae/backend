@@ -9,7 +9,7 @@ import com.chwihae.dto.option.response.Option;
 import com.chwihae.dto.option.response.VoteOptionResponse;
 import com.chwihae.exception.CustomException;
 import com.chwihae.service.option.OptionService;
-import com.chwihae.service.question.QuestionService;
+import com.chwihae.service.question.query.QuestionQueryService;
 import com.chwihae.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -32,13 +32,13 @@ import static com.chwihae.utils.TimeUtils.KST;
 public class VoteService {
 
     private final UserService userService;
-    private final QuestionService questionService;
+    private final QuestionQueryService questionQueryService;
     private final OptionService optionService;
     private final VoteRepository voteRepository;
     private final PlatformTransactionManager transactionManager;
 
     public VoteOptionResponse getVoteOptions(Long questionId, Long userId) {
-        QuestionEntity questionEntity = questionService.findQuestionOrException(questionId);
+        QuestionEntity questionEntity = questionQueryService.findQuestionOrException(questionId);
         Long votedOptionId = getVotedOptionId(questionId, userId);
         boolean showVoteCount = canUserViewVoteResults(questionEntity, votedOptionId, userId);
         List<Option> options = optionService.findOptionsWithResultsByQuestionId(questionId, showVoteCount);
@@ -47,7 +47,7 @@ public class VoteService {
 
     @Transactional
     public void createVote(Long questionId, Long optionId, Long userId) {
-        QuestionEntity questionEntity = questionService.findQuestionOrException(questionId);
+        QuestionEntity questionEntity = questionQueryService.findQuestionOrException(questionId);
         ensureQuestionIsNotClosed(questionEntity);
         ensureQuestionerCannotVote(questionEntity, userId);
         ensureUserHasNotVoted(questionId, userId);
