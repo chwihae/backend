@@ -24,14 +24,16 @@ public class CloseQuestionScheduler {
     private final Job closeQuestionJob;
     private final QuestionRepository questionRepository;
 
-    @Scheduled(cron = "0 * * * * ?")
+    @Scheduled(cron = "0/30 * * * * ?")
     public void closeQuestion() {
         if (questionRepository.existsByCloseAtBefore(LocalDateTime.now(KST))) {
             JobParameters jobParameters = new JobParametersBuilder()
                     .addLong("time", System.currentTimeMillis())
                     .toJobParameters();
             try {
+                log.info("Close expired question job started");
                 jobLauncher.run(closeQuestionJob, jobParameters);
+                log.info("Close expired question job finished");
             } catch (JobExecutionException ex) {
                 log.error("Error executing closeQuestion job", ex);
             }

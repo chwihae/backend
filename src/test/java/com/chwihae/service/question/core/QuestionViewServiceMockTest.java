@@ -13,8 +13,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 
-import java.util.*;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import static com.chwihae.exception.CustomExceptionError.QUESTION_NOT_FOUND;
 import static org.mockito.ArgumentMatchers.any;
@@ -30,6 +35,9 @@ class QuestionViewServiceMockTest extends AbstractMockTest {
 
     @Mock
     private QuestionViewCacheRepository questionViewCacheRepository;
+
+    @Mock
+    private RedisTemplate<String, String> questionViewLockRedisTemplate;
 
     @Test
     @DisplayName("질문 조회 엔티티를 저장한다")
@@ -87,6 +95,9 @@ class QuestionViewServiceMockTest extends AbstractMockTest {
         // given
         Long givenQuestionId = 1L;
 
+        ValueOperations<String, String> opsMock = mock(ValueOperations.class);
+        when(questionViewLockRedisTemplate.opsForValue()).thenReturn(opsMock);
+        when(opsMock.setIfAbsent(anyString(), anyString(), any(Duration.class))).thenReturn(true);
         when(questionViewCacheRepository.existsByQuestionId(givenQuestionId)).thenReturn(true);
 
         // when
@@ -103,6 +114,10 @@ class QuestionViewServiceMockTest extends AbstractMockTest {
         Long givenQuestionId = 1L;
         Long givenViewCount = 100L;
 
+        // given
+        ValueOperations<String, String> opsMock = mock(ValueOperations.class);
+        when(questionViewLockRedisTemplate.opsForValue()).thenReturn(opsMock);
+        when(opsMock.setIfAbsent(anyString(), anyString(), any(Duration.class))).thenReturn(true);
         when(questionViewCacheRepository.existsByQuestionId(givenQuestionId)).thenReturn(false);
         when(questionViewRepository.findViewCountByQuestionEntityId(givenQuestionId)).thenReturn(Optional.of(givenViewCount));
 
@@ -112,115 +127,6 @@ class QuestionViewServiceMockTest extends AbstractMockTest {
         // then
         verify(questionViewCacheRepository).setViewCount(givenQuestionId, givenViewCount);
         verify(questionViewCacheRepository).incrementViewCount(givenQuestionId);
-    }
-
-    @Test
-    @DisplayName("캐시된 모든 질문의 조회수를 동기화하고, 해당 키를 삭제한다")
-    void syncQuestionViewCount() {
-        // given
-        String givenKey = "question:1:views";
-        Long givenQuestionId = 1L;
-        Long cachedViewCount = 100L;
-
-        Set<String> keys = new HashSet<>();
-        keys.add(givenKey);
-
-        QuestionViewEntity givenEntity = mock(QuestionViewEntity.class);
-
-        when(questionViewCacheRepository.findAllKeys()).thenReturn(keys);
-        when(questionViewCacheRepository.extractQuestionIdFromKey(any())).thenReturn(Optional.of(givenQuestionId));
-        when(questionViewCacheRepository.getViewCount(givenQuestionId)).thenReturn(Optional.of(cachedViewCount));
-        when(questionViewRepository.findByQuestionEntityId(givenQuestionId)).thenReturn(Optional.of(givenEntity));
-
-        // when
-        questionViewService.syncQuestionViewCount();
-
-        // then
-        verify(questionViewCacheRepository).deleteKey(givenKey);
-        verify(givenEntity).setViewCount(cachedViewCount);
-        verify(questionViewRepository).save(givenEntity);
-    }
-
-    @Test
-    @DisplayName("캐시에서 키 목록을 가져오지 못하면 DB와 동기화가 되지 않는다")
-    void syncQuestionViewCount_noKeysFromCache() {
-        // given
-        when(questionViewCacheRepository.findAllKeys()).thenReturn(null);
-
-        // when
-        questionViewService.syncQuestionViewCount();
-
-        // then
-        verify(questionViewCacheRepository, never()).getViewCount(anyLong());
-        verify(questionViewRepository, never()).findByQuestionEntityId(anyLong());
-    }
-
-    @Test
-    @DisplayName("캐시에 저장된 조회수 정보가 없는 경우 캐시에서 키를 삭제한다")
-    void syncQuestionViewCount_noViewInfoInCache() {
-        // given
-        String givenKey = "question:1:views";
-        Long givenQuestionId = 1L;
-
-        Set<String> keys = new HashSet<>();
-        keys.add(givenKey);
-
-        when(questionViewCacheRepository.findAllKeys()).thenReturn(keys);
-        when(questionViewCacheRepository.extractQuestionIdFromKey(any())).thenReturn(Optional.of(givenQuestionId));
-        when(questionViewCacheRepository.getViewCount(givenQuestionId)).thenReturn(Optional.empty());
-
-        // when
-        questionViewService.syncQuestionViewCount();
-
-        // then
-        verify(questionViewCacheRepository).deleteKey(givenKey);
-        verify(questionViewRepository, never()).findByQuestionEntityId(anyLong());
-    }
-
-    @Test
-    @DisplayName("DB 업데이트 중 오류가 발생하면 캐시 키는 삭제되지 않는다")
-    void syncQuestionViewCount_errorDuringDbUpdate() {
-        // given
-        String givenKey = "question:1:views";
-        Long givenQuestionId = 1L;
-        Long cachedViewCount = 100L;
-
-        Set<String> keys = new HashSet<>();
-        keys.add(givenKey);
-        QuestionViewEntity givenEntity = mock(QuestionViewEntity.class);
-
-        when(questionViewCacheRepository.findAllKeys()).thenReturn(keys);
-        when(questionViewCacheRepository.extractQuestionIdFromKey(any())).thenReturn(Optional.of(givenQuestionId));
-        when(questionViewCacheRepository.getViewCount(givenQuestionId)).thenReturn(Optional.of(cachedViewCount));
-        when(questionViewRepository.findByQuestionEntityId(givenQuestionId)).thenReturn(Optional.of(givenEntity));
-        doThrow(new RuntimeException()).when(questionViewRepository).save(givenEntity);
-
-        // when //then
-        Assertions.assertThatThrownBy(() -> questionViewService.syncQuestionViewCount())
-                .isInstanceOf(RuntimeException.class);
-
-        verify(questionViewCacheRepository, never()).deleteKey(givenKey);
-    }
-
-    @Test
-    @DisplayName("캐시와 DB 모두에서 조회수 정보를 찾지 못하면 캐시에서 키를 삭제한다")
-    void syncQuestionViewCount_noViewInfoInCacheOrDb() {
-        // given
-        String givenKey = "question:1:views";
-        Long givenQuestionId = 1L;
-
-        Set<String> keys = new HashSet<>();
-        keys.add(givenKey);
-
-        when(questionViewCacheRepository.findAllKeys()).thenReturn(keys);
-        when(questionViewCacheRepository.extractQuestionIdFromKey(any())).thenReturn(Optional.of(givenQuestionId));
-        when(questionViewCacheRepository.getViewCount(givenQuestionId)).thenReturn(Optional.empty());
-
-        // when
-        questionViewService.syncQuestionViewCount();
-
-        // then
-        verify(questionViewCacheRepository).deleteKey(givenKey);
     }
 
     @Test

@@ -7,11 +7,16 @@ import com.chwihae.domain.question.QuestionViewRepository;
 import com.chwihae.dto.question.response.QuestionViewResponse;
 import com.chwihae.exception.CustomException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.chwihae.exception.CustomExceptionError.QUESTION_NOT_FOUND;
@@ -21,9 +26,11 @@ import static com.chwihae.exception.CustomExceptionError.QUESTION_NOT_FOUND;
 @Service
 public class QuestionViewService {
 
-    private static final long TEN_MINUTES_IN_MILLISECONDS = 10 * 60 * 1000L;
+    private static final String LOCK_PREFIX = "question:%d:views:lock:";
+    private static final Duration LOCK_EXPIRED_DURATION = Duration.ofSeconds(3);
     private final QuestionViewRepository questionViewRepository;
     private final QuestionViewCacheRepository questionViewCacheRepository;
+    private final RedisTemplate<String, String> questionViewLockRedisTemplate;
 
     @Transactional
     public void createQuestionView(QuestionEntity questionEntity) {
@@ -66,37 +73,51 @@ public class QuestionViewService {
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    /**
-     * NOTE: This method may encounter concurrency issues, so caution is advised.
-     */
     public void incrementViewCount(Long questionId) {
-        if (!questionViewCacheRepository.existsByQuestionId(questionId)) {
-            long viewCount = questionViewRepository.findViewCountByQuestionEntityId(questionId)
-                    .orElseThrow(() -> new CustomException(QUESTION_NOT_FOUND));
-            questionViewCacheRepository.setViewCount(questionId, viewCount);
-        }
-        questionViewCacheRepository.incrementViewCount(questionId);
-    }
+        acquireLock(questionId);
+        try {
+            if (!questionViewCacheRepository.existsByQuestionId(questionId)) {
+                long viewCount = questionViewRepository.findViewCountByQuestionEntityId(questionId)
+                        .orElseThrow(() -> new CustomException(QUESTION_NOT_FOUND));
+                questionViewCacheRepository.setViewCount(questionId, viewCount);
+            }
 
-    @Transactional
-    public void syncQuestionViewCount() {
-        Set<String> keys = Optional.ofNullable(questionViewCacheRepository.findAllKeys())
-                .orElse(Collections.emptySet());
-
-        for (String key : keys) {
-            Optional<Long> questionIdOpt = questionViewCacheRepository.extractQuestionIdFromKey(key);
-            questionIdOpt.ifPresent(this::updateViewCount);
-            questionViewCacheRepository.deleteKey(key);
+            questionViewCacheRepository.incrementViewCount(questionId);
+        } finally {
+            releaseLock(questionId);
         }
     }
 
-    private void updateViewCount(Long questionId) {
-        questionViewCacheRepository.getViewCount(questionId).ifPresent(viewCount -> {
-            questionViewRepository.findByQuestionEntityId(questionId)
-                    .ifPresent(entity -> {
-                        entity.setViewCount(viewCount);
-                        questionViewRepository.save(entity);
-                    });
-        });
+    private void acquireLock(Long questionId) {
+        final int maxAttempts = 10;
+        String lockKey = getLockKey(questionId);
+        ValueOperations<String, String> ops = questionViewLockRedisTemplate.opsForValue();
+
+        for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+            Boolean isSuccess = ops.setIfAbsent(lockKey, "LOCKED", LOCK_EXPIRED_DURATION);
+            if (Boolean.TRUE.equals(isSuccess)) {
+                return;
+            }
+
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+
+        }
+        throw new IllegalStateException("Failed to acquire lock for " + questionId);
+    }
+
+    private void releaseLock(Long questionId) {
+        String lockKey = getLockKey(questionId);
+        String currentLockValue = questionViewLockRedisTemplate.opsForValue().get(lockKey);
+        if ("LOCKED".equals(currentLockValue)) {
+            questionViewLockRedisTemplate.delete(lockKey);
+        }
+    }
+
+    private String getLockKey(Long questionId) {
+        return LOCK_PREFIX + questionId;
     }
 }

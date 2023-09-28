@@ -47,4 +47,13 @@ public class RedisConfig {
         redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(Long.class));
         return redisTemplate;
     }
+
+    @Bean
+    public RedisTemplate<String, String> questionViewLockRedisTemplate() {
+        RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(redisConnectionFactory());
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new StringRedisSerializer());
+        return redisTemplate;
+    }
 }
