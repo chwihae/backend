@@ -1,4 +1,4 @@
-package com.chwihae.batch;
+package com.chwihae.batch.closequestion;
 
 import com.chwihae.domain.question.QuestionEntity;
 import com.chwihae.domain.question.QuestionType;
@@ -27,18 +27,16 @@ class CloseQuestionJobConfigTest extends AbstractBatchTest {
     }
 
     @Test
-    @DisplayName("마감 시간이 지난 질문들을 마감 처리한다")
+    @DisplayName("마감 시간이 지난 질문들을 청크 사이즈만큼 마감 처리한다")
     void closeQuestionStep() throws Exception {
         //given
         final int CHUNK_SIZE = 100;
         UserEntity userEntity = userRepository.save(UserEntityFixture.of());
 
         LocalDateTime closeAt = LocalDateTime.now(KST).minusDays(1);
-        List<QuestionEntity> questionEntityList =
-                IntStream.range(0, CHUNK_SIZE)
-                        .mapToObj(question -> createQuestion(userEntity, closeAt))
-                        .toList();
-
+        List<QuestionEntity> questionEntityList = IntStream.range(0, CHUNK_SIZE)
+                .mapToObj(count -> createQuestion(userEntity, closeAt))
+                .toList();
         questionRepository.saveAll(questionEntityList);
 
         //when

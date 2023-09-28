@@ -436,10 +436,7 @@ class QuestionServiceTest extends AbstractIntegrationTest {
         Assertions.assertThatThrownBy(() -> questionService.getUserQuestions(notExistingUserId, type, pageRequest))
                 .isInstanceOf(IllegalStateException.class);
     }
-
-    // TODO - 캐싱되어 있는거
-    // TODO - DB에만 있는거
-
+    
     public QuestionEntity createQuestion(UserEntity userEntity, QuestionType type) {
         return QuestionEntity.builder()
                 .userEntity(userEntity)

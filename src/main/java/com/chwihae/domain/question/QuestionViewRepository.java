@@ -12,8 +12,6 @@ import java.util.Optional;
 
 @Repository
 public interface QuestionViewRepository extends JpaRepository<QuestionViewEntity, Long> {
-    Optional<QuestionViewEntity> findByQuestionEntityId(Long questionId);
-
     @Query("SELECT qve.viewCount " +
             "FROM QuestionViewEntity qve " +
             "WHERE qve.questionEntity.id = :questionId")
@@ -30,4 +28,9 @@ public interface QuestionViewRepository extends JpaRepository<QuestionViewEntity
             "SET qve.deletedAt = NOW() " +
             "WHERE qve.questionEntity.id = :questionId")
     void deleteAllByQuestionId(@Param("questionId") Long questionId);
+
+    @Transactional
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query(value = "DELETE FROM question_view", nativeQuery = true)
+    void physicallyDeleteAll();
 }

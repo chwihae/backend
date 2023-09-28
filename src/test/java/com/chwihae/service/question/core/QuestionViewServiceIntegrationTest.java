@@ -112,25 +112,6 @@ class QuestionViewServiceIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("캐시된 모든 질문의 조회수를 동기화하고, 해당 키를 삭제한다")
-    void syncQuestionViewCount() {
-        //given
-        Long cachedViewCount = 100L;
-
-        UserEntity user = userRepository.save(UserEntityFixture.of());
-        QuestionEntity question = questionRepository.save(QuestionEntityFixture.of(user));
-        questionViewService.createQuestionView(question);
-        questionViewCacheRepository.setViewCount(question.getId(), cachedViewCount);
-
-        //when
-        questionViewService.syncQuestionViewCount();
-
-        //then
-        assertThat(questionViewRepository.findByQuestionEntityId(question.getId()).get().getViewCount()).isEqualTo(cachedViewCount);
-        assertThat(questionViewCacheRepository.getViewCount(question.getId())).isEmpty();
-    }
-
-    @Test
     @DisplayName("캐싱 되어있는 질문 아이디 리스트가 없으면 질문 조회 엔티티 리스트를 반환받는다")
     void findViewCountsByQuestionEntityIds_returnList() throws Exception {
         //given

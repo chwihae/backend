@@ -1,4 +1,4 @@
-package com.chwihae.batch;
+package com.chwihae.batch.closequestion;
 
 import com.chwihae.domain.question.QuestionEntity;
 import com.chwihae.domain.question.QuestionRepository;

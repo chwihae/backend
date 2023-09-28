@@ -32,7 +32,7 @@ feign:
     loggerLevel: HEADERS
 
 jwt:
-  secret-key: "adZw12pxc55CmnIKsNP42KIa+M+bTlezcJKs3sW2RctO"
+  secret-key: "tywr1nTbJvWquHdD51gFSEezaYRs1fwAf+mKjxgYosMa"
   token-expired-time-ms: 86400000
 ---
 spring.config.activate.on-profile: local

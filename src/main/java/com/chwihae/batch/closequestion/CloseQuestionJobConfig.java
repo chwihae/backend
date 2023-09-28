@@ -1,4 +1,4 @@
-package com.chwihae.batch;
+package com.chwihae.batch.closequestion;
 
 import com.chwihae.domain.question.QuestionEntity;
 import com.chwihae.domain.question.QuestionRepository;
@@ -42,7 +42,6 @@ public class CloseQuestionJobConfig {
                 .build();
     }
 
-    // TODO 재시도 테스트
     @Bean(name = "closeQuestionStep")
     public Step closeQuestionStep() {
         return new StepBuilder("closeQuestionStep", jobRepository)
@@ -89,6 +88,7 @@ public class CloseQuestionJobConfig {
     }
 
     @Bean
+    @StepScope
     public ItemWriter<QuestionEntity> closeQuestionItemWriter() {
         return questionEntities -> {
             for (QuestionEntity questionEntity : questionEntities) {
