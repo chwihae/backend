@@ -164,6 +164,4 @@ class QuestionViewServiceMockTest extends AbstractMockTest {
         //then
         verify(questionViewRepository, never()).findByQuestionEntityIds(any());
     }
-
-    // TODO test - redis와 DB에 view를 합쳐서 리턴
 }

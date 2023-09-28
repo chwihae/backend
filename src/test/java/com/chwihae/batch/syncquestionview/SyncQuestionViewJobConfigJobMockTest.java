@@ -38,7 +38,7 @@ class SyncQuestionViewJobConfigJobMockTest extends AbstractMockTest {
     PlatformTransactionManager transactionManager;
 
     @Test
-    @DisplayName("SyncQuestionViewJob configuration 확인")
+    @DisplayName("SyncQuestionViewJob 구성 확인")
     void syncQuestionViewJob() {
         //when
         Job job = jobConfig.syncQuestionViewJob();

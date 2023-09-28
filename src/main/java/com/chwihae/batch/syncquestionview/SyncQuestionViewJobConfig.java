@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
@@ -17,9 +18,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -28,7 +31,7 @@ import java.util.stream.Collectors;
 @Configuration
 public class SyncQuestionViewJobConfig {
 
-    public final int CHUNK_SIZE = 20;
+    public static final int CHUNK_SIZE = 20;
     private final JobRepository jobRepository;
     private final RedisTemplate<String, Long> questionViewRedisTemplate;
     private final QuestionViewRepository questionViewRepository;
@@ -53,13 +56,19 @@ public class SyncQuestionViewJobConfig {
     }
 
     @Bean
+    @StepScope
     public ItemReader<QuestionViewResponse> syncQuestionViewItemReader() {
         return new SyncQuestionViewItemReader(questionViewRedisTemplate, questionViewCacheRepository, CHUNK_SIZE);
     }
 
     @Bean
+    @StepScope
     public ItemWriter<QuestionViewResponse> syncQuestionViewItemWriter() {
         return items -> {
+            if (CollectionUtils.isEmpty(items.getItems())) {
+                return;
+            }
+
             List<Long> ids = items.getItems().stream().map(QuestionViewResponse::getQuestionId).toList();
             List<QuestionViewEntity> questionViewEntityList = questionViewRepository.findByQuestionEntityIds(ids);
 
@@ -72,7 +81,7 @@ public class SyncQuestionViewJobConfig {
             for (QuestionViewEntity questionViewEntity : questionViewEntityList) {
                 QuestionViewResponse correspondingResponse = itemIdToResponseMap.get(questionViewEntity.getQuestionId());
 
-                if (correspondingResponse != null && correspondingResponse.getViewCount() > questionViewEntity.getViewCount()) {
+                if (Objects.nonNull(correspondingResponse) && correspondingResponse.getViewCount() > questionViewEntity.getViewCount()) {
                     questionViewEntity.setViewCount(correspondingResponse.getViewCount());
                 }
             }
