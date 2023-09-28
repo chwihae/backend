@@ -1,4 +1,4 @@
-package com.chwihae.batch;
+package com.chwihae.batch.syncquestionview;
 
 import com.chwihae.config.redis.QuestionViewCacheRepository;
 import com.chwihae.dto.question.response.QuestionViewResponse;

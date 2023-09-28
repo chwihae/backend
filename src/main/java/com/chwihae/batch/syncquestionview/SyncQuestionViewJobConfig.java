@@ -1,4 +1,4 @@
-package com.chwihae.batch;
+package com.chwihae.batch.syncquestionview;
 
 import com.chwihae.config.redis.QuestionViewCacheRepository;
 import com.chwihae.domain.question.QuestionViewEntity;
@@ -47,18 +47,18 @@ public class SyncQuestionViewJobConfig {
         return new StepBuilder("syncQuestionViewStep", jobRepository)
                 .repository(jobRepository)
                 .<QuestionViewResponse, QuestionViewResponse>chunk(CHUNK_SIZE, transactionManager)
-                .reader(itemReader())
-                .writer(itemWriter())
+                .reader(syncQuestionViewItemReader())
+                .writer(syncQuestionViewItemWriter())
                 .build();
     }
 
     @Bean
-    public ItemReader<QuestionViewResponse> itemReader() {
+    public ItemReader<QuestionViewResponse> syncQuestionViewItemReader() {
         return new SyncQuestionViewItemReader(questionViewRedisTemplate, questionViewCacheRepository, CHUNK_SIZE);
     }
 
     @Bean
-    public ItemWriter<QuestionViewResponse> itemWriter() {
+    public ItemWriter<QuestionViewResponse> syncQuestionViewItemWriter() {
         return items -> {
             List<Long> ids = items.getItems().stream().map(QuestionViewResponse::getQuestionId).toList();
             List<QuestionViewEntity> questionViewEntityList = questionViewRepository.findByQuestionEntityIds(ids);

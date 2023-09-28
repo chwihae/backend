@@ -1,6 +1,6 @@
 package com.chwihae.infra.test;
 
-import com.chwihae.batch.CloseQuestionJobConfig;
+import com.chwihae.batch.closequestion.CloseQuestionJobConfig;
 import com.chwihae.client.kakao.KakaoTokenFeignClient;
 import com.chwihae.client.kakao.KakaoUserInfoFeignClient;
 import com.chwihae.config.properties.JwtTokenProperties;
@@ -113,6 +113,9 @@ public class AbstractIntegrationTest extends AbstractContainerBaseTest {
 
     @Autowired
     protected RedisTemplate<String, UserContext> userContextRedisTemplate;
+
+    @Autowired
+    protected RedisTemplate<String, Long> questionViewRedisTemplate;
 
     @Autowired
     protected CloseQuestionJobConfig closeQuestionJobConfig;

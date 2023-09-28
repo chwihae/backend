@@ -4,6 +4,7 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.batch.test.context.SpringBatchTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -11,7 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 public abstract class AbstractBatchTest extends AbstractIntegrationTest {
 
     @Autowired
+    protected JobLauncherTestUtils jobLauncherTestUtils;
+
+    @Autowired
     protected Job closeQuestionJob;
+
+    @Autowired
+    protected Job syncQuestionViewJob;
 
     @Autowired
     protected JobLauncher jobLauncher;
