@@ -18,7 +18,7 @@ public class SyncQuestionViewScheduler {
     private final Job syncQuestionViewJob;
     private final JobLauncher jobLauncher;
 
-    @Scheduled(cron = "0 0 */1 * * ?")
+    @Scheduled(cron = "0 0 0 ? * SUN")
     public void syncQuestionViewCount() {
         JobParameters jobParameters = new JobParametersBuilder()
                 .addLong("time", System.currentTimeMillis())
