@@ -1,4 +1,4 @@
-# Chwihae
+# Chwihae backend
 
 ### Intro
 
@@ -112,3 +112,17 @@ The following APIs are being invoked for Kakao OAuth2 authentication
 ### AWS Architecture
 
 ![](images/aws%20architecture.png)
+
+### Git flow
+
+```shell
+|-- master
+| |-- hotfix
+| | |-- #885
+|-- develop
+| |-- feat
+| | |-- #883
+| | |-- #884
+| |-- refactor
+| | |-- #887
+```
