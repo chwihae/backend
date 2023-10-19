@@ -38,7 +38,60 @@ class VoteServiceConcurrencyTest extends AbstractConcurrencyTest {
     }
 
     @Test
-    @DisplayName("사용자가 같은 질문에 대해서 여러 옵션에 동시에  투표를 요청해도 투표는 하나만 생성하고, 나머지 요청은 예외를 던진다")
+    @DisplayName("다수의 사용자가 동시에 질문에 투표를 해도 모든 투표가 정상 등록된다")
+    void createVote_withMultipleRequests_concurrency() throws Exception {
+        //given
+        final int TOTAL_USER_SIZE = 100;
+        final int TOTAL_OPTION_SIZE = 5;
+
+        UserEntity questioner = UserEntityFixture.of();
+        userRepository.save(questioner);
+
+        List<UserEntity> voters = new ArrayList<>();
+        IntStream.range(0, TOTAL_USER_SIZE).forEach(idx -> {
+            voters.add(UserEntityFixture.of());
+        });
+        userRepository.saveAll(voters);
+
+        QuestionEntity questionEntity = questionRepository.save(QuestionEntityFixture.of(questioner));
+        List<OptionEntity> optionEntities = new ArrayList<>();
+        IntStream.of(0, TOTAL_OPTION_SIZE).forEach(optionNumber -> {
+            optionEntities.add(OptionEntityFixture.of(questionEntity));
+        });
+        optionRepository.saveAll(optionEntities);
+
+        List<Callable<Void>> createVoteTasks = doGenerateConcurrentTasks(TOTAL_USER_SIZE, (userIndex) -> {
+            int randomOptionId = new Random().nextInt(optionEntities.size());
+            OptionEntity optionEntity = optionEntities.get(randomOptionId);
+            return () -> {
+                voteService.createVote(questionEntity.getId(), optionEntity.getId(), voters.get(userIndex).getId());
+                return null;
+            };
+        });
+
+        //when
+        List<Future<Void>> createVoteFutures = executorService.invokeAll(createVoteTasks);
+
+        //then
+        int exceptionCount = 0;
+        for (Future<Void> future : createVoteFutures) {
+            try {
+                future.get();
+            } catch (ExecutionException e) {
+                Assertions.assertThat(e.getCause()).isInstanceOf(CustomException.class);
+                CustomException customException = ClassUtils.getSafeCastInstance(e.getCause(), CustomException.class);
+                if (customException.error() == DUPLICATE_VOTE) {
+                    exceptionCount++;
+                }
+            }
+        }
+
+        Assertions.assertThat(voteRepository.findAll()).hasSize(TOTAL_USER_SIZE);
+        Assertions.assertThat(exceptionCount).isZero();
+    }
+
+    @Test
+    @DisplayName("사용자가 같은 질문에 대해서 여러 옵션에 동시에 투표를 요청해도 투표는 하나만 생성하고, 나머지 요청은 예외를 던진다")
     void createVote_concurrency() throws Exception {
         //given
         final int TOTAL_REQUEST_COUNT = 10;
