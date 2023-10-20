@@ -29,7 +29,8 @@ public class QuestionService {
         return questionCreateService.createQuestion(request, userId);
     }
 
-    public Page<QuestionListResponse> getQuestionsByTypeAndStatus(QuestionType type, QuestionStatus status, Pageable pageable) {
+    public Page<QuestionListResponse> getQuestionsByTypeAndStatus(QuestionType type, QuestionStatus status,
+                                                                  Pageable pageable) {
         return questionQueryService.getQuestionsByTypeAndStatus(type, status, pageable);
     }
 
@@ -41,6 +42,7 @@ public class QuestionService {
         return questionQueryService.getQuestion(questionId, userId);
     }
 
+    @Transactional
     public void deleteQuestion(Long questionId, Long userId) {
         questionDeletionService.deleteQuestion(questionId, userId);
     }
