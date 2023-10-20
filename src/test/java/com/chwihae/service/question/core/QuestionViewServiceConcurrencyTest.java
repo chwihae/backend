@@ -31,6 +31,9 @@ class QuestionViewServiceConcurrencyTest extends AbstractConcurrencyTest {
     void incrementViewCount_concurrency() throws Exception {
         //given
         final int TOTAL_REQUEST_COUNT = 100;
+
+        questionViewCacheRepository.clear();
+
         UserEntity user = userRepository.save(UserEntityFixture.of());
         QuestionEntity question = questionRepository.save(QuestionEntityFixture.of(user));
         QuestionViewEntity view = QuestionViewFixture.of(question);
