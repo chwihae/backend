@@ -30,7 +30,8 @@ class CommentRepositoryTest extends AbstractIntegrationTest {
         commentRepository.save(createComment(question, user, commenterAlias, content));
 
         //when
-        Optional<CommentEntity> optionalComment = commentRepository.findFirstByQuestionEntityIdAndUserEntityId(question.getId(), user.getId());
+        Optional<CommentEntity> optionalComment = commentRepository.findTopByQuestionIdAndUserId(question.getId(),
+                user.getId());
 
         //then
         Assertions.assertThat(optionalComment)
@@ -42,7 +43,7 @@ class CommentRepositoryTest extends AbstractIntegrationTest {
                         }
                 );
     }
-    
+
     @Test
     @DisplayName("질문 아이디로 댓글 수를 집계한다")
     void countByQuestionEntityId() throws Exception {
@@ -52,7 +53,8 @@ class CommentRepositoryTest extends AbstractIntegrationTest {
         userRepository.saveAll(List.of(questioner, commenter));
         QuestionEntity question = questionRepository.save(createQuestion(questioner));
 
-        CommenterAliasEntity commenterAliasEntity = commenterAliasRepository.save(createAlias("alias", question, commenter));
+        CommenterAliasEntity commenterAliasEntity = commenterAliasRepository.save(createAlias("alias", question,
+                commenter));
         CommentEntity comment1 = createComment(question, commenter, commenterAliasEntity, "content");
         CommentEntity comment2 = createComment(question, commenter, commenterAliasEntity, "content");
         CommentEntity comment3 = createComment(question, commenter, commenterAliasEntity, "content");
@@ -75,7 +77,8 @@ class CommentRepositoryTest extends AbstractIntegrationTest {
         userRepository.saveAll(List.of(questioner, commenter));
         QuestionEntity question = questionRepository.save(createQuestion(questioner));
 
-        CommenterAliasEntity commenterAliasEntity = commenterAliasRepository.save(createAlias("alias", question, commenter));
+        CommenterAliasEntity commenterAliasEntity = commenterAliasRepository.save(createAlias("alias", question,
+                commenter));
         CommentEntity comment1 = createComment(question, commenter, commenterAliasEntity, "content");
         CommentEntity comment2 = createComment(question, commenter, commenterAliasEntity, "content");
         CommentEntity comment3 = createComment(question, commenter, commenterAliasEntity, "content");
@@ -107,7 +110,8 @@ class CommentRepositoryTest extends AbstractIntegrationTest {
                 .build();
     }
 
-    public CommentEntity createComment(QuestionEntity questionEntity, UserEntity userEntity, CommenterAliasEntity commenterAliasEntity, String content) {
+    public CommentEntity createComment(QuestionEntity questionEntity, UserEntity userEntity,
+                                       CommenterAliasEntity commenterAliasEntity, String content) {
         return CommentEntity.builder()
                 .content(content)
                 .userEntity(userEntity)

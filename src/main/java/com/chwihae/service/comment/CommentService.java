@@ -64,22 +64,25 @@ public class CommentService {
     }
 
     private CommenterAliasEntity getOrCreateCommenterAlias(UserEntity userEntity, QuestionEntity questionEntity) {
-        return commentRepository.findFirstByQuestionEntityIdAndUserEntityId(questionEntity.getId(), userEntity.getId())
+        return commentRepository.findTopByQuestionIdAndUserId(questionEntity.getId(), userEntity.getId())
                 .map(CommentEntity::getCommenterAliasEntity)
                 .orElseGet(() -> createCommenterAlias(questionEntity, userEntity));
     }
 
     private CommenterAliasEntity createCommenterAlias(QuestionEntity questionEntity, UserEntity userEntity) {
-        CommenterSequenceEntity commenterSequenceEntity = commenterSequenceRepository.findForUpdateByQuestionEntityId(questionEntity.getId())
+        CommenterSequenceEntity commenterSequenceEntity =
+                commenterSequenceRepository.findForUpdateByQuestionEntityId(questionEntity.getId())
                 .orElseThrow(() -> new IllegalStateException("질문에 대한 댓글 작성자 순서 정보가 존재하지 않습니다."));
         int nextSequence = commenterSequenceEntity.getSequence() + 1;
         String alias = CommenterAliasPrefix.getAlias(nextSequence);
-        CommenterAliasEntity commenterAliasEntity = commenterAliasRepository.save(buildCommenterAliasEntity(alias, userEntity, questionEntity));
+        CommenterAliasEntity commenterAliasEntity = commenterAliasRepository.save(buildCommenterAliasEntity(alias,
+                userEntity, questionEntity));
         commenterSequenceRepository.updateSequenceByQuestionEntityId(questionEntity.getId());
         return commenterAliasEntity;
     }
 
-    private CommentEntity buildCommentEntity(QuestionEntity questionEntity, UserEntity userEntity, CommenterAliasEntity commenterAliasEntity, String content) {
+    private CommentEntity buildCommentEntity(QuestionEntity questionEntity, UserEntity userEntity,
+                                             CommenterAliasEntity commenterAliasEntity, String content) {
         return CommentEntity.builder()
                 .content(content)
                 .questionEntity(questionEntity)
@@ -88,7 +91,8 @@ public class CommentService {
                 .build();
     }
 
-    private CommenterAliasEntity buildCommenterAliasEntity(String alias, UserEntity userEntity, QuestionEntity questionEntity) {
+    private CommenterAliasEntity buildCommenterAliasEntity(String alias, UserEntity userEntity,
+                                                           QuestionEntity questionEntity) {
         return CommenterAliasEntity.builder()
                 .alias(alias)
                 .userEntity(userEntity)

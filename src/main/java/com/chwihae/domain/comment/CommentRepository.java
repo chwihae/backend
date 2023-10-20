@@ -19,12 +19,12 @@ public interface CommentRepository extends JpaRepository<CommentEntity, Long> {
 
     int countByUserEntityId(Long userId);
 
-    //@EntityGraph(attributePaths = "commenterAliasEntity")
     @Query(value = "SELECT * " +
             "FROM comment c " +
-            "WHERE c.id_question = :questionId AND c.id_commenter = :userId", nativeQuery = true)
-    Optional<CommentEntity> findFirstByQuestionEntityIdAndUserEntityId(@Param("questionId") Long questionId,
-                                                                       @Param("userId") Long userId);
+            "WHERE c.id_question = :questionId AND c.id_commenter = :userId " +
+            "LIMIT 1", nativeQuery = true)
+    Optional<CommentEntity> findTopByQuestionIdAndUserId(@Param("questionId") Long questionId,
+                                                         @Param("userId") Long userId);
 
     @EntityGraph(attributePaths = "commenterAliasEntity")
     Page<CommentEntity> findWithAliasByQuestionEntityId(Long questionId, Pageable pageable);
