@@ -10,6 +10,7 @@ import com.chwihae.dto.comment.Comment;
 import com.chwihae.exception.CustomException;
 import com.chwihae.exception.CustomExceptionError;
 import com.chwihae.infra.fixture.CommentEntityFixture;
+import com.chwihae.infra.fixture.CommenterSequenceFixture;
 import com.chwihae.infra.fixture.QuestionEntityFixture;
 import com.chwihae.infra.fixture.UserEntityFixture;
 import com.chwihae.infra.test.AbstractIntegrationTest;
@@ -109,7 +110,8 @@ class CommentServiceTest extends AbstractIntegrationTest {
         String content = "content";
 
         //when //then
-        Assertions.assertThatThrownBy(() -> commentService.createComment(notExistingQuestionId, notExistingUserId, content))
+        Assertions.assertThatThrownBy(() -> commentService.createComment(notExistingQuestionId, notExistingUserId,
+                        content))
                 .isInstanceOf(CustomException.class)
                 .extracting("error")
                 .isEqualTo(CustomExceptionError.QUESTION_NOT_FOUND);
@@ -161,7 +163,8 @@ class CommentServiceTest extends AbstractIntegrationTest {
         long notExistingUserId = 0;
         PageRequest pageRequest = PageRequest.of(PAGE_NUMBER, PAGE_SIZE);
         //when //then
-        Assertions.assertThatThrownBy(() -> commentService.getComments(notExistingQuestionId, notExistingUserId, pageRequest))
+        Assertions.assertThatThrownBy(() -> commentService.getComments(notExistingQuestionId, notExistingUserId,
+                        pageRequest))
                 .isInstanceOf(CustomException.class)
                 .extracting("error")
                 .isEqualTo(CustomExceptionError.QUESTION_NOT_FOUND);
@@ -192,7 +195,8 @@ class CommentServiceTest extends AbstractIntegrationTest {
         long notExistingUserId = 0L;
 
         //when//then
-        Assertions.assertThatThrownBy(() -> commentService.modifyComment(notExistingCommentId, notExistingUserId, "content"))
+        Assertions.assertThatThrownBy(() -> commentService.modifyComment(notExistingCommentId, notExistingUserId,
+                        "content"))
                 .isInstanceOf(CustomException.class)
                 .extracting("error")
                 .isEqualTo(CustomExceptionError.COMMENT_NOT_FOUND);
@@ -210,7 +214,8 @@ class CommentServiceTest extends AbstractIntegrationTest {
         long notExistingUserId = 0L;
 
         //when//then
-        Assertions.assertThatThrownBy(() -> commentService.modifyComment(comment.getId(), notExistingUserId, modifiedContent))
+        Assertions.assertThatThrownBy(() -> commentService.modifyComment(comment.getId(), notExistingUserId,
+                        modifiedContent))
                 .isInstanceOf(CustomException.class)
                 .extracting("error")
                 .isEqualTo(CustomExceptionError.FORBIDDEN);
@@ -230,6 +235,28 @@ class CommentServiceTest extends AbstractIntegrationTest {
 
         //then
         Assertions.assertThat(commentRepository.findAll()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("댓글 작성자는 댓글을 삭제하고 다시 댓글을 작성할 수 있다")
+    void createComment_AfterDeletingComment() throws Exception {
+        //given
+        UserEntity user = userRepository.save(UserEntityFixture.of());
+        QuestionEntity question = questionRepository.save(QuestionEntityFixture.of(user));
+        commenterSequenceRepository.save(CommenterSequenceFixture.of(question));
+
+        commentService.createComment(question.getId(), user.getId(), "content1");
+
+        CommentEntity before = commentRepository.findAll().get(0);
+        commentService.deleteComment(before.getId(), user.getId());
+
+        //when
+        commentService.createComment(question.getId(), user.getId(), "content2");
+
+        //then
+        CommentEntity after = commentRepository.findAll().get(0);
+        Assertions.assertThat(after.getAlias()).isEqualTo(before.getAlias());
+        Assertions.assertThat(after.getContent()).isEqualTo("content2");
     }
 
     @Test
