@@ -1,5 +1,8 @@
 package com.chwihae.controller.question;
 
+import static org.springframework.data.domain.Sort.Direction.ASC;
+import static org.springframework.data.domain.Sort.Direction.DESC;
+
 import com.chwihae.config.security.CurrentUser;
 import com.chwihae.controller.ApiResponse;
 import com.chwihae.domain.question.QuestionStatus;
@@ -23,9 +26,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.BindException;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import static org.springframework.data.domain.Sort.Direction.DESC;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
@@ -39,9 +48,10 @@ public class QuestionController {
     private final BookmarkService bookmarkService;
 
     @GetMapping
-    public ApiResponse<Page<QuestionListResponse>> getQuestions(@RequestParam(value = "type", required = false) QuestionType type,
-                                                                @RequestParam(value = "status", required = false) QuestionStatus status,
-                                                                @PageableDefault(sort = "createdAt", direction = DESC) Pageable pageable) {
+    public ApiResponse<Page<QuestionListResponse>> getQuestions(
+            @RequestParam(value = "type", required = false) QuestionType type,
+            @RequestParam(value = "status", required = false) QuestionStatus status,
+            @PageableDefault(sort = "createdAt", direction = DESC) Pageable pageable) {
         return ApiResponse.ok(questionService.getQuestionsByTypeAndStatus(type, status, pageable));
     }
 
@@ -80,7 +90,7 @@ public class QuestionController {
     @GetMapping("/{questionId}/comments")
     public ApiResponse<Page<Comment>> getComments(@PathVariable Long questionId,
                                                   @CurrentUser UserContext userContext,
-                                                  @PageableDefault(sort = "createdAt", direction = DESC) Pageable pageable) {
+                                                  @PageableDefault(sort = "createdAt", direction = ASC) Pageable pageable) {
         return ApiResponse.ok(commentService.getComments(questionId, userContext.getId(), pageable));
     }
 
