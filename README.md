@@ -1,5 +1,17 @@
 # Chwihae backend
 
+### Feature
+
+<img src="https://github.com/chwihae/frontend/assets/90189513/7e525a0c-d517-4dfb-b87c-4b2fb3200cdd" alt="취해 스플래쉬 및 로그인 gif 화면" width="400px"/> 
+
+<img src="https://github.com/chwihae/frontend/assets/90189513/3d5078bc-1ba7-424c-8482-131ebd862f53" alt="취해 메인홈의 탭, 필터, 무한스크롤 gif 화면" width="400px"/> 
+
+<img src="https://github.com/chwihae/frontend/assets/90189513/9209e2b8-8698-4323-a1da-8bf80a2f2018" alt="취해 글작성 gif 화면" width="400px"/>
+
+<img src="https://github.com/chwihae/frontend/assets/90189513/2bf7d426-cb33-49bf-98a9-1ed41384ce96" alt="취해 내가쓴투표글 진행중, 마감, 삭제 gif 화면" width="400px"/>
+
+<img src="https://github.com/chwihae/frontend/assets/90189513/a2117536-f8b9-4550-8370-5a2606c5dcfa" alt="취해 타인이쓴투표글 진행중, 댓글 gif 화면" width="400px"/>
+
 ### Intro
 
 - Gradle mono module project
